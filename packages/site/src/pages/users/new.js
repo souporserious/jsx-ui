@@ -14,9 +14,9 @@ export default ({ style, column, row }) => {
       <Stack spaceMain="1fr" spaceBetween="32px">
         <Stack axis="horizontal" spaceBetween="32px">
           <Stack size={120} background="#1a42ab" />
-          <Stack width={720} spaceBetween="8px">
+          <Stack spaceBetween="8px">
             <Text size={30}>Create a User</Text>
-            <Text>
+            <Text width={720}>
               A user will be created on this PS4 and you will be logged in.
               Saved data, screenshots, and other information will be saved even
               after you log out of the system.
@@ -25,9 +25,9 @@ export default ({ style, column, row }) => {
         </Stack>
         <Stack axis="horizontal" spaceBetween="32px">
           <Stack size={120} background="#1a42ab" />
-          <Stack width={720} spaceBetween="8px">
+          <Stack spaceBetween="8px">
             <Text size={30}>Play as a Guest</Text>
-            <Text>
+            <Text width={720}>
               Temporarily log in to this PS4 as a guest without creating a user.
               After you log out, data you created will be deleted.
             </Text>

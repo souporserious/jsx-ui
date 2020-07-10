@@ -1,7 +1,8 @@
 import * as React from 'react'
 
-import { useModifierProps } from './Modifiers'
+import { useModifierProps, ChildModifiers } from './Modifiers'
 import { useTokens } from './Tokens'
+import { useVariantProps } from './Variants'
 import { SharedProps } from './index'
 import { parseValue } from './utils'
 
@@ -17,13 +18,15 @@ export type TextProps = {
   translateY?: string | number
   width?: string | number
   height?: string | number
-  visible?: boolean
+  visible?: boolean | string
+  variants?: any
   style?: React.CSSProperties
   children?: React.ReactNode
 } & SharedProps
 
 export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
   (props, ref) => {
+    const modifierProps = useModifierProps<TextProps>(Text, props)
     const {
       as: Component = 'span',
       column,
@@ -40,10 +43,13 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
       height,
       visible,
       style = {},
+      parentAxis,
       children,
       ...restProps
-    } = useModifierProps<TextProps>(Text, props)
-    const { fontSizes, fontFamilies, fontWeights } = useTokens()
+    } = useVariantProps(modifierProps)
+    const fontSizes = useTokens('fontSizes')
+    const fontFamilies = useTokens('fontFamilies')
+    const fontWeights = useTokens('fontWeights')
 
     if (visible === false) {
       return null
@@ -56,29 +62,31 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
     }
 
     return (
-      <Component
-        ref={ref}
-        style={{
-          gridColumn: column,
-          gridRow: row,
-          fontFamily: fontFamilies[family] || family,
-          fontSize: fontSizes[size] || size,
-          fontWeight: fontWeights[weight] || weight,
-          transform:
-            translateX ?? translateY
-              ? `translate(${parseValue(translateX)}, ${parseValue(
-                  translateY
-                )})`
-              : undefined,
-          width,
-          height,
-          color,
-          ...style,
-        }}
-        {...restProps}
-      >
-        {children}
-      </Component>
+      <ChildModifiers reset>
+        <Component
+          ref={ref}
+          style={{
+            gridColumn: column,
+            gridRow: row,
+            fontFamily: fontFamilies[family] || family,
+            fontSize: fontSizes[size] || size,
+            fontWeight: fontWeights[weight] || weight,
+            transform:
+              translateX ?? translateY
+                ? `translate(${parseValue(translateX)}, ${parseValue(
+                    translateY
+                  )})`
+                : undefined,
+            width,
+            height,
+            color,
+            ...style,
+          }}
+          {...restProps}
+        >
+          {children}
+        </Component>
+      </ChildModifiers>
     )
   }
 )

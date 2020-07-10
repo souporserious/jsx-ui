@@ -12,7 +12,7 @@ export * from './Spacer'
 export * from './Stack'
 export * from './Text'
 export * from './Tokens'
-export * from './Variant'
+export * from './Variants'
 export * from './View'
 export * from './Wrap'
 

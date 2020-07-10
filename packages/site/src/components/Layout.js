@@ -24,15 +24,7 @@ const tokens = {
   },
 }
 
-const modifiers = [
-  [
-    Stack,
-    {
-      style: {
-        // backgroundColor: 'pink',
-      },
-    },
-  ],
+const overrides = [
   [
     Text,
     {
@@ -97,7 +89,7 @@ function Layout({ children, location }) {
   }, [])
   return (
     <Tokens value={tokens}>
-      <Modifiers value={modifiers}>{children}</Modifiers>
+      <Modifiers value={overrides}>{children}</Modifiers>
     </Tokens>
   )
 }

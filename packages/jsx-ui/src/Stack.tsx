@@ -1,10 +1,11 @@
 import * as React from 'react'
 
-import { isSameInstance, useModifierProps } from './Modifiers'
+import { useModifierProps, ChildModifiers } from './Modifiers'
 import { Spacer } from './Spacer'
 import { Text } from './Text'
+import { useVariantProps } from './Variants'
 import { SharedProps } from './index'
-import { parseValue } from './utils'
+import { isSameInstance, parseValue } from './utils'
 
 export type StackProps = {
   as?: any
@@ -31,7 +32,8 @@ export type StackProps = {
   translateX?: string | number
   translateY?: string | number
   background?: string
-  visible?: boolean
+  visible?: boolean | string
+  variants?: any
   style?: React.CSSProperties
   children?: React.ReactNode
 } & SharedProps
@@ -45,11 +47,12 @@ export type Cell = {
 /** Use for vertical and horizontal layouts */
 export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
   (props, ref) => {
+    const modifierProps = useModifierProps<StackProps>(Stack, props)
     const {
       as: Component = 'div',
       column,
       row,
-      axis,
+      axis = 'vertical',
       size,
       width,
       height,
@@ -74,9 +77,10 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
       translateY = 0,
       visible,
       style = {},
+      parentAxis,
       children,
       ...restProps
-    } = useModifierProps<StackProps>(Stack, props)
+    } = useVariantProps(modifierProps)
 
     if (visible === false) {
       return null
@@ -128,65 +132,70 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
       trackCells.push({ size: spaceMainEndValue })
     }
     return (
-      <Component
-        ref={ref}
-        style={{
-          display: 'grid',
-          gridAutoFlow: axis === 'horizontal' ? 'column' : 'row',
-          [`gridTemplate${
-            isHorizontal ? 'Columns' : 'Rows'
-          }`]: trackCells
-            .map(cell =>
-              typeof cell.size === 'number' ? `${cell.size}px` : cell.size
-            )
-            .join(' '),
-          gridColumn: column,
-          gridRow: row,
-          width: width ?? size,
-          height: height ?? size,
-          transform:
-            translateX ?? translateY
-              ? `translate(${parseValue(translateX)}, ${parseValue(
-                  translateY
-                )})`
-              : undefined,
-          position: 'relative',
-          minWidth,
-          minHeight,
-          maxWidth,
-          maxHeight,
-          background,
-          ...style,
-        }}
-        {...restProps}
-      >
-        {trackCells
-          .map((cell, index) => ({ ...cell, index: index + 1 }))
-          .filter(cell => Boolean(cell.element))
-          .map(cell => {
-            const cellProps = {
-              parentAxis: axis,
-              [isHorizontal ? 'column' : 'row']: cell.index,
-            }
-            const childToRender =
-              trackCells.length > 1
-                ? React.cloneElement(cell.element, cellProps)
-                : cell.element
-            return spaceCrossStartValue ?? spaceCrossEndValue ? (
-              <Stack
-                key={cell.index}
-                axis={isHorizontal ? 'vertical' : 'horizontal'}
-                spaceMainStart={spaceCrossStartValue}
-                spaceMainEnd={spaceCrossEndValue}
-                {...cellProps}
-              >
-                {childToRender}
-              </Stack>
-            ) : (
-              childToRender
-            )
-          })}
-      </Component>
+      <ChildModifiers reset>
+        <Component
+          ref={ref}
+          style={{
+            display: 'grid',
+            gridAutoFlow: axis === 'horizontal' ? 'column' : 'row',
+            [`gridTemplate${
+              isHorizontal ? 'Columns' : 'Rows'
+            }`]: trackCells
+              .map(cell =>
+                typeof cell.size === 'number' ? `${cell.size}px` : cell.size
+              )
+              .join(' '),
+            gridColumn: column,
+            gridRow: row,
+            width: width ?? size,
+            height: height ?? size,
+            transform:
+              translateX ?? translateY
+                ? `translate(${parseValue(translateX)}, ${parseValue(
+                    translateY
+                  )})`
+                : undefined,
+            position: 'relative',
+            minWidth,
+            minHeight,
+            maxWidth,
+            maxHeight,
+            background,
+            ...style,
+          }}
+          {...restProps}
+        >
+          {trackCells
+            .map((cell, index) => ({ ...cell, index: index + 1 }))
+            .filter(cell => Boolean(cell.element))
+            .map(cell => {
+              const cellProps = {
+                parentAxis: axis,
+                [isHorizontal ? 'column' : 'row']: cell.index,
+              }
+              const spaceCrossValue = spaceCrossStartValue ?? spaceCrossEndValue
+              if (!spaceCrossValue && trackCells.length <= 1) {
+                return cell.element
+              }
+              return (
+                <ChildModifiers key={cell.index} value={cellProps}>
+                  {spaceCrossValue ? (
+                    <Stack
+                      axis={isHorizontal ? 'vertical' : 'horizontal'}
+                      spaceMainStart={spaceCrossStartValue}
+                      spaceMainEnd={spaceCrossEndValue}
+                      {...cellProps}
+                    >
+                      {cell.element}
+                    </Stack>
+                  ) : (
+                    cell.element
+                  )}
+                </ChildModifiers>
+              )
+            })}
+        </Component>
+      </ChildModifiers>
     )
   }
 )

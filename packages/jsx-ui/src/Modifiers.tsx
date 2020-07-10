@@ -1,24 +1,13 @@
 import * as React from 'react'
 
-const ModifiersContext = React.createContext(null)
+import { getInstance } from './utils'
 
-export function useModifiers() {
-  return React.useContext(ModifiersContext)
-}
-
-export function getInstance(instance) {
-  return (
-    instance.render ||
-    (instance.type ? instance.type.render || instance.type : instance)
-  )
-}
-
-export function isSameInstance(element1, element2) {
-  return getInstance(element1).toString() === getInstance(element2).toString()
-}
+const ModifiersContext = React.createContext([])
+const ChildModifiersContext = React.createContext({})
 
 export function useModifierProps<Props>(instance, props) {
-  const modifiersStack = useModifiers()
+  const modifiersStack = React.useContext(ModifiersContext)
+  const childModifiers = React.useContext(ChildModifiersContext)
   let modifiedProps = {} as Props
   modifiersStack.forEach(modifiers => {
     modifiers.forEach(modifier => {
@@ -32,17 +21,34 @@ export function useModifierProps<Props>(instance, props) {
       }
     })
   })
-  return { ...modifiedProps, ...props }
+  return {
+    ...modifiedProps,
+    ...childModifiers,
+    ...props,
+  }
 }
 
 export function Modifiers({ value, children }) {
-  const parentModifiers = useModifiers()
-  const nextValue = Array.isArray(parentModifiers)
-    ? [...parentModifiers, value]
-    : [value]
+  const parentModifiers = React.useContext(ModifiersContext)
   return (
-    <ModifiersContext.Provider value={nextValue}>
+    <ModifiersContext.Provider value={[...parentModifiers, value]}>
       {children}
     </ModifiersContext.Provider>
+  )
+}
+
+export function ChildModifiers({
+  value,
+  reset,
+  children,
+}: {
+  value?: object
+  reset?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <ChildModifiersContext.Provider value={reset ? {} : value}>
+      {children}
+    </ChildModifiersContext.Provider>
   )
 }

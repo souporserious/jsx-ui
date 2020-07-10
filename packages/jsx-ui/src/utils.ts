@@ -8,8 +8,30 @@ export type PropsOf<
 > = JSX.LibraryManagedAttributes<C, React.ComponentPropsWithRef<C>>
 
 /**
+ * Utility type for omitting a key from an object
+ */
+export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
+
+/**
  * Parses number values and adds pixel suffix.
  */
 export function parseValue(value) {
   return typeof value === 'number' ? value + 'px' : value
+}
+
+/**
+ * Returns the instance of a component.
+ */
+export function getInstance(instance) {
+  return (
+    instance.render ||
+    (instance.type ? instance.type.render || instance.type : instance)
+  )
+}
+
+/**
+ * Determines if two component instances are the same.
+ */
+export function isSameInstance(element1, element2) {
+  return getInstance(element1).toString() === getInstance(element2).toString()
 }

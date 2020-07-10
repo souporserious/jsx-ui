@@ -11,12 +11,21 @@ function Field({ label, children, ...props }) {
   )
 }
 
-function TextInput({ value, onChange }) {
-  return <input value={value} onChange={onChange} />
+function TextInput({ value, row, column, onChange }) {
+  return (
+    <input
+      value={value}
+      onChange={onChange}
+      style={{
+        gridColumn: column,
+        gridRow: row,
+      }}
+    />
+  )
 }
 
 function Button({ title }) {
-  return <button>{title}</button>
+  return <Stack>{title}</Stack>
 }
 
 // const sizes = {
@@ -30,13 +39,6 @@ function Button({ title }) {
 //     spaceBetween: 3,
 //   },
 // }
-
-function Modifiers({ children }) {
-  return children
-}
-function useViewport() {
-  return {}
-}
 
 const variants = {
   heading1: {
@@ -54,7 +56,6 @@ const variants = {
 }
 
 export default ({ style }) => {
-  const viewport = useViewport()
   return (
     <Stack height="100vh" style={style}>
       <Spacer size="32px" />
@@ -70,7 +71,7 @@ export default ({ style }) => {
         </Text>
       </Stack>
       <Spacer size="16px" />
-      <Divider />
+      <Divider size={1} color="white" />
       <Field label="Name">
         <TextInput />
       </Field>

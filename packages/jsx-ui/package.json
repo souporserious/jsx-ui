@@ -55,6 +55,7 @@
     "trailingComma": "es5"
   },
   "dependencies": {
-    "dlv": "^1.1.3"
+    "dlv": "^1.1.3",
+    "use-ref-list": "^1.0.0"
   }
 }
