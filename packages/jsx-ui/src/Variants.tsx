@@ -2,9 +2,14 @@ import * as React from 'react'
 
 const VariantsContext = React.createContext([])
 
-export function useVariantProps({ variants, ...props }) {
+export function useVariantProps<Props>({
+  variants,
+  ...props
+}: {
+  variants?: object
+}) {
   const contextVariants = React.useContext(VariantsContext)
-  let mergedProps = { ...props }
+  let mergedProps = { ...props } as Props
   if (variants) {
     const activeVariants = Object.entries(contextVariants)
       .filter(([, active]) => active)

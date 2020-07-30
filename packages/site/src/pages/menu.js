@@ -1,5 +1,5 @@
 import React from 'react'
-import { Stack, Text, Variants } from 'jsx-ui'
+import { Spacer, Stack, Text, Variants } from 'jsx-ui'
 import { useRovingIndex } from 'use-roving-index'
 import { Link } from 'gatsby'
 
@@ -50,57 +50,48 @@ export default () => {
         }
       >
         {menuItems.map((item, index) => (
-          <Variants value={{ active: index === activeIndex }}>
-            <Stack
-              key={item.title}
-              as={Link}
-              to="/add-to-folder"
-              // ref={index === activeIndex ? stackGeometry : undefined}
-              width={200}
-              height={200}
-              background="#1a42ab"
-              variants={{
-                active: {
-                  width: 400,
-                  height: 450,
-                  spaceBefore: 8,
-                  spaceAfter: 8,
-                },
-              }}
-            >
-              <Stack size={200} variants={{ active: { size: 400 } }} />
-              <Text
-                // ref={textGeometry}
-                // offsetX={stackGeometry.maxX}
-                // offsetY={stackGeometry.maxY}
-                visible="active"
-                offsetX={0}
-                offsetY="calc(100% + 8px)"
-                size={40}
-                color="white"
+          <React.Fragment key={item.title}>
+            <Spacer visible={index === activeIndex && index !== 0} size={8} />
+            <Variants value={{ active: index === activeIndex }}>
+              <Stack
+                key={item.title}
+                as={Link}
+                to="/add-to-folder"
+                // ref={index === activeIndex ? stackGeometry : undefined}
+                width={200}
+                height={200}
+                background="#1a42ab"
+                variants={{
+                  active: {
+                    width: 400,
+                    height: 450,
+                  },
+                }}
               >
-                {item.title}
-              </Text>
-            </Stack>
-          </Variants>
+                <Stack size={200} variants={{ active: { size: 400 } }} />
+                <Text
+                  // ref={textGeometry}
+                  // offsetX={stackGeometry.maxX}
+                  // offsetY={stackGeometry.maxY}
+                  visible="active"
+                  offsetX="calc(100% + 8px)"
+                  offsetY="100%"
+                  translateY="-100%"
+                  size={40}
+                  color="white"
+                >
+                  {item.title}
+                </Text>
+              </Stack>
+            </Variants>
+            <Spacer
+              visible={index === activeIndex && index !== menuItems.length - 1}
+              size={8}
+            />
+          </React.Fragment>
         ))}
       </Stack>
-      <Stack axis="horizontal">
-        <button
-          onClick={() =>
-            fetch('http://localhost:8080/', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ name: 'Component' }),
-            })
-              .then((response) => {
-                return response.json()
-              })
-              .then((data) => console.log(data))
-          }
-        >
-          Fetch
-        </button>
+      <Stack axis="horizontal" spaceMain="1fr">
         <button
           disabled={moveBackwardDisabled}
           onClick={() => moveActiveIndex(-1)}

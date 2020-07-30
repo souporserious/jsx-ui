@@ -12,10 +12,10 @@ function useUsers(amount = 3) {
   return users
 }
 
-export default ({ style }) => {
+export default function Users() {
   const users = useUsers()
   return (
-    <Stack height="100vh" spaceAround="1fr" style={style}>
+    <Stack height="100vh" space="1fr">
       <Text>DUALSHOCK 4 wireless controller connected.</Text>
       <Spacer size={8} />
       <Text>Who is using this controller?</Text>
@@ -26,7 +26,7 @@ export default ({ style }) => {
           to="/users/new"
           width="180px"
           height="256px"
-          spaceAround="1fr"
+          space="1fr"
           background="#1a42ab"
         >
           <Text>New User</Text>
@@ -41,12 +41,15 @@ export default ({ style }) => {
             background="#1a42ab"
           >
             <Image
-              source={user.picture.medium}
+              source={`https://api.adorable.io/avatars/285/${index}`}
               width="180px"
               height="180px"
               style={{ objectFit: 'cover' }}
             />
-            <Text>Name</Text>
+            <Spacer size={16} />
+            <Stack axis="horizontal" spaceMainStart={16}>
+              <Text>Name</Text>
+            </Stack>
           </Stack>
         ))}
       </Stack>

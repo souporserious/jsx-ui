@@ -1,6 +1,8 @@
 import * as React from 'react'
+import capsize from 'capsize'
 
-import { useModifierProps, ChildModifiers } from './Modifiers'
+import { StackContext } from './Contexts'
+import { useModifierProps } from './Modifiers'
 import { useTokens } from './Tokens'
 import { useVariantProps } from './Variants'
 import { SharedProps } from './index'
@@ -10,6 +12,7 @@ export type TextProps = {
   as?: any
   family?: string
   size?: string | number
+  lineSpacing?: number
   weight?: string | number
   color?: string
   offsetX?: string | number
@@ -18,14 +21,13 @@ export type TextProps = {
   translateY?: string | number
   width?: string | number
   height?: string | number
-  visible?: boolean | string
-  variants?: any
   style?: React.CSSProperties
   children?: React.ReactNode
 } & SharedProps
 
 export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
   (props, ref) => {
+    const parentAxis = React.useContext(StackContext)
     const modifierProps = useModifierProps<TextProps>(Text, props)
     const {
       as: Component = 'span',
@@ -33,6 +35,7 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
       row,
       family,
       size,
+      lineSpacing = 12,
       weight,
       color,
       offsetX,
@@ -41,15 +44,19 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
       translateY = 0,
       width = 'max-content',
       height,
-      visible,
+      visible = true,
+      stackChildStyles,
       style = {},
-      parentAxis,
       children,
       ...restProps
-    } = useVariantProps(modifierProps)
-    const fontSizes = useTokens('fontSizes')
-    const fontFamilies = useTokens('fontFamilies')
-    const fontWeights = useTokens('fontWeights')
+    } = useVariantProps<TextProps>(modifierProps)
+    const { fontSizes, fontFamilies, fontWeights, fontMetrics } = useTokens()
+    const fontFamilyMetrics = fontMetrics && fontMetrics[family]
+    const fontStyles = capsize({
+      capHeight: fontSizes[size] || size,
+      lineGap: lineSpacing,
+      fontMetrics: fontFamilyMetrics,
+    })
 
     if (visible === false) {
       return null
@@ -57,36 +64,45 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
 
     if (offsetX !== undefined || offsetY !== undefined) {
       style.position = 'absolute'
-      style.top = offsetX
-      style.left = offsetY
+      style.top = offsetY
+      style.left = offsetX
     }
 
     return (
-      <ChildModifiers reset>
-        <Component
-          ref={ref}
+      <Component
+        ref={ref}
+        style={{
+          gridColumn: column,
+          gridRow: row,
+          fontFamily: fontFamilies[family] || family,
+          fontSize: fontSizes[size] || size,
+          fontWeight: fontWeights[weight] || weight,
+          transform: `translate(${parseValue(translateX)}, ${parseValue(
+            translateY
+          )})`,
+          width,
+          height,
+          color,
+          ...style,
+          ...fontStyles,
+          ...stackChildStyles,
+        }}
+        {...restProps}
+      >
+        <span
           style={{
-            gridColumn: column,
-            gridRow: row,
-            fontFamily: fontFamilies[family] || family,
-            fontSize: fontSizes[size] || size,
-            fontWeight: fontWeights[weight] || weight,
-            transform:
-              translateX ?? translateY
-                ? `translate(${parseValue(translateX)}, ${parseValue(
-                    translateY
-                  )})`
-                : undefined,
-            width,
-            height,
-            color,
-            ...style,
+            display: 'block',
+            marginTop: fontStyles['::before'].marginTop,
           }}
-          {...restProps}
-        >
-          {children}
-        </Component>
-      </ChildModifiers>
+        />
+        {children}
+        <span
+          style={{
+            display: 'block',
+            marginBottom: fontStyles['::after'].marginBottom,
+          }}
+        />
+      </Component>
     )
   }
 )

@@ -1,5 +1,7 @@
 import * as React from 'react'
 
+import { Spacer } from './Spacer'
+
 /**
  * Utility type for getting props type of React component.
  */
@@ -17,6 +19,17 @@ export type Omit<T, K> = Pick<T, Exclude<keyof T, K>>
  */
 export function parseValue(value) {
   return typeof value === 'number' ? value + 'px' : value
+}
+
+/**
+ * Parses number values as Spacer
+ */
+export function parseSpaceValue(value) {
+  return typeof value === 'string' || typeof value === 'number' ? (
+    <Spacer size={value} />
+  ) : (
+    value
+  )
 }
 
 /**

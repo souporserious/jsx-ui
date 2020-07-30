@@ -2,14 +2,25 @@ import React from 'react'
 import { globalHistory } from '@reach/router'
 import { Modifiers, Text, Tokens, Stack } from 'jsx-ui'
 
+import './layout.css'
+
 const tokens = {
   fontFamilies: {
     body: 'Muli',
   },
+  fontMetrics: {
+    body: {
+      capHeight: 712,
+      ascent: 1005,
+      descent: -250,
+      lineGap: 0,
+      unitsPerEm: 1000,
+    },
+  },
   fontSizes: {
     xsmall: 12,
     small: 14,
-    medium: 24,
+    medium: 16,
     large: 22,
     xlarge: 32,
   },
@@ -17,6 +28,16 @@ const tokens = {
     light: '300',
     medium: '400',
     bold: '700',
+  },
+  lineSpacings: {
+    small: '4px',
+    medium: '12px',
+    large: '24px',
+  },
+  stackSpacings: {
+    small: '8px',
+    medium: '16px',
+    large: '32px',
   },
   colors: {
     background: '#083cb6',
@@ -89,7 +110,16 @@ function Layout({ children, location }) {
   }, [])
   return (
     <Tokens value={tokens}>
-      <Modifiers value={overrides}>{children}</Modifiers>
+      <Modifiers value={overrides}>
+        <Stack>
+          {children}
+          {/* <Stack visible="gridOverlay">
+            {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(() => (
+              <Stack background="orange" />
+            ))}
+          </Stack> */}
+        </Stack>
+      </Modifiers>
     </Tokens>
   )
 }

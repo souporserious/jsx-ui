@@ -1,11 +1,11 @@
 import * as React from 'react'
 
-import { useModifierProps, ChildModifiers } from './Modifiers'
+import { StackContext } from './Contexts'
+import { useModifierProps } from './Modifiers'
 import { Spacer } from './Spacer'
-import { Text } from './Text'
 import { useVariantProps } from './Variants'
 import { SharedProps } from './index'
-import { isSameInstance, parseValue } from './utils'
+import { parseValue, parseSpaceValue } from './utils'
 
 export type StackProps = {
   as?: any
@@ -13,11 +13,7 @@ export type StackProps = {
   size?: number | string
   width?: number | string
   height?: number | string
-  minWidth?: number | string
-  minHeight?: number | string
-  maxWidth?: number | string
-  maxHeight?: number | string
-  spaceAround?: number | string
+  space?: number | string
   spaceAfter?: number | string
   spaceBefore?: number | string
   spaceBetween?: number | string
@@ -27,40 +23,113 @@ export type StackProps = {
   spaceMain?: number | string
   spaceMainStart?: number | string
   spaceMainEnd?: number | string
+  radius?: number
+  radiusTopLeft?: number
+  radiusTopRight?: number
+  radiusBottomLeft?: number
+  radiusBottomRight?: number
   offsetX?: string | number
   offsetY?: string | number
   translateX?: string | number
   translateY?: string | number
+  scale?: number
+  scaleX?: number
+  scaleY?: number
+  strokeWeight?: number
+  strokeColor?: string
   background?: string
-  visible?: boolean | string
-  variants?: any
   style?: React.CSSProperties
+  stackChildStyles?: {
+    minWidth: number
+    minHeight: number
+    flexGrow: number
+    flexShrink: number
+    flexBasis: number
+  }
   children?: React.ReactNode
 } & SharedProps
 
-export type Cell = {
-  element?: any
-  index?: number
-  size: number
+function joinChildren(children, separator: any = ', ') {
+  const childrenArray = React.Children.toArray(children)
+  const lastChildIndex = childrenArray.length - 1
+  return childrenArray.reduce((result: any, child: any, index) => {
+    if (child.type === separator.type) {
+      const nextResult = [...result]
+      nextResult.pop()
+      return nextResult.concat(child)
+    } else if (index < lastChildIndex) {
+      return result.concat([
+        child,
+        typeof separator === 'string'
+          ? separator
+          : React.cloneElement(separator, { key: index + '-separator' }),
+      ])
+    } else {
+      return result.concat(child)
+    }
+  }, [])
 }
 
-/** Use for vertical and horizontal layouts */
+function getOrthogonalAxis(axis) {
+  return axis === 'horizontal' ? 'vertical' : 'horizontal'
+}
+
+type TransformValue = {
+  scale?: number
+  scaleX?: number
+  scaleY?: number
+  translateX?: number | string
+  translateY?: number | string
+}
+
+function getTransformValue({
+  scale,
+  scaleX = 1,
+  scaleY = 1,
+  translateX = 0,
+  translateY = 0,
+}: TransformValue) {
+  return `translate(${parseValue(translateX)}, ${parseValue(
+    translateY
+  )}) scale(${scaleX ?? scale}, ${scaleY ?? scale})`
+}
+
+export function getStackChildStyles({ width, height }) {
+  const style = {
+    minWidth: 0,
+    minHeight: 0,
+    flexGrow: 0,
+    flexShrink: 1,
+    flexBasis: 0,
+  } as any
+  if (typeof width === 'string' && width.includes('fr')) {
+    style.flexGrow = parseFloat(width)
+  } else {
+    style.width = width
+    style.flexBasis = width
+  }
+  if (typeof height === 'string' && height.includes('fr')) {
+    style.flexGrow = parseFloat(height)
+  } else {
+    style.height = height
+    style.flexBasis = height
+  }
+  if (style.flexGrow > 0) {
+    style.flexBasis = 0
+  }
+  return style
+}
+
 export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
-  (props, ref) => {
+  (props: StackProps, ref) => {
     const modifierProps = useModifierProps<StackProps>(Stack, props)
     const {
       as: Component = 'div',
-      column,
-      row,
       axis = 'vertical',
       size,
       width,
       height,
-      minWidth,
-      minHeight,
-      maxWidth,
-      maxHeight,
-      spaceAround,
+      space,
       spaceMain,
       spaceMainStart,
       spaceMainEnd,
@@ -70,132 +139,157 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
       spaceBetween,
       spaceBefore,
       spaceAfter,
+      strokeWeight,
+      strokeColor,
       background,
-      offsetX,
-      offsetY,
-      translateX = 0,
-      translateY = 0,
-      visible,
-      style = {},
-      parentAxis,
+      radius = 0,
+      radiusTopLeft,
+      radiusTopRight,
+      radiusBottomLeft,
+      radiusBottomRight,
+      scale,
+      scaleX,
+      scaleY,
+      translateX,
+      translateY,
+      stackChildStyles,
       children,
+      visible = true,
+      style: _style,
       ...restProps
-    } = useVariantProps(modifierProps)
+    } = useVariantProps<StackProps>(modifierProps)
+    const flattenedChildren = React.Children.toArray(children)
+      .flatMap((child: any) =>
+        child && child.type === React.Fragment ? child.props.children : child
+      )
+      .filter(
+        child =>
+          // @ts-ignore
+          React.isValidElement(child) && child.props.visible !== false
+      )
+    const style = {
+      display: 'flex',
+      flexDirection: axis === 'horizontal' ? 'row' : 'column',
+      boxShadow: `0px 0px 0px ${strokeWeight}px ${strokeColor}`,
+      borderRadius: [
+        parseValue(radiusTopLeft ?? radius),
+        parseValue(radiusTopRight ?? radius),
+        parseValue(radiusBottomRight ?? radius),
+        parseValue(radiusBottomLeft ?? radius),
+      ].join(' '),
+      background,
+      transform: getTransformValue({
+        scale,
+        scaleX,
+        scaleY,
+        translateX,
+        translateY,
+      }),
+      position: 'relative',
+      zIndex: 1,
+      ...stackChildStyles,
+      ..._style,
+    }
+    const childrenToRender =
+      spaceCrossStart ?? spaceCrossEnd ?? spaceCross ?? space
+        ? flattenedChildren.map((child: any) =>
+            child.type === Spacer ? (
+              child
+            ) : (
+              <StackContext.Provider value={getOrthogonalAxis(axis)}>
+                <div
+                  style={{
+                    position: 'relative',
+                    display: 'flex',
+                    flexDirection: axis === 'horizontal' ? 'column' : 'row',
+                    ...getStackChildStyles({
+                      width:
+                        axis === 'horizontal'
+                          ? child.props.width ?? child.props.size
+                          : 'auto',
+                      height:
+                        axis === 'horizontal'
+                          ? 'auto'
+                          : child.props.height ?? child.props.size,
+                    }),
+                  }}
+                >
+                  {parseSpaceValue(
+                    child.props.spaceBefore ??
+                      spaceCrossStart ??
+                      spaceCross ??
+                      space
+                  )}
+                  {React.cloneElement(child, {
+                    stackChildStyles: getStackChildStyles({
+                      width:
+                        axis === 'horizontal'
+                          ? 'auto'
+                          : child.props.width ?? child.props.size,
+                      height:
+                        axis === 'horizontal'
+                          ? child.props.height ?? child.props.size
+                          : 'auto',
+                    }),
+                  })}
+                  {parseSpaceValue(
+                    child.props.spaceAfter ??
+                      spaceCrossEnd ??
+                      spaceCross ??
+                      space
+                  )}
+                </div>
+              </StackContext.Provider>
+            )
+          )
+        : flattenedChildren
 
     if (visible === false) {
       return null
     }
 
-    if (offsetX !== undefined || offsetY !== undefined) {
-      style.position = 'absolute'
-      style.top = offsetX
-      style.left = offsetY
+    if (
+      (typeof width === 'string' && width.includes('fr')) ||
+      (typeof size === 'string' && size.includes('fr'))
+    ) {
+      style.flex = `${width} 0 auto`
+    } else {
+      style.width = width ?? size
+    }
+    if (
+      (typeof height === 'string' && height.includes('fr')) ||
+      (typeof size === 'string' && size.includes('fr'))
+    ) {
+      style.flex = `${height ?? size} 0 auto`
+    } else {
+      style.height = height ?? size
     }
 
-    const isHorizontal = axis === 'horizontal'
-    const childrenArray = React.Children.toArray(children)
-    const trackCells = childrenArray.reduce<Cell[]>((cells, element, index) => {
-      const previousElement = childrenArray[index - 1]
-      const cell = {
-        element,
-        size: isSameInstance(element, Text)
-          ? 'max-content'
-          : React.isValidElement(element)
-          ? (isHorizontal ? element.props.width : element.props.height) ??
-            element.props.size ??
-            'min-content'
-          : null,
-      }
-      const spaceValue =
-        (React.isValidElement(previousElement) &&
-          previousElement?.props.spaceAfter) ??
-        (React.isValidElement(element) && element.props.spaceBefore) ??
-        spaceBetween
-      if (isSameInstance(element, Spacer)) {
-        // @ts-ignore
-        return [...cells, { size: element.props.size }]
-      } else if (index === 0 || spaceValue === undefined) {
-        // @ts-ignore
-        return cells.concat(cell)
-      } else {
-        return [...cells, { size: spaceValue }, cell]
-      }
-    }, [])
-    const spaceMainStartValue = spaceMainStart ?? spaceMain ?? spaceAround
-    const spaceMainEndValue = spaceMainEnd ?? spaceMain ?? spaceAround
-    const spaceCrossStartValue = spaceCrossStart ?? spaceCross ?? spaceAround
-    const spaceCrossEndValue = spaceCrossEnd ?? spaceCross ?? spaceAround
-    if (spaceMainStartValue) {
-      trackCells.unshift({ size: spaceMainStartValue })
-    }
-    if (spaceMainEndValue) {
-      trackCells.push({ size: spaceMainEndValue })
-    }
     return (
-      <ChildModifiers reset>
-        <Component
-          ref={ref}
-          style={{
-            display: 'grid',
-            gridAutoFlow: axis === 'horizontal' ? 'column' : 'row',
-            [`gridTemplate${
-              isHorizontal ? 'Columns' : 'Rows'
-            }`]: trackCells
-              .map(cell =>
-                typeof cell.size === 'number' ? `${cell.size}px` : cell.size
-              )
-              .join(' '),
-            gridColumn: column,
-            gridRow: row,
-            width: width ?? size,
-            height: height ?? size,
-            transform:
-              translateX ?? translateY
-                ? `translate(${parseValue(translateX)}, ${parseValue(
-                    translateY
-                  )})`
-                : undefined,
-            position: 'relative',
-            minWidth,
-            minHeight,
-            maxWidth,
-            maxHeight,
-            background,
-            ...style,
-          }}
-          {...restProps}
-        >
-          {trackCells
-            .map((cell, index) => ({ ...cell, index: index + 1 }))
-            .filter(cell => Boolean(cell.element))
-            .map(cell => {
-              const cellProps = {
-                parentAxis: axis,
-                [isHorizontal ? 'column' : 'row']: cell.index,
-              }
-              const spaceCrossValue = spaceCrossStartValue ?? spaceCrossEndValue
-              if (!spaceCrossValue && trackCells.length <= 1) {
-                return cell.element
-              }
-              return (
-                <ChildModifiers key={cell.index} value={cellProps}>
-                  {spaceCrossValue ? (
-                    <Stack
-                      axis={isHorizontal ? 'vertical' : 'horizontal'}
-                      spaceMainStart={spaceCrossStartValue}
-                      spaceMainEnd={spaceCrossEndValue}
-                      {...cellProps}
-                    >
-                      {cell.element}
-                    </Stack>
-                  ) : (
-                    cell.element
-                  )}
-                </ChildModifiers>
-              )
-            })}
+      <StackContext.Provider value={axis}>
+        <Component ref={ref} style={style} {...restProps}>
+          {parseSpaceValue(spaceMainStart ?? spaceMain ?? space)}
+          {spaceBetween
+            ? joinChildren(childrenToRender, parseSpaceValue(spaceBetween))
+            : childrenToRender}
+          {parseSpaceValue(spaceMainEnd ?? spaceMain ?? space)}
+          {React.isValidElement(background) && (
+            <div
+              style={{
+                position: 'absolute',
+                top: 0,
+                right: 0,
+                bottom: 0,
+                left: 0,
+                zIndex: 0,
+                pointerEvents: 'none',
+              }}
+            >
+              {background}
+            </div>
+          )}
         </Component>
-      </ChildModifiers>
+      </StackContext.Provider>
     )
   }
 )

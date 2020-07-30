@@ -1,15 +1,16 @@
 import * as React from 'react'
-import delve from 'dlv'
 
 const TokensContext = React.createContext({})
 
-export function useTokens(key?) {
-  const tokens = React.useContext(TokensContext)
-  return key ? delve(tokens, key) : tokens
+export function useTokens(): { [key in any]: any } {
+  return React.useContext(TokensContext)
 }
 
 export function Tokens({ value, children }) {
+  const tokens = React.useContext(TokensContext)
   return (
-    <TokensContext.Provider value={value}>{children}</TokensContext.Provider>
+    <TokensContext.Provider value={{ ...value, ...tokens }}>
+      {children}
+    </TokensContext.Provider>
   )
 }
