@@ -1,5 +1,5 @@
 import React from 'react'
-import { DevTools, Overrides, Text, Tokens, Stack } from 'jsx-ui'
+import { DevTools, Overrides, override, Text, Tokens, Stack } from 'jsx-ui'
 
 import './layout.css'
 
@@ -75,15 +75,12 @@ const playstationTokens = {
 }
 
 const overrides = [
-  [
-    Text,
-    {
-      family: 'body',
-      size: 'medium',
-      weight: 'light',
-      color: 'foreground',
-    },
-  ],
+  override(Text, {
+    family: 'body',
+    size: 'medium',
+    weight: 'light',
+    color: 'foreground',
+  }),
 ]
 
 function Layout({ children, location }) {
