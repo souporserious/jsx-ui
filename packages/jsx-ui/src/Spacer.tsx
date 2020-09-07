@@ -14,7 +14,7 @@ type SpacerProps = {
 }
 
 export function Spacer(props: SpacerProps) {
-  const modifiedProps = useOverrideProps<SpacerProps>(Spacer, props)
+  const modifiedProps = useOverrideProps(Spacer, props)
   const { children, size = '1fr', visible = true } = useVariantProps<
     SpacerProps
   >(modifiedProps)

@@ -4,9 +4,9 @@ import { getInstance } from './utils'
 
 const OverridesContext = React.createContext([])
 
-export function useOverrideProps<Props>(component, props) {
+export function useOverrideProps(component, props) {
   const overridesStack = React.useContext(OverridesContext)
-  let modifiedProps = {} as Props
+  let modifiedProps = {} as React.ComponentProps<typeof component>
   overridesStack.forEach(overrides => {
     overrides.forEach(override => {
       const components = override.slice(0, -1).map(getInstance)

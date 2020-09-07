@@ -5,6 +5,7 @@ import { Divider } from './Divider'
 import { useOverrideProps } from './Overrides'
 import { Spacer } from './Spacer'
 import { Text } from './Text'
+import { useTokens } from './Tokens'
 import { useVariantProps } from './Variants'
 import { SharedProps } from './index'
 import { useLayoutStyles } from './use-layout-styles'
@@ -122,7 +123,7 @@ export function getStackChildStyles({ width, height }) {
 export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
   (props: StackProps, ref) => {
     const mainAxis = React.useContext(StackContext)
-    const overrideProps = useOverrideProps<StackProps>(Stack, props)
+    const overrideProps = useOverrideProps(Stack, props)
     const {
       as: Component = 'div',
       axis = 'vertical',
@@ -158,6 +159,7 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
       style: _style,
       ...restProps
     } = useVariantProps<StackProps>(overrideProps)
+    const { colors } = useTokens()
     const flattenedChildren = React.Children.toArray(children)
       .flatMap((child: any) =>
         child && child.type === React.Fragment ? child.props.children : child
@@ -183,7 +185,10 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
         parseValue(radiusBottomRight ?? radius),
         parseValue(radiusBottomLeft ?? radius),
       ].join(' '),
-      background,
+      background:
+        typeof background === 'string'
+          ? colors[background] || background
+          : undefined,
       transform: getTransformValue({
         scale,
         scaleX,

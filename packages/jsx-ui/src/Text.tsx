@@ -11,10 +11,12 @@ import { parseValue } from './utils'
 
 export type TextProps = {
   as?: any
+  alignment?: 'left' | 'center' | 'right'
   family?: string
   size?: string | number
   lineSpacing?: number
   weight?: string | number
+  backgroundColor?: string
   color?: string
   offsetX?: string | number
   offsetY?: string | number
@@ -31,15 +33,17 @@ export type TextProps = {
 export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
   (props, ref) => {
     const mainAxis = React.useContext(StackContext)
-    const overrideProps = useOverrideProps<TextProps>(Text, props)
+    const overrideProps = useOverrideProps(Text, props)
     const {
       as: Component = 'span',
+      alignment,
       column,
       row,
       family,
       size,
-      lineSpacing = 12,
+      lineSpacing = 0,
       weight,
+      backgroundColor,
       color,
       offsetX,
       offsetY,
@@ -89,9 +93,11 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
           display: 'inline-block',
           gridColumn: column,
           gridRow: row,
+          textAlign: alignment,
           fontFamily: fontFamilies[family] || family,
           fontSize: fontSizes[size] || size,
           fontWeight: fontWeights[weight] || weight,
+          backgroundColor: colors[backgroundColor] || backgroundColor,
           color: colors[color] || color,
           transform: `translate(${parseValue(translateX)}, ${parseValue(
             translateY

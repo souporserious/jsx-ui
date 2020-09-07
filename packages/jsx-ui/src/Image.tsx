@@ -21,7 +21,7 @@ export const Image = React.forwardRef<HTMLSpanElement, ImageProps>(
       style,
       children,
       ...restProps
-    } = useOverrideProps<ImageProps>(Image, props)
+    } = useOverrideProps(Image, props)
     return (
       <img
         ref={ref}
