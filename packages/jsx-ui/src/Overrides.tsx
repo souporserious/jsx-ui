@@ -4,7 +4,7 @@ import { getInstance } from './utils'
 
 const OverridesContext = React.createContext([])
 
-export function useOverrideProps(component, props) {
+export function useOverrideProps(component: React.ElementType, props: object) {
   const overridesStack = React.useContext(OverridesContext)
   let modifiedProps = {} as React.ComponentProps<typeof component>
   overridesStack.forEach(overrides => {
@@ -32,7 +32,12 @@ export function override<C extends React.ElementType>(
   return [component, props]
 }
 
-export function Overrides({ value, children }) {
+export type OverridesProps = {
+  value: [React.ElementType, object][]
+  children: React.ReactNode
+}
+
+export function Overrides({ value, children }: OverridesProps) {
   const parentOverrides = React.useContext(OverridesContext)
   return (
     <OverridesContext.Provider value={[...parentOverrides, value]}>
