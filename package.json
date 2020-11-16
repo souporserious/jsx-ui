@@ -1,10 +1,17 @@
 {
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
+    "babel": "yarn workspace babel-plugin-jsxui",
     "site": "yarn workspace site",
     "jsx-ui": "yarn workspace jsx-ui"
   },
-  "workspaces": [
-    "packages/*"
-  ]
+  "prettier": {
+    "printWidth": 80,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "es5"
+  }
 }

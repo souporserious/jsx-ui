@@ -1,0 +1,36 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`babel-plugin-jsxui 1. babel-plugin-jsxui: 1. babel-plugin-jsxui 1`] = `
+"
+import { Overrides, Text } from 'jsxui'
+
+function App() {
+  return (
+    <Overrides
+      value={[
+        <Text color=\\"tomato\\" variants={{ hover: { color: 'papayawhip' } }} />,
+      ]}
+    >
+      <Text>Hello World</Text>
+    </Overrides>
+  )
+}
+
+      ↓ ↓ ↓ ↓ ↓ ↓
+
+import { Overrides, Text } from 'jsxui';
+
+function App() {
+  return <Overrides value={[[Text, {
+    color: \\"tomato\\",
+    variants: {
+      hover: {
+        color: 'papayawhip'
+      }
+    }
+  }]]}>
+      <Text>Hello World</Text>
+    </Overrides>;
+}
+"
+`;
