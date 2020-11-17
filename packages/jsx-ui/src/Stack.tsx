@@ -9,7 +9,7 @@ import { useTokens } from './Tokens'
 import { useVariantProps } from './Variants'
 import { SharedProps } from './index'
 import { useLayoutStyles } from './use-layout-styles'
-import { parseValue, parseSpaceValue } from './utils'
+import { parseValue, parseSpaceValue, isSameInstance } from './utils'
 
 export type StackProps = {
   as?: any
@@ -206,8 +206,9 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
     }
     const childrenToRender =
       spaceCrossStart ?? spaceCrossEnd ?? spaceCross ?? space
-        ? flattenedChildren.map((child: any, index) =>
-            child.type === Spacer || child.type === Divider ? (
+        ? flattenedChildren.map((child: any, index) => {
+            const type = child.props.originalType || child.type
+            return isSameInstance(type, [Spacer, Divider]) ? (
               child
             ) : (
               <StackContext.Provider
@@ -264,7 +265,7 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
                 </div>
               </StackContext.Provider>
             )
-          )
+          })
         : flattenedChildren
 
     if (visible === false) {

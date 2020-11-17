@@ -22,4 +22,5 @@ export * from './Variants'
 export * from './View'
 export * from './Wrap'
 
+export * from './jsx'
 export * from './use-geometry'
