@@ -4,8 +4,9 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "yarn babel build; yarn jsxui build; yarn site build",
+    "build": "yarn workspaces run build",
     "babel": "yarn workspace babel-plugin-jsxui",
+    "editor": "yarn workspace @jsxui/editor",
     "jsxui": "yarn workspace @jsxui/react",
     "site": "yarn workspace site"
   },

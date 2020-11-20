@@ -1,0 +1,52 @@
+{
+  "name": "@jsxui/editor",
+  "version": "0.1.0",
+  "author": "Travis Arnold",
+  "description": "JSX editor used to update components.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/souporserious/jsxui.git"
+  },
+  "module": "dist/editor.esm.js",
+  "main": "dist/index.js",
+  "typings": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "keywords": [
+    "jsx",
+    "editor",
+    "ui",
+    "design-tool"
+  ],
+  "scripts": {
+    "develop": "tsdx watch --target node",
+    "build": "tsdx build --target node",
+    "test": "tsdx test --passWithNoTests",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "sextant": "sextant ./flows"
+  },
+  "devDependencies": {
+    "@types/jest": "^26.0.15",
+    "@types/react": "^16.9.56",
+    "@types/react-dom": "^16.9.9",
+    "husky": "^4.3.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "sextant": "^0.4.0",
+    "tsdx": "^0.14.1",
+    "tslib": "^2.0.3",
+    "typescript": "^4.0.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "tsdx lint"
+    }
+  },
+  "dependencies": {
+    "@sextant-tools/plugin-javascript-express": "^0.1.0",
+    "express": "^4.17.1"
+  }
+}
