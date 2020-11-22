@@ -1,4 +1,20 @@
 {
-  "plugins": ["babel-plugin-jsxui"],
+  "plugins": [
+    "babel-plugin-jsxui",
+    [
+      "babel-plugin-transform-react-jsx",
+      {
+        "pragma": "jsx"
+      }
+    ],
+    [
+      "@emotion/babel-plugin-jsx-pragmatic",
+      {
+        "module": "@jsxui/react",
+        "import": "jsx",
+        "export": "jsx"
+      }
+    ]
+  ],
   "presets": ["babel-preset-gatsby"]
 }

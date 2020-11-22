@@ -1,5 +1,4 @@
-/** @jsx jsx */
-import { Graphic, jsx } from '@jsxui/react'
+import { Graphic } from '@jsxui/react'
 export const Logo = (props) => (
   <Graphic
     height="80"

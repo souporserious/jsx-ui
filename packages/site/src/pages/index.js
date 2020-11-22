@@ -1,6 +1,5 @@
-/** @jsx jsx */
 import React from 'react'
-import { jsx, Text, Tokens, Spacer, Stack, Variants } from '@jsxui/react'
+import { Text, Tokens, Spacer, Stack, Variants } from '@jsxui/react'
 
 import { Github, Logo, Wave } from '../assets'
 

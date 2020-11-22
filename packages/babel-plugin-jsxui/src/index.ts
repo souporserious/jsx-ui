@@ -1,8 +1,35 @@
 import * as t from '@babel/types'
 import jsx from '@babel/plugin-syntax-jsx'
 
-// adapted from: https://github.com/babel/babel/blob/main/packages/babel-helper-builder-react-jsx/src/index.js
+// adapted from: https://github.com/babel/babel/blob/master/packages/babel-plugin-transform-react-jsx-source/
+const TRACE_ID = '__jsxuiSource'
+const FILE_NAME_ID = '__jsxuiFileName'
 
+function makeTrace(fileNameIdentifier, lineNumber, column0Based) {
+  const fileLineLiteral =
+    lineNumber != null ? t.numericLiteral(lineNumber) : t.nullLiteral()
+  const fileColumnLiteral =
+    column0Based != null ? t.numericLiteral(column0Based + 1) : t.nullLiteral()
+  const fileNameProperty = t.objectProperty(
+    t.identifier('fileName'),
+    fileNameIdentifier
+  )
+  const lineNumberProperty = t.objectProperty(
+    t.identifier('lineNumber'),
+    fileLineLiteral
+  )
+  const columnNumberProperty = t.objectProperty(
+    t.identifier('columnNumber'),
+    fileColumnLiteral
+  )
+  return t.objectExpression([
+    fileNameProperty,
+    lineNumberProperty,
+    columnNumberProperty,
+  ])
+}
+
+// adapted from: https://github.com/babel/babel/blob/main/packages/babel-helper-builder-react-jsx/src/index.js
 function convertAttributeValue(node) {
   if (t.isJSXExpressionContainer(node)) {
     return node.expression
@@ -38,7 +65,7 @@ function convertAttribute(node) {
   return t.inherits(t.objectProperty(node.name, value), node)
 }
 
-export default function() {
+export default function () {
   return {
     name: 'babel-plugin-jsxui',
     inherits: jsx,
@@ -46,7 +73,42 @@ export default function() {
       this.cache = new Set()
     },
     visitor: {
-      JSXOpeningElement(path) {
+      JSXOpeningElement(path, state) {
+        // add component source information
+        if (
+          path.node.name.name !== 'Fragment' &&
+          path.node.name.property?.name !== 'Fragment'
+        ) {
+          const location = path.container.openingElement.loc
+          if (!state.fileNameIdentifier) {
+            const fileName = state.filename || ''
+            const fileNameIdentifier = path.scope.generateUidIdentifier(
+              FILE_NAME_ID
+            )
+            const scope = path.hub.getScope()
+            if (scope) {
+              scope.push({
+                id: fileNameIdentifier,
+                init: t.stringLiteral(fileName),
+              })
+            }
+            state.fileNameIdentifier = fileNameIdentifier
+          }
+
+          const trace = makeTrace(
+            state.fileNameIdentifier,
+            location.start.line,
+            location.start.column
+          )
+
+          path.node.attributes.push(
+            t.jsxAttribute(
+              t.jsxIdentifier(TRACE_ID),
+              t.jsxExpressionContainer(trace)
+            )
+          )
+        }
+
         if (path.node.name.name === 'Overrides') {
           const [valuePath] = path.get('attributes')
           const expressionPath = valuePath.get('value').get('expression')
@@ -62,11 +124,18 @@ export default function() {
             arrayExpression = expressionPath
           }
           if (arrayExpression) {
-            arrayExpression.get('elements').forEach(element => {
+            arrayExpression.get('elements').forEach((element) => {
               // handle already transpiled JSX
               if (element.node.type === 'CallExpression') {
+                const [identifier, objectExpression] = element.node.arguments
+                // filter out TRACE_ID if it was applied to any Overrides
+                objectExpression.properties = objectExpression.properties.filter(
+                  (property) => property.key.name !== TRACE_ID
+                )
                 element.node.leadingComments = []
-                element.replaceWith(t.arrayExpression(element.node.arguments))
+                element.replaceWith(
+                  t.arrayExpression([identifier, objectExpression])
+                )
               } else {
                 const openingElement = element.get('openingElement')
                 const name = openingElement.node.name.name

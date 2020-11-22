@@ -11,9 +11,11 @@
     "deploy": "gatsby build --prefix-paths && gh-pages -d public"
   },
   "dependencies": {
+    "@emotion/babel-plugin-jsx-pragmatic": "^0.1.5",
     "@jsxui/react": "*",
     "@react-aria/interactions": "^3.3.1",
     "babel-plugin-jsxui": "*",
+    "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-gatsby": "^0.6.0",
     "case-anything": "^1.1.2",
     "dotenv": "^8.2.0",
