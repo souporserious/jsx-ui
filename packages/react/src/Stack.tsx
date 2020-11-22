@@ -72,7 +72,7 @@ function joinChildren(children, separator: any = ', ') {
   }, [])
 }
 
- function parseSpaceValue(value) {
+function parseSpaceValue(value) {
   return typeof value === 'string' || typeof value === 'number' ? (
     <Spacer size={value} />
   ) : (
@@ -173,7 +173,7 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
         child && child.type === React.Fragment ? child.props.children : child
       )
       .filter(
-        child =>
+        (child) =>
           // @ts-ignore
           React.isValidElement(child) && child.props.visible !== false
       )
@@ -215,7 +215,7 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
     const childrenToRender =
       spaceCrossStart ?? spaceCrossEnd ?? spaceCross ?? space
         ? flattenedChildren.map((child: any, index) => {
-            const type = child.props.originalType || child.type
+            const type = child.props.__originalType || child.type
             return isSameInstance(type, [Spacer, Divider]) ? (
               child
             ) : (
