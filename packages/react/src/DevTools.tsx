@@ -117,10 +117,24 @@ const overrides: OverridesProps['value'] = [
       },
     },
   ],
+  // variants should be able to use props for user composition mergeEvent(props.onClick, () => null)
+  // somehow specify state? How can we use hooks possible (reakit) to add things like useHover()
+  // there should always be a way to render through CSS if possible
+  // mediaQuery: { sm: { row: 1, onClick: null } } -> className=".row-1" onClick={applyWhen(variant, {})}
+  // should we go higher-level? Single File JSX? Can only recieve props (dumb components only)
   [
     Stack,
     {
       variants: {
+        // design: (props) => ({
+        //   onClick: () => {
+        //     fetch('http://localhost:4000/props/add', {
+        //       method: 'POST',
+        //       headers: { 'Content-Type': 'application/json' },
+        //       body: JSON.stringify({ name: 'Component' }),
+        //     })
+        //   },
+        // }),
         xray: {
           strokeWeight: 1,
           strokeColor: 'black',

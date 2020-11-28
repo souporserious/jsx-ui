@@ -43,7 +43,7 @@ export default function Index() {
     })
   }, [])
   return (
-    <Variants value={{ xray, ...matches }}>
+    <Variants value={{ xray: false, design: true, ...matches }}>
       <Tokens
         value={{
           colors: {
@@ -130,7 +130,7 @@ export default function Index() {
               />
               <Stack space="16px" background="brand" radius={5}>
                 <Text weight="700" color="white">
-                  Coming Soon
+                  Getting Started
                 </Text>
               </Stack>
             </Stack>

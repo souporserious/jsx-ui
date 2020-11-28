@@ -39,6 +39,12 @@ export function Head({
       htmlAttributes={{ lang }}
       title={pageTitle}
       titleTemplate={hasTitle ? `%s | ${site.siteMetadata.title}` : `%s`}
+      link={[
+        {
+          rel: 'icon',
+          href: favicon,
+        },
+      ]}
       meta={[
         {
           name: `description`,
@@ -83,8 +89,6 @@ export function Head({
             : []
         )
         .concat(meta)}
-    >
-      <link rel="icon" href={favicon} />
-    </Helmet>
+    />
   )
 }

@@ -49,6 +49,8 @@
     }
   },
   "dependencies": {
-    "capsize": "^1.1.0"
+    "capsize": "^1.1.0",
+    "lodash.debounce": "^4.0.8",
+    "zustand": "^3.2.0"
   }
 }

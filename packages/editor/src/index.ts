@@ -1,4 +1,4 @@
-import express from 'express'
+import { App } from '@tinyhttp/app'
 import cors from 'cors'
 import * as fs from 'fs/promises'
 import * as prettier from 'prettier'
@@ -6,7 +6,7 @@ import * as codemod from '@codemod/core'
 
 import { makeExpressHandlers } from '../flows/sextant-express.generated.js'
 
-const app = express()
+const app = new App()
 
 const plugin = () => {
   return {
@@ -76,6 +76,7 @@ app.use(cors({ origin: true }))
 
 handlers.forEach(({ feature, handler }) => {
   Object.entries(handler).forEach(([scenario, callback]) => {
+      // @ts-ignore
     app.post(`/${feature}/${scenario}`, callback)
   })
 })

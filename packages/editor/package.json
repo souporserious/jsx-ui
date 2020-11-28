@@ -48,6 +48,7 @@
   "dependencies": {
     "@codemod/core": "^1.1.0",
     "@sextant-tools/plugin-javascript-express": "^0.1.0",
+    "@tinyhttp/app": "^1.0.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
     "prettier": "^2.2.0"

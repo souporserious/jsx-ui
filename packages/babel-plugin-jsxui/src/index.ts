@@ -5,22 +5,18 @@ import jsx from '@babel/plugin-syntax-jsx'
 const TRACE_ID = '__jsxuiSource'
 const FILE_NAME_ID = '__jsxuiFileName'
 
-function makeTrace(fileNameIdentifier, lineNumber, column0Based) {
-  const fileLineLiteral =
-    lineNumber != null ? t.numericLiteral(lineNumber) : t.nullLiteral()
-  const fileColumnLiteral =
-    column0Based != null ? t.numericLiteral(column0Based + 1) : t.nullLiteral()
+function makeTrace(fileNameIdentifier, lineNumber, columnBased) {
   const fileNameProperty = t.objectProperty(
     t.identifier('fileName'),
     fileNameIdentifier
   )
   const lineNumberProperty = t.objectProperty(
     t.identifier('lineNumber'),
-    fileLineLiteral
+    lineNumber != null ? t.numericLiteral(lineNumber) : t.nullLiteral()
   )
   const columnNumberProperty = t.objectProperty(
     t.identifier('columnNumber'),
-    fileColumnLiteral
+    columnBased != null ? t.numericLiteral(columnBased + 1) : t.nullLiteral()
   )
   return t.objectExpression([
     fileNameProperty,
