@@ -11,9 +11,10 @@
     "site": "yarn workspace site"
   },
   "devDependencies": {
-    "prettier": "^2.1.2"
+    "prettier": "^2.2.0"
   },
   "prettier": {
+    "parser": "babel",
     "printWidth": 80,
     "semi": false,
     "singleQuote": true,
