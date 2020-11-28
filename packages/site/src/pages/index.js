@@ -130,7 +130,7 @@ export default function Index() {
               />
               <Stack space="16px" background="brand" radius={5}>
                 <Text weight="700" color="white">
-                  Getting Started
+                  Coming Soon
                 </Text>
               </Stack>
             </Stack>

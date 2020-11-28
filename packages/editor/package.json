@@ -25,8 +25,7 @@
     "build": "tsdx build --target node",
     "test": "tsdx test --passWithNoTests",
     "lint": "tsdx lint",
-    "prepare": "tsdx build",
-    "sextant": "sextant ./flows"
+    "prepare": "tsdx build"
   },
   "devDependencies": {
     "@types/jest": "^26.0.15",
@@ -35,7 +34,6 @@
     "husky": "^4.3.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
-    "sextant": "^0.4.0",
     "tsdx": "^0.14.1",
     "tslib": "^2.0.3",
     "typescript": "^4.0.5"
@@ -47,7 +45,6 @@
   },
   "dependencies": {
     "@codemod/core": "^1.1.0",
-    "@sextant-tools/plugin-javascript-express": "^0.1.0",
     "@tinyhttp/app": "^1.0.0",
     "cors": "^2.8.5",
     "express": "^4.17.1",
