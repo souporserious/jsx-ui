@@ -32,18 +32,24 @@ function useMatches(queries) {
 
 export default function Index() {
   const [xray, setXray] = React.useState(false)
+  const [editor, setEditor] = React.useState(true)
   const matches = useMatches({
     'breakpoints.small': '(min-width: 0px)',
     'breakpoints.medium': '(min-width: 768px)',
     'breakpoints.large': '(min-width: 1280px)',
   })
   React.useEffect(() => {
-    document.addEventListener('click', () => {
-      setXray((bool) => !bool)
+    document.addEventListener('keydown', (event) => {
+      switch (event.key) {
+        case 'x':
+          setXray((bool) => !bool)
+        case 'e':
+          setEditor((bool) => !bool)
+      }
     })
   }, [])
   return (
-    <Variants value={{ xray: false, design: true, ...matches }}>
+    <Variants value={{ xray, editor, ...matches }}>
       <Tokens
         value={{
           colors: {

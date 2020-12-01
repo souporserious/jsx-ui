@@ -33,7 +33,7 @@ export type TextProps = {
 export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
   (props, ref) => {
     const mainAxis = React.useContext(StackContext)
-    const overrideProps = useOverrideProps(Text, props)
+    // const overrideProps = useOverrideProps(Text, props)
     const {
       as: Component = 'span',
       alignment,
@@ -58,7 +58,7 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
       style = {},
       children,
       ...restProps
-    } = useVariantProps(overrideProps)
+    } = props
     const layoutStyles = useLayoutStyles(
       mainAxis === 'horizontal' ? width : height
     )

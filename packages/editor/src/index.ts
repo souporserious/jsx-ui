@@ -10,15 +10,17 @@ const plugin = () => {
   return {
     visitor: {
       JSXText(path, state) {
-        const location = path.parent.openingElement.loc
-        if (
-          state.opts.source.lineNumber === location.start.line &&
-          state.opts.source.columnNumber === location.start.column + 1
-        ) {
-          path.node.value = path.node.value.replace(
-            path.node.value.trim(),
-            state.opts.value.trim()
-          )
+        if (path.parent.openingElement) {
+          const location = path.parent.openingElement.loc
+          if (
+            state.opts.source.lineNumber === location.start.line &&
+            state.opts.source.columnNumber === location.start.column + 1
+          ) {
+            path.node.value = path.node.value.replace(
+              path.node.value.trim(),
+              state.opts.value.trim()
+            )
+          }
         }
       },
     },
@@ -27,11 +29,11 @@ const plugin = () => {
 
 type ComponentData = {
   source: {
-    fileName: string,
-    lineNumber: number,
-    columnNumber: number,
-  },
-  value: any,
+    fileName: string
+    lineNumber: number
+    columnNumber: number
+  }
+  value: any
 }
 
 // TODO: add option for specifying origin
@@ -40,10 +42,10 @@ app.use(cors({ origin: true }))
 app.post(`/props/update`, (request, response) => {
   let bodyBuffer = []
   request
-    .on('error', err => {
+    .on('error', (err) => {
       console.error(err)
     })
-    .on('data', chunk => {
+    .on('data', (chunk) => {
       bodyBuffer.push(chunk)
     })
     .on('end', async () => {

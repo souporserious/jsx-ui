@@ -14,7 +14,7 @@
     "prettier": "^2.2.0"
   },
   "prettier": {
-    "parser": "babel",
+    "parser": "typescript",
     "printWidth": 80,
     "semi": false,
     "singleQuote": true,
