@@ -1,5 +1,4 @@
 import * as React from 'react'
-import create from 'zustand'
 import debounce from 'lodash.debounce'
 
 import { Overrides, OverridesProps } from './Overrides'
@@ -7,17 +6,8 @@ import { Spacer } from './Spacer'
 import { Stack } from './Stack'
 import { Text } from './Text'
 
-const useEditorStore = create((set) => ({
-  highlightedId: null,
-  setHighlightedId: (id) => set({ highlightedId: id }),
-}))
-
 const useTextEditor = (props) => {
-  const id = `${props.__jsxuiSource.fileName}${props.__jsxuiSource.lineNumber}${props.__jsxuiSource.columnNumber}`
-  const highlighted = useEditorStore((state) => state.highlightedId === id)
-  const setHighlightedId: any = useEditorStore(
-    (state) => state.setHighlightedId
-  )
+  const [hover, setHover] = React.useState(false)
   return {
     contentEditable: true,
     suppressContentEditableWarning: true,
@@ -34,13 +24,14 @@ const useTextEditor = (props) => {
     }, 120),
     onMouseOver: (event) => {
       event.stopPropagation()
-      setHighlightedId(id)
+      setHover(true)
     },
     onMouseOut: () => {
-      setHighlightedId(null)
+      setHover(false)
     },
     style: {
-      boxShadow: highlighted && `0px 0px 0px 2px blue`,
+      outline: 0,
+      boxShadow: hover && `0px 0px 0px 2px blue`,
     },
   }
 }
