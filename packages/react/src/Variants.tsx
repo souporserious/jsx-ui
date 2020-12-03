@@ -9,16 +9,19 @@ export function useVariantProps<Props>({
   const contextVariants = React.useContext(VariantsContext)
   let mergedProps = { ...props }
   if (variants) {
-    const activeVariants = Object.entries(contextVariants)
-      .filter(([, active]) => active)
-      .map(([prop]) => prop)
-    activeVariants.forEach((activeVariant) => {
-      const variantProps = variants[activeVariant]
-      mergedProps = {
-        ...mergedProps,
-        ...(typeof variantProps === 'function'
+    Object.entries(contextVariants).forEach(([variant, active]) => {
+      const variantProps = variants[variant]
+      // we intentionally call each function no matter what since variants can
+      // contain hooks and need to run in the same order on every render
+      const nextProps =
+        typeof variantProps === 'function'
           ? variantProps(mergedProps)
-          : variantProps),
+          : variantProps
+      if (active) {
+        mergedProps = {
+          ...mergedProps,
+          ...nextProps,
+        }
       }
     })
   }
