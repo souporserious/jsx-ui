@@ -1,10 +1,3 @@
-export type SharedProps = {
-  column?: string
-  row?: string
-  variants?: any
-  visible?: boolean | string
-}
-
 export * from './Circle'
 export * from './DevTools'
 export * from './Divider'
@@ -19,3 +12,4 @@ export * from './Variants'
 
 export * from './jsx'
 export * from './use-geometry'
+export * from './types'

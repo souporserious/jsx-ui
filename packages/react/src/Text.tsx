@@ -3,12 +3,11 @@ import capsize from 'capsize'
 
 import { StackContext } from './Contexts'
 import { useTokens } from './Tokens'
-import { SharedProps } from './index'
+import { DefaultProps } from './index'
 import { useLayoutStyles } from './use-layout-styles'
 import { parseValue } from './utils'
 
-export type TextProps = {
-  as?: any
+export type TextOwnProps = {
   alignment?: 'left' | 'center' | 'right'
   family?: string
   size?: string | number
@@ -26,10 +25,20 @@ export type TextProps = {
   spaceBefore?: number | string
   style?: React.CSSProperties
   children?: React.ReactNode
-} & SharedProps
+}
 
-export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
-  (props, ref) => {
+export type TextProps<E extends React.ElementType> = DefaultProps<
+  E,
+  TextOwnProps
+>
+
+const defaultElement = 'span'
+
+export const Text = React.forwardRef(
+  <E extends React.ElementType = typeof defaultElement>(
+    props: TextProps<E>,
+    ref
+  ) => {
     const mainAxis = React.useContext(StackContext)
     const {
       as: Component = 'span',
@@ -126,6 +135,9 @@ export const Text = React.forwardRef<HTMLSpanElement, TextProps>(
       </Component>
     )
   }
-)
+) as <E extends React.ElementType = typeof defaultElement>(
+  props: TextProps<E>
+) => React.ReactElement
 
+// @ts-ignore
 Text.displayName = 'Text'

@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { StackContext } from './Contexts'
 import { Divider } from './Divider'
-import { SharedProps } from './index'
+import { DefaultProps } from './index'
 import { jsx } from './jsx'
 import { Spacer } from './Spacer'
 import { Text } from './Text'
@@ -10,7 +10,7 @@ import { useTokens } from './Tokens'
 import { useLayoutStyles } from './use-layout-styles'
 import { parseValue, isSameInstance } from './utils'
 
-export type StackProps = {
+export type StackOwnProps = {
   as?: any
   axis?: 'horizontal' | 'vertical'
   size?: number | string
@@ -43,7 +43,14 @@ export type StackProps = {
   background?: string | React.ReactNode
   style?: React.CSSProperties
   children?: React.ReactNode
-} & SharedProps
+}
+
+export type StackProps<E extends React.ElementType> = DefaultProps<
+  E,
+  StackOwnProps
+>
+
+const defaultElement = 'div'
 
 function joinChildren(children, separator: any = ', ') {
   const childrenArray = React.Children.toArray(children)
@@ -120,8 +127,11 @@ export function getStackChildStyles({ width, height }) {
   return style
 }
 
-export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
-  (props: StackProps, ref) => {
+export const Stack = React.forwardRef(
+  <E extends React.ElementType = typeof defaultElement>(
+    props: StackProps<E>,
+    ref
+  ) => {
     const mainAxis = React.useContext(StackContext)
     const {
       as: Component = 'div',
@@ -163,7 +173,7 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
         child && child.type === React.Fragment ? child.props.children : child
       )
       .filter(
-        (child) =>
+        child =>
           // @ts-ignore
           React.isValidElement(child) && child.props.visible !== false
       )
@@ -296,6 +306,9 @@ export const Stack = React.forwardRef<HTMLDivElement, StackProps>(
       </StackContext.Provider>
     )
   }
-)
+) as <E extends React.ElementType = typeof defaultElement>(
+  props: StackProps<E>
+) => React.ReactElement
 
+// @ts-ignore
 Stack.displayName = 'Stack'
