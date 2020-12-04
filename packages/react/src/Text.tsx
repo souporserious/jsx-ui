@@ -39,7 +39,7 @@ export const Text = React.forwardRef(
     props: TextProps<E>,
     ref
   ) => {
-    const mainAxis = React.useContext(StackContext)
+    const isMainAxisHorizontal = React.useContext(StackContext)
     const {
       as: Component = 'span',
       alignment,
@@ -64,9 +64,7 @@ export const Text = React.forwardRef(
       children,
       ...restProps
     } = props
-    const layoutStyles = useLayoutStyles(
-      mainAxis === 'horizontal' ? width : height
-    )
+    const layoutStyles = useLayoutStyles(isMainAxisHorizontal ? width : height)
     const {
       colors,
       fontSizes,

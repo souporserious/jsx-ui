@@ -41,7 +41,7 @@ const overrides: OverridesProps['value'] = [
   [
     Spacer,
     {
-      children: ({ size, mainAxis }) => {
+      children: ({ size, isMainAxisHorizontal }) => {
         const [hover, setHover] = React.useState(false)
         const [altDown, setAltDown] = React.useState(false)
         const isFractional = typeof size === 'string' && size.includes('fr')
@@ -73,15 +73,11 @@ const overrides: OverridesProps['value'] = [
           >
             {altDown && hover && (
               <svg
-                width={
-                  mainAxis === 'horizontal' ? '100%' : isFractional ? 8 : 1
-                }
-                height={
-                  mainAxis === 'horizontal' ? (isFractional ? 8 : 1) : '100%'
-                }
+                width={isMainAxisHorizontal ? '100%' : isFractional ? 8 : 1}
+                height={isMainAxisHorizontal ? (isFractional ? 8 : 1) : '100%'}
                 style={{
                   position: 'absolute',
-                  [mainAxis === 'horizontal' ? 'top' : 'left']: `calc(50% - ${
+                  [isMainAxisHorizontal ? 'top' : 'left']: `calc(50% - ${
                     isFractional ? 4 : 0.5
                   }px)`,
                   zIndex: 100,
@@ -91,7 +87,9 @@ const overrides: OverridesProps['value'] = [
                   <rect
                     width="100%"
                     height="100%"
-                    fill={`url(#${mainAxis}Wave)`}
+                    fill={`url(#${
+                      isMainAxisHorizontal ? 'horizontal' : 'vertical'
+                    }Wave)`}
                   />
                 ) : (
                   <rect width="100%" height="100%" fill="hotpink" />
@@ -107,10 +105,9 @@ const overrides: OverridesProps['value'] = [
                   bottom: 0,
                   left: 0,
                   zIndex: 100,
-                  backgroundColor:
-                    mainAxis === 'horizontal'
-                      ? 'hsla(214, 72%, 56%, 0.5)'
-                      : 'hsla(214, 84%, 74%, 0.5)',
+                  backgroundColor: isMainAxisHorizontal
+                    ? 'hsla(214, 72%, 56%, 0.5)'
+                    : 'hsla(214, 84%, 74%, 0.5)',
                 }}
               >
                 <span

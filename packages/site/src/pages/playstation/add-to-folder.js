@@ -16,7 +16,7 @@ function TextInput({ value, row, column, onChange }) {
 
 function Field({ label, children, ...props }) {
   return (
-    <Stack as="label" axis="horizontal" spaceBetween={8} {...props}>
+    <Stack as="label" axis="x" spaceBetween={8} {...props}>
       <Text>{label}</Text>
       {children}
     </Stack>
@@ -27,7 +27,7 @@ export default ({ style }) => {
   return (
     <Stack height="100vh" style={style}>
       <Spacer size="32px" />
-      <Stack axis="horizontal" spaceMainStart="64px" spaceMainEnd="1fr">
+      <Stack axis="x" spaceXStart="64px" spaceXEnd="1fr">
         <Text size={40}>Add to New Folder</Text>
       </Stack>
       <Spacer size="16px" />

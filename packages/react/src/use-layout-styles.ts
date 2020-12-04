@@ -3,8 +3,8 @@ import * as React from 'react'
 import { StackContext } from './Contexts'
 
 export function useLayoutStyles(value) {
-  const mainAxis = React.useContext(StackContext)
-  const mainDimension = mainAxis === 'horizontal' ? 'Width' : 'Height'
+  const isMainAxisHorizontal = React.useContext(StackContext)
+  const mainDimension = isMainAxisHorizontal ? 'Width' : 'Height'
   const style = {
     flexGrow: 0,
     flexShrink: 0,
@@ -15,7 +15,7 @@ export function useLayoutStyles(value) {
       .split('minmax(')[1]
       .split(')')[0]
       .split(',')
-      .map(value => value.trim())
+      .map((value) => value.trim())
     if (min.includes('fr')) {
       throw new Error(
         'Fractional minimums cannot exist. Use a maximum fraction "minmax(16px, 1fr)".'

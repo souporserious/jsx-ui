@@ -57,12 +57,12 @@ export default function Index() {
       }
     >
       <Spacer size={60} />
-      <Stack axis="horizontal">
+      <Stack axis="x">
         <Spacer size="minmax(16px, 1fr)" />
-        <Stack axis="horizontal" width="minmax(320px, 1140px)" spaceCross="1fr">
+        <Stack axis="x" width="minmax(320px, 1140px)" spaceY="1fr">
           <Text>Collab</Text>
           <Spacer size={60} />
-          <Stack axis="horizontal" spaceBetween={20}>
+          <Stack axis="x" spaceBetween={20}>
             {['Features', 'Pricing', 'Tours', 'Explore'].map((link) => (
               <Text key={link}>{link}</Text>
             ))}
@@ -73,7 +73,7 @@ export default function Index() {
         <Spacer size="minmax(16px, 1fr)" />
       </Stack>
 
-      <Stack axis="horizontal">
+      <Stack axis="x">
         <Spacer />
         <Stack>
           <Spacer size={64} />
@@ -92,7 +92,7 @@ export default function Index() {
             👋
           </Text>
           <Spacer size={48} />
-          <Stack axis="horizontal" spaceBetween={8}>
+          <Stack axis="x" spaceBetween={8}>
             <Button title="Get Started" secondary />
             <Button title="See It In Action!" />
           </Stack>
@@ -123,7 +123,7 @@ export default function Index() {
           }
         >
           <Spacer size={200} />
-          <Stack axis="horizontal">
+          <Stack axis="x">
             <Spacer size="minmax(32px, 1fr)" />
             <Text size={12} weight={500}>
               Features

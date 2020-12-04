@@ -36,16 +36,16 @@ export default () => {
   const inactiveSpaceOffset = activeIndex > 0 ? (activeIndex - 1) * 2 : 0
   const offset = activeOffset - activeSpaceOffset - inactiveSpaceOffset
   return (
-    <Stack height="100vh" spaceMain="minmax(16px, 1fr)" spaceBetween="32px">
-      <Stack axis="horizontal" spaceMain="1fr" spaceBetween="32px">
+    <Stack height="100vh" spaceY="minmax(16px, 1fr)" spaceBetween="32px">
+      <Stack axis="x" spaceX="1fr" spaceBetween="32px">
         {[...Array(11).keys()].map((value) => (
           <Stack key={value} size={24} background="white" />
         ))}
       </Stack>
       <Stack
-        axis="horizontal"
+        axis="x"
         width="100%"
-        spaceMain="minmax(32px, 1fr)"
+        spaceX="minmax(32px, 1fr)"
         spaceBetween={2}
         translateX={offset}
       >
@@ -85,7 +85,7 @@ export default () => {
           </React.Fragment>
         ))}
       </Stack>
-      <Stack axis="horizontal" spaceMain="1fr">
+      <Stack axis="x" spaceX="1fr">
         <button
           disabled={moveBackwardDisabled}
           onClick={() => moveActiveIndex(-1)}

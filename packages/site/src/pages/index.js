@@ -27,7 +27,7 @@ export default function Index() {
       }}
     >
       <Stack height="minmax(100vh, auto)">
-        <Stack axis="horizontal" spaceX="minmax(16px, 1fr)">
+        <Stack axis="x" spaceX="minmax(16px, 1fr)">
           <Stack
             width="minmax(auto, 960px)"
             spaceX="1fr"
@@ -35,7 +35,7 @@ export default function Index() {
             spaceYEnd="minmax(16px, 1fr)"
           >
             <Stack
-              axis="horizontal"
+              axis="x"
               width="1fr"
               spaceY="1fr"
               spaceBefore={0}

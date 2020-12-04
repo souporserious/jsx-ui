@@ -20,7 +20,7 @@ export default function Users() {
       <Spacer size={8} />
       <Text>Who is using this controller?</Text>
       <Spacer size={64} />
-      <Stack axis="horizontal" spaceBetween="32px">
+      <Stack axis="x" spaceBetween="32px">
         <Stack
           as={Link}
           to="/playstation/users/new"
@@ -47,7 +47,7 @@ export default function Users() {
               style={{ objectFit: 'cover' }}
             />
             <Spacer size={16} />
-            <Stack axis="horizontal" spaceMainStart={16}>
+            <Stack axis="x" spaceXStart={16}>
               <Text>Name</Text>
             </Stack>
           </Stack>

@@ -5,17 +5,12 @@ import { Stack, Text, Spacer } from '@jsxui/react'
 
 export default function Index() {
   return (
-    <Stack axis="horizontal" height="100vh">
+    <Stack axis="x" height="100vh">
       <Stack width="100px" />
-      <Stack width="1fr" space={40} spaceCrossStart={60} background="#f3f3f3">
-        <Stack axis="horizontal" width="1fr">
+      <Stack width="1fr" space={40} spaceXStart={60} background="#f3f3f3">
+        <Stack axis="x" width="1fr">
           <Stack width="1fr">
-            <Stack
-              axis="horizontal"
-              height={50}
-              spaceCross="1fr"
-              spaceBetween={40}
-            >
+            <Stack axis="x" height={50} spaceY="1fr" spaceBetween={40}>
               <Text size={12} weight={700}>
                 All
               </Text>
@@ -50,7 +45,7 @@ export default function Index() {
                 Project Estimate
               </Text>
               <Spacer size={64} />
-              <Stack axis="horizontal" width="1fr">
+              <Stack axis="x" width="1fr">
                 <Stack spaceBetween={8}>
                   <Text size={8} color="gray">
                     Team Members
@@ -83,7 +78,7 @@ export default function Index() {
         </Stack>
         <Spacer size={120} />
         <Stack
-          axis="horizontal"
+          axis="x"
           width="1fr"
           spaceBetween="1fr"
           background={
@@ -93,7 +88,7 @@ export default function Index() {
           }
         >
           {['Mon', 'Tues', 'Wed', 'Thu', 'Fri'].map((date, index) => (
-            <Stack key={date} height={400} spaceCross="1fr">
+            <Stack key={date} height={400} spaceX="1fr">
               <Stack space="1fr" spaceBetween={16}>
                 <Text size={12} color="gray">
                   {date}
@@ -108,7 +103,7 @@ export default function Index() {
           ))}
         </Stack>
       </Stack>
-      <Stack width={320} spaceCross="1fr">
+      <Stack width={320} spaceX="1fr">
         <Spacer size={32} />
         <Text size={14} weight={700}>
           Kevin Parker
@@ -118,7 +113,7 @@ export default function Index() {
           @kevinparker
         </Text>
         <Spacer size={32} />
-        <Stack axis="horizontal" width="1fr" space="1fr" spaceBetween={32}>
+        <Stack axis="x" width="1fr" space="1fr" spaceBetween={32}>
           <Stack space="1fr" spaceBetween={16}>
             <Text size={8} color="gray">
               In Progress

@@ -15,7 +15,7 @@ type SpacerProps = {
 export function Spacer(props: SpacerProps) {
   const { children, size = '1fr', background, visible = true } = props
   const { fontFamilies } = useTokens()
-  const mainAxis = React.useContext(StackContext)
+  const isMainAxisHorizontal = React.useContext(StackContext)
   const layoutStyles = useLayoutStyles(size)
 
   if (visible === false) {
@@ -39,7 +39,9 @@ export function Spacer(props: SpacerProps) {
           <rect width="100%" height="100%" fill={background} />
         </svg>
       ) : null}
-      {typeof children === 'function' ? children({ size, mainAxis }) : children}
+      {typeof children === 'function'
+        ? children({ size, isMainAxisHorizontal })
+        : children}
     </div>
   )
 }

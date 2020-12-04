@@ -4,8 +4,8 @@ import { Spacer, Stack, Text } from '@jsxui/react'
 export default ({ style, column, row }) => {
   return (
     <Stack column={column} row={row} height="100vh" space="1fr" style={style}>
-      <Stack spaceMain="1fr" spaceBetween={32}>
-        <Stack axis="horizontal" spaceBetween={32}>
+      <Stack spaceY="1fr" spaceBetween={32}>
+        <Stack axis="x" spaceBetween={32}>
           <Stack size={100} background="#1a42ab" />
           <Stack spaceBetween={16}>
             <Text size={24}>Create a User</Text>
@@ -16,7 +16,7 @@ export default ({ style, column, row }) => {
             </Text>
           </Stack>
         </Stack>
-        <Stack axis="horizontal" spaceBetween={32}>
+        <Stack axis="x" spaceBetween={32}>
           <Stack size={100} background="#1a42ab" />
           <Stack spaceBetween={16}>
             <Text size={24}>Play as a Guest</Text>

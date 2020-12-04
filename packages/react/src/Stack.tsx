@@ -17,7 +17,7 @@ export type StackOwnProps = {
   as?: any
 
   /** The axis along which children are positioned. */
-  axis?: 'horizontal' | 'vertical'
+  axis?: 'x' | 'y'
 
   /** Defines the width of the view area. */
   width?: number | string
@@ -143,7 +143,7 @@ function parseSpaceValue(value) {
 }
 
 function getOrthogonalAxis(axis) {
-  return axis === 'horizontal' ? 'vertical' : 'horizontal'
+  return axis === 'x' ? 'y' : 'x'
 }
 
 type TransformValue = {
@@ -195,10 +195,10 @@ export const Stack = React.forwardRef(
     props: StackProps<E>,
     ref
   ) => {
-    const mainAxis = React.useContext(StackContext)
+    const isMainAxisHorizontal = React.useContext(StackContext)
     const {
       as: Component = 'div',
-      axis = 'vertical',
+      axis = 'y',
       size,
       width,
       height,
@@ -241,9 +241,9 @@ export const Stack = React.forwardRef(
           React.isValidElement(child) && child.props.visible !== false
       )
     const layoutStyles = useLayoutStyles(
-      (mainAxis === 'horizontal' ? width : height) ?? size
+      (isMainAxisHorizontal ? width : height) ?? size
     )
-    const isHorizontal = axis === 'horizontal'
+    const isHorizontal = axis === 'x'
     const spaceMainStart = isHorizontal
       ? spaceXStart ?? spaceX ?? space
       : spaceYStart ?? spaceY ?? space
@@ -258,7 +258,7 @@ export const Stack = React.forwardRef(
       : spaceXEnd ?? spaceX ?? space
     const style = {
       display: 'flex',
-      flexDirection: axis === 'horizontal' ? 'row' : 'column',
+      flexDirection: isHorizontal ? 'row' : 'column',
       boxShadow:
         strokeWeight ?? strokeColor
           ? `inset 0px 0px 0px ${strokeWeight}px ${strokeColor}`
@@ -301,18 +301,16 @@ export const Stack = React.forwardRef(
                   style={{
                     position: 'relative',
                     display: 'flex',
-                    flexDirection: axis === 'horizontal' ? 'column' : 'row',
+                    flexDirection: isHorizontal ? 'column' : 'row',
                     ...getStackChildStyles({
-                      width:
-                        axis === 'horizontal'
-                          ? child.props.width ??
-                            (child.type === Text ? 'auto' : child.props.size)
-                          : 'auto',
-                      height:
-                        axis === 'horizontal'
-                          ? 'auto'
-                          : child.props.height ??
-                            (child.type === Text ? 'auto' : child.props.size),
+                      width: isHorizontal
+                        ? child.props.width ??
+                          (child.type === Text ? 'auto' : child.props.size)
+                        : 'auto',
+                      height: isHorizontal
+                        ? 'auto'
+                        : child.props.height ??
+                          (child.type === Text ? 'auto' : child.props.size),
                     }),
                     // Can we be smart here and split layout props so we can pass them to the wrappers we create?
                     ...child.props.style,
@@ -321,16 +319,14 @@ export const Stack = React.forwardRef(
                   {parseSpaceValue(child.props.spaceBefore ?? spaceCrossStart)}
                   {React.cloneElement(child, {
                     style: getStackChildStyles({
-                      width:
-                        axis === 'horizontal'
-                          ? 'auto'
-                          : child.props.width ??
-                            (child.type === Text ? 'auto' : child.props.size),
-                      height:
-                        axis === 'horizontal'
-                          ? child.props.height ??
-                            (child.type === Text ? 'auto' : child.props.size)
-                          : 'auto',
+                      width: isHorizontal
+                        ? 'auto'
+                        : child.props.width ??
+                          (child.type === Text ? 'auto' : child.props.size),
+                      height: isHorizontal
+                        ? child.props.height ??
+                          (child.type === Text ? 'auto' : child.props.size)
+                        : 'auto',
                     }),
                   })}
                   {parseSpaceValue(child.props.spaceAfter ?? spaceCrossEnd)}
@@ -345,7 +341,7 @@ export const Stack = React.forwardRef(
     }
 
     return (
-      <StackContext.Provider value={axis}>
+      <StackContext.Provider value={isHorizontal}>
         <Component ref={ref} style={style} {...restProps}>
           {React.isValidElement(background) && (
             <div

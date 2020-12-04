@@ -10,8 +10,8 @@ function Button({ title }) {
       role="button"
       tabIndex={0}
       height={32}
-      spaceMain="1fr"
-      spaceCross={16}
+      spaceX="1fr"
+      spaceY={16}
       background={isPressed ? 'hsl(214 84% 42%)' : 'hsl(214 82% 51%)'}
       radius={16}
       style={{
@@ -35,7 +35,7 @@ function Card({ title, actions, children, ...restProps }) {
       strokeWeight={1}
       {...restProps}
     >
-      <Stack axis="horizontal">
+      <Stack axis="x">
         {typeof title === 'string' ? (
           <Text size={14} weight={600}>
             {title}
@@ -83,7 +83,7 @@ function OrderDetails() {
 
           <Spacer size={32} />
 
-          <Stack axis="horizontal" width="1fr" spaceBetween="1fr">
+          <Stack axis="x" width="1fr" spaceBetween="1fr">
             <Text size={12} color="gray">
               Large Pizza Bressi Ranch x 1
             </Text>
@@ -98,7 +98,7 @@ function OrderDetails() {
 
           <Spacer size={16} />
 
-          <Stack axis="horizontal" width="1fr" spaceBetween="1fr">
+          <Stack axis="x" width="1fr" spaceBetween="1fr">
             <Text size={12} color="gray">
               Subtotal
             </Text>
@@ -109,7 +109,7 @@ function OrderDetails() {
 
           <Spacer size={16} />
 
-          <Stack axis="horizontal" width="1fr" spaceBetween="1fr">
+          <Stack axis="x" width="1fr" spaceBetween="1fr">
             <Text size={12} color="gray">
               Tax
             </Text>
@@ -120,7 +120,7 @@ function OrderDetails() {
 
           <Spacer size={16} />
 
-          <Stack axis="horizontal" width="1fr" spaceBetween="1fr">
+          <Stack axis="x" width="1fr" spaceBetween="1fr">
             <Text size={12} color="gray">
               Tip
             </Text>
@@ -135,7 +135,7 @@ function OrderDetails() {
 
           <Spacer size={16} />
 
-          <Stack axis="horizontal" width="1fr" spaceBetween="1fr">
+          <Stack axis="x" width="1fr" spaceBetween="1fr">
             <Text size={12} weight={700} color="gray">
               Total:
             </Text>
@@ -164,11 +164,11 @@ export default function Index() {
     <Overrides value={[<Divider color="lightgray" />]}>
       <Stack height="100vh">
         <Stack
-          axis="horizontal"
+          axis="x"
           height="auto"
-          spaceMainStart={32}
-          spaceMainEnd={16}
-          spaceCross={16}
+          spaceX={16}
+          spaceYStart={32}
+          spaceYEnd={16}
         >
           <Text weight={500} spaceBefore="1fr" spaceAfter="1fr">
             Track your order
@@ -182,14 +182,9 @@ export default function Index() {
           />
         </Stack>
         <Divider />
-        <Stack
-          width="1fr"
-          height="1fr"
-          spaceMain={24}
-          spaceCross="minmax(16px, 1fr)"
-        >
+        <Stack width="1fr" height="1fr" spaceX="minmax(16px, 1fr)" spaceY={24}>
           <Stack
-            axis="horizontal"
+            axis="x"
             width="minmax(320px, 1200px)"
             height="1fr"
             spaceBetween={16}
