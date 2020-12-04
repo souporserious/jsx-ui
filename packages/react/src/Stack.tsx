@@ -31,23 +31,23 @@ export type StackOwnProps = {
   /** Shortcut to set all space props. */
   space?: SpaceValue
 
-  /** Defines space along the main axis. */
-  spaceMain?: SpaceValue
+  /** Defines space along the x-axis. */
+  spaceX?: SpaceValue
 
-  /** Defines space along the main start axis. */
-  spaceMainStart?: SpaceValue
+  /** Defines space along the x-start-axis. */
+  spaceXStart?: SpaceValue
 
-  /** Defines space along the main end axis. */
-  spaceMainEnd?: SpaceValue
+  /** Defines space along the x-end-axis. */
+  spaceXEnd?: SpaceValue
 
-  /** Defines space along the cross axis. */
-  spaceCross?: SpaceValue
+  /** Defines space along the y-axis. */
+  spaceY?: SpaceValue
 
-  /** Defines space along the cross start axis. */
-  spaceCrossStart?: SpaceValue
+  /** Defines space along the y-start-axis. */
+  spaceYStart?: SpaceValue
 
-  /** Defines space along the cross end axis. */
-  spaceCrossEnd?: SpaceValue
+  /** Defines space along the y-end-axis. */
+  spaceYEnd?: SpaceValue
 
   /** Defines space between child views. */
   spaceBetween?: SpaceValue
@@ -203,12 +203,12 @@ export const Stack = React.forwardRef(
       width,
       height,
       space,
-      spaceMain,
-      spaceMainStart,
-      spaceMainEnd,
-      spaceCross,
-      spaceCrossStart,
-      spaceCrossEnd,
+      spaceX,
+      spaceXStart,
+      spaceXEnd,
+      spaceY,
+      spaceYStart,
+      spaceYEnd,
       spaceBetween,
       spaceBefore,
       spaceAfter,
@@ -243,6 +243,19 @@ export const Stack = React.forwardRef(
     const layoutStyles = useLayoutStyles(
       (mainAxis === 'horizontal' ? width : height) ?? size
     )
+    const isHorizontal = axis === 'horizontal'
+    const spaceMainStart = isHorizontal
+      ? spaceXStart ?? spaceX ?? space
+      : spaceYStart ?? spaceY ?? space
+    const spaceMainEnd = isHorizontal
+      ? spaceXEnd ?? spaceX ?? space
+      : spaceYEnd ?? spaceY ?? space
+    const spaceCrossStart = isHorizontal
+      ? spaceYStart ?? spaceY ?? space
+      : spaceXStart ?? spaceX ?? space
+    const spaceCrossEnd = isHorizontal
+      ? spaceYEnd ?? spaceY ?? space
+      : spaceXEnd ?? spaceX ?? space
     const style = {
       display: 'flex',
       flexDirection: axis === 'horizontal' ? 'row' : 'column',
@@ -275,7 +288,7 @@ export const Stack = React.forwardRef(
       ..._style,
     }
     const childrenToRender =
-      spaceCrossStart ?? spaceCrossEnd ?? spaceCross ?? space
+      spaceCrossStart ?? spaceCrossEnd
         ? flattenedChildren.map((child: any, index) => {
             return isSameInstance(child, [Spacer, Divider]) ? (
               child
@@ -305,12 +318,7 @@ export const Stack = React.forwardRef(
                     ...child.props.style,
                   }}
                 >
-                  {parseSpaceValue(
-                    child.props.spaceBefore ??
-                      spaceCrossStart ??
-                      spaceCross ??
-                      space
-                  )}
+                  {parseSpaceValue(child.props.spaceBefore ?? spaceCrossStart)}
                   {React.cloneElement(child, {
                     style: getStackChildStyles({
                       width:
@@ -325,12 +333,7 @@ export const Stack = React.forwardRef(
                           : 'auto',
                     }),
                   })}
-                  {parseSpaceValue(
-                    child.props.spaceAfter ??
-                      spaceCrossEnd ??
-                      spaceCross ??
-                      space
-                  )}
+                  {parseSpaceValue(child.props.spaceAfter ?? spaceCrossEnd)}
                 </div>
               </StackContext.Provider>
             )
@@ -359,11 +362,11 @@ export const Stack = React.forwardRef(
               {background}
             </div>
           )}
-          {parseSpaceValue(spaceMainStart ?? spaceMain ?? space)}
+          {parseSpaceValue(spaceMainStart)}
           {spaceBetween
             ? joinChildren(childrenToRender, parseSpaceValue(spaceBetween))
             : childrenToRender}
-          {parseSpaceValue(spaceMainEnd ?? spaceMain ?? space)}
+          {parseSpaceValue(spaceMainEnd)}
         </Component>
       </StackContext.Provider>
     )
