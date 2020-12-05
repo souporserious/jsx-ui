@@ -11,5 +11,6 @@ export * from './Tokens'
 export * from './Variants'
 
 export * from './jsx'
+export * from './use-child-props'
 export * from './use-geometry'
 export * from './types'

@@ -7,6 +7,7 @@ import { jsx } from './jsx'
 import { Spacer } from './Spacer'
 import { Text } from './Text'
 import { useTokens } from './Tokens'
+import { useChildProps } from './use-child-props'
 import { useLayoutStyles } from './use-layout-styles'
 import { parseValue, isSameInstance } from './utils'
 
@@ -231,15 +232,18 @@ export const Stack = React.forwardRef(
       ...restProps
     } = props
     const { colors } = useTokens()
+    const getChildProps = useChildProps()
     const flattenedChildren = React.Children.toArray(children)
-      .flatMap((child: any) =>
-        child && child.type === React.Fragment ? child.props.children : child
-      )
-      .filter(
-        (child) =>
-          // @ts-ignore
-          React.isValidElement(child) && child.props.visible !== false
-      )
+      .flatMap((child: any) => {
+        const childProps = getChildProps(child)
+        return isSameInstance(child, React.Fragment)
+          ? childProps.children
+          : child
+      })
+      .filter((child) => {
+        const childProps = getChildProps(child)
+        return React.isValidElement(child) && childProps.visible !== false
+      })
     const layoutStyles = useLayoutStyles(
       (isMainAxisHorizontal ? width : height) ?? size
     )
@@ -290,6 +294,7 @@ export const Stack = React.forwardRef(
     const childrenToRender =
       spaceCrossStart ?? spaceCrossEnd
         ? flattenedChildren.map((child: any, index) => {
+            const childProps = getChildProps(child)
             return isSameInstance(child, [Spacer, Divider]) ? (
               child
             ) : (
@@ -304,32 +309,28 @@ export const Stack = React.forwardRef(
                     flexDirection: isHorizontal ? 'column' : 'row',
                     ...getStackChildStyles({
                       width: isHorizontal
-                        ? child.props.width ??
-                          (child.type === Text ? 'auto' : child.props.size)
+                        ? childProps.width ?? childProps.size
                         : 'auto',
                       height: isHorizontal
                         ? 'auto'
-                        : child.props.height ??
-                          (child.type === Text ? 'auto' : child.props.size),
+                        : childProps.height ?? childProps.size,
                     }),
                     // Can we be smart here and split layout props so we can pass them to the wrappers we create?
-                    ...child.props.style,
+                    ...childProps.style,
                   }}
                 >
-                  {parseSpaceValue(child.props.spaceBefore ?? spaceCrossStart)}
+                  {parseSpaceValue(childProps.spaceBefore ?? spaceCrossStart)}
                   {React.cloneElement(child, {
                     style: getStackChildStyles({
                       width: isHorizontal
                         ? 'auto'
-                        : child.props.width ??
-                          (child.type === Text ? 'auto' : child.props.size),
+                        : childProps.width ?? childProps.size,
                       height: isHorizontal
-                        ? child.props.height ??
-                          (child.type === Text ? 'auto' : child.props.size)
+                        ? childProps.height ?? childProps.size
                         : 'auto',
                     }),
                   })}
-                  {parseSpaceValue(child.props.spaceAfter ?? spaceCrossEnd)}
+                  {parseSpaceValue(childProps.spaceAfter ?? spaceCrossEnd)}
                 </div>
               </StackContext.Provider>
             )

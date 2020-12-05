@@ -4,26 +4,30 @@ import { isSameInstance } from './utils'
 
 export const OverridesContext = React.createContext([])
 
-export function useOverrideProps<C extends React.ElementType>(
-  component: C,
-  props: React.ComponentProps<C>
-): React.ComponentProps<C> {
-  const overridesStack = React.useContext(OverridesContext)
-  let modifiedProps = {} as React.ComponentProps<typeof component>
-  overridesStack.forEach(overrides => {
+export function getOverrideProps(overridesContext, component, props) {
+  let overrideProps = {} as React.ComponentProps<typeof component>
+  overridesContext.forEach((overrides) => {
     overrides.forEach(([instance, props]) => {
       if (isSameInstance(instance, component)) {
-        modifiedProps = {
-          ...modifiedProps,
-          ...(typeof props === 'function' ? props(modifiedProps) : props),
+        overrideProps = {
+          ...overrideProps,
+          ...(typeof props === 'function' ? props(overrideProps) : props),
         }
       }
     })
   })
   return {
-    ...modifiedProps,
+    ...overrideProps,
     ...props,
   }
+}
+
+export function useOverrideProps<C extends React.ElementType>(
+  component: C,
+  props: React.ComponentProps<C>
+): React.ComponentProps<C> {
+  const overridesContext = React.useContext(OverridesContext)
+  return getOverrideProps(overridesContext, component, props)
 }
 
 export type OverridesProps = {

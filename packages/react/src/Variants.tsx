@@ -1,15 +1,11 @@
 import * as React from 'react'
 
-const VariantsContext = React.createContext([])
+export const VariantsContext = React.createContext([])
 
-export function useVariantProps<Props>({
-  variants,
-  ...props
-}: { variants?: object } & Props): Omit<Props, 'variants'> {
-  const contextVariants = React.useContext(VariantsContext)
+export function getVariantProps(variantsContext, { variants, ...props }: any) {
   let mergedProps = { ...props }
   if (variants) {
-    Object.entries(contextVariants).forEach(([variant, active]) => {
+    Object.entries(variantsContext).forEach(([variant, active]) => {
       const variantProps = variants[variant]
       // we intentionally call each function no matter what since variants can
       // contain hooks and need to run in the same order on every render
@@ -27,7 +23,7 @@ export function useVariantProps<Props>({
   }
   // check and convert boolean props that have a variant value
   // <Text visible="checkout-success">Success!</Text>
-  Object.entries(contextVariants).forEach(([variant, active]) => {
+  Object.entries(variantsContext).forEach(([variant, active]) => {
     Object.entries(props).forEach(([prop, value]) => {
       if (value === variant) {
         mergedProps[prop] = active
@@ -35,6 +31,11 @@ export function useVariantProps<Props>({
     })
   })
   return mergedProps
+}
+
+export function useVariantProps<Props>(props: Props) {
+  const variantsContext = React.useContext(VariantsContext)
+  return getVariantProps(variantsContext, props) as Omit<Props, 'variants'>
 }
 
 export type VariantsProps = {
