@@ -50,6 +50,7 @@
   },
   "dependencies": {
     "capsize": "^1.1.0",
+    "dlv": "^1.1.3",
     "lodash.debounce": "^4.0.8",
     "react-polymorphic-box": "^3.0.2",
     "zustand": "^3.2.0"
