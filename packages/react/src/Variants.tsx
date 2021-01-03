@@ -36,7 +36,10 @@ export function getVariantProps(variantsContext, { variants, ...props }: any) {
 export function useVariantProps<Props>(props: Props, localVariants: object) {
   const contextVariants = React.useContext(VariantsContext)
   return getVariantProps(
-    { ...contextVariants, ...localVariants },
+    {
+      ...localVariants,
+      ...contextVariants,
+    },
     props
   ) as Omit<Props, 'variants'>
 }
