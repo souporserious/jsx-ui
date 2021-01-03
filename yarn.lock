@@ -9232,6 +9232,11 @@ merge-descriptors@1.0.1:
   resolved "https://registry.yarnpkg.com/merge-descriptors/-/merge-descriptors-1.0.1.tgz#b00aaa556dd8b44568150ec9d1b953f3f90cbb61"
   integrity sha1-sAqqVW3YtEVoFQ7J0blT8/kMu2E=
 
+merge-props@^5.0.3:
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/merge-props/-/merge-props-5.0.3.tgz#1c89c40f81b932ad66ea069b1b5f38deb0cd5247"
+  integrity sha512-TuntFuNELf4ZEMZEDM32hCpACQStDfeEMlN5R499gRQB4XUIaGuLrQhm+nRMDtPwCWEZ2a2KTGnTxfjK8B1zww==
+
 merge-stream@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/merge-stream/-/merge-stream-2.0.0.tgz#52823629a14dd00c9770fb6ad47dc6310f2c1f60"

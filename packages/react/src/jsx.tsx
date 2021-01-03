@@ -1,26 +1,27 @@
 import * as React from 'react'
+import mergeProps from 'merge-props'
 
 import { useOverrideProps } from './Overrides'
 import { useVariantProps } from './Variants'
 
-type CreateElementProps = {
-  __originalType: React.ElementType
-  __jsxuiSource: {
-    fileName: string
-    lineNumber: number
-    columnNumber: number
+export const CreateElement = React.forwardRef((props: any, ref) => {
+  const variants = props.__originalType.variants
+  const localVariants = {}
+  if (variants) {
+    for (let key in variants) {
+      const variantHook = variants[key]
+      const [active, hookProps] = variantHook()
+      localVariants[key] = active
+      props = mergeProps(hookProps, props)
+    }
   }
-}
-
-export const CreateElement = React.forwardRef(
-  (props: CreateElementProps, ref) => {
-    const overrideProps = useOverrideProps(props.__originalType, props)
-    const { __originalType, __jsxuiSource, ...variantProps } = useVariantProps(
-      overrideProps
-    )
-    return React.createElement(props.__originalType, { ref, ...variantProps })
-  }
-)
+  const overrideProps = useOverrideProps(props.__originalType, props)
+  const { __originalType, __jsxuiSource, ...variantProps } = useVariantProps(
+    overrideProps,
+    localVariants
+  )
+  return React.createElement(props.__originalType, { ref, ...variantProps })
+})
 
 CreateElement.displayName = 'JSXUICreateElement'
 
