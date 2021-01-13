@@ -1,8 +1,13 @@
 import * as React from 'react'
+import {
+  PolymorphicForwardRefExoticComponent,
+  PolymorphicPropsWithoutRef,
+  PolymorphicPropsWithRef,
+} from 'react-polymorphic-types'
 
 import { StackContext } from './Contexts'
 import { Divider } from './Divider'
-import { DefaultProps } from './index'
+import { SharedProps } from './index'
 import { jsx } from './jsx'
 import { Spacer } from './Spacer'
 import { useTokens } from './Tokens'
@@ -10,12 +15,11 @@ import { useChildProps } from './use-child-props'
 import { useLayoutStyles } from './use-layout-styles'
 import { parseValue, isSameInstance } from './utils'
 
+const defaultElement = 'div'
+
 export type SpaceValue = number | string | React.ReactNode
 
 export type StackOwnProps = {
-  /** Changes the underlying rendered element. */
-  as?: any
-
   /** The axis along which children are positioned. */
   axis?: 'x' | 'y'
 
@@ -106,14 +110,11 @@ export type StackOwnProps = {
   style?: React.CSSProperties
 
   children?: React.ReactNode
-}
+} & SharedProps
 
-export type StackProps<E extends React.ElementType> = DefaultProps<
-  E,
-  StackOwnProps
->
-
-const defaultElement = 'div'
+export type StackProps<
+  T extends React.ElementType = typeof defaultElement
+> = PolymorphicPropsWithRef<StackOwnProps, T>
 
 function joinChildren(children, separator: any = ', ') {
   const childrenArray = React.Children.toArray(children)
@@ -190,14 +191,13 @@ export function getStackLayoutStyles({ width, height }) {
   return style
 }
 
-export const Stack = React.forwardRef(
-  <E extends React.ElementType = typeof defaultElement>(
-    props: StackProps<E>,
-    ref
-  ) => {
-    const isMainAxisHorizontal = React.useContext(StackContext)
-    const {
-      as: Component = 'div',
+export const Stack: PolymorphicForwardRefExoticComponent<
+  StackOwnProps,
+  typeof defaultElement
+> = React.forwardRef(
+  <T extends React.ElementType = typeof defaultElement>(
+    {
+      as,
       axis = 'y',
       size,
       width,
@@ -229,7 +229,11 @@ export const Stack = React.forwardRef(
       visible = true,
       style: _style,
       ...restProps
-    } = props
+    }: PolymorphicPropsWithoutRef<StackOwnProps, T>,
+    ref: React.ForwardedRef<React.ElementRef<T>>
+  ) => {
+    const Element: React.ElementType = as || defaultElement
+    const isMainAxisHorizontal = React.useContext(StackContext)
     const { colors } = useTokens()
     const getChildProps = useChildProps()
     const flattenedChildren = React.Children.toArray(children)
@@ -346,8 +350,8 @@ export const Stack = React.forwardRef(
     }
 
     return (
-      <StackContext.Provider value={isHorizontal}>
-        <Component ref={ref} style={style} {...restProps}>
+      <Element ref={ref} style={style} {...restProps}>
+        <StackContext.Provider value={isHorizontal}>
           {React.isValidElement(background) && (
             <div
               style={{
@@ -368,13 +372,10 @@ export const Stack = React.forwardRef(
             ? joinChildren(childrenToRender, parseSpaceValue(spaceBetween))
             : childrenToRender}
           {parseSpaceValue(spaceMainEnd)}
-        </Component>
-      </StackContext.Provider>
+        </StackContext.Provider>
+      </Element>
     )
   }
-) as <E extends React.ElementType = typeof defaultElement>(
-  props: StackProps<E>
-) => React.ReactElement
+)
 
-// @ts-ignore
 Stack.displayName = 'Stack'

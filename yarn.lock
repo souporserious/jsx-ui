@@ -11311,10 +11311,10 @@ react-maps-google@^0.4.10:
     prop-types "^15.6.1"
     react-load-script "0.0.6"
 
-react-polymorphic-box@^3.0.2:
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/react-polymorphic-box/-/react-polymorphic-box-3.0.2.tgz#f7830deac08b0ae55226a85a2cc2bfa0af53e8f1"
-  integrity sha512-6nTfLUgYPuniGaosD2uDMmS/ZHh4xu2BtscNYZK6HMaVyDgdk4qo2grsEBreOR5CS9Lz4wS835DBKPZ53dFPXg==
+react-polymorphic-types@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/react-polymorphic-types/-/react-polymorphic-types-1.0.3.tgz#fa4a33e56d2e3a324e4e4a3b81447791aba35120"
+  integrity sha512-FVLrK9nEvr+gTIPf2lw/AzYOaeWRGbSdFLA+qqQIVNpCpdwqZqHkmhpTaChpZkG+Xub1fPMEuLmXTwNykVxbbQ==
 
 react-refresh@^0.8.3:
   version "0.8.3"

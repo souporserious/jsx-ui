@@ -1,11 +1,18 @@
 import * as React from 'react'
+import {
+  PolymorphicForwardRefExoticComponent,
+  PolymorphicPropsWithoutRef,
+  PolymorphicPropsWithRef,
+} from 'react-polymorphic-types'
 import capsize from 'capsize'
 
 import { StackContext } from './Contexts'
 import { useTokens } from './Tokens'
-import { DefaultProps } from './index'
+import { SharedProps } from './index'
 import { useLayoutStyles } from './use-layout-styles'
 import { parseValue } from './utils'
+
+const defaultElement = 'span'
 
 export type TextOwnProps = {
   alignment?: 'left' | 'center' | 'right'
@@ -27,23 +34,19 @@ export type TextOwnProps = {
   opacity?: number | string
   style?: React.CSSProperties
   children?: React.ReactNode
-}
+} & SharedProps
 
-export type TextProps<E extends React.ElementType> = DefaultProps<
-  E,
-  TextOwnProps
->
+export type TextProps<
+  T extends React.ElementType = typeof defaultElement
+> = PolymorphicPropsWithRef<TextOwnProps, T>
 
-const defaultElement = 'span'
-
-export const Text = React.forwardRef(
-  <E extends React.ElementType = typeof defaultElement>(
-    props: TextProps<E>,
-    ref
-  ) => {
-    const isMainAxisHorizontal = React.useContext(StackContext)
-    const {
-      as: Component = 'span',
+export const Text: PolymorphicForwardRefExoticComponent<
+  TextOwnProps,
+  typeof defaultElement
+> = React.forwardRef(
+  <T extends React.ElementType = typeof defaultElement>(
+    {
+      as,
       alignment,
       column,
       row,
@@ -67,7 +70,11 @@ export const Text = React.forwardRef(
       style = {},
       children,
       ...restProps
-    } = props
+    }: PolymorphicPropsWithoutRef<TextOwnProps, T>,
+    ref: React.ForwardedRef<React.ElementRef<T>>
+  ) => {
+    const Element: React.ElementType = as || defaultElement
+    const isMainAxisHorizontal = React.useContext(StackContext)
     const layoutStyles = useLayoutStyles(isMainAxisHorizontal ? width : height)
     const {
       colors,
@@ -98,7 +105,7 @@ export const Text = React.forwardRef(
     }
 
     return (
-      <Component
+      <Element
         ref={ref}
         style={{
           display: 'inline-block',
@@ -138,12 +145,9 @@ export const Text = React.forwardRef(
             marginBottom: fontStyles['::after']?.marginBottom,
           }}
         />
-      </Component>
+      </Element>
     )
   }
-) as <E extends React.ElementType = typeof defaultElement>(
-  props: TextProps<E>
-) => React.ReactElement
+)
 
-// @ts-ignore
 Text.displayName = 'Text'
