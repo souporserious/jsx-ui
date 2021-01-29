@@ -55,6 +55,7 @@ export default () => {
     <Prose>
       <Stack axis="x" spaceX="1fr" spaceY="64px">
         <Stack width="80%" spaceBetween={48}>
+          <Text>Hello</Text>
           <Text modifiers="heading1">
             Until now, trying to style an article, document, or blog post with
             Tailwind has been a tedious task that required a keen eye for
