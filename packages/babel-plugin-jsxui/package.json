@@ -22,15 +22,15 @@
     "prepare": "yarn build"
   },
   "dependencies": {
-    "@babel/plugin-syntax-jsx": "^7.12.1"
+    "@babel/plugin-syntax-jsx": "^7.12.13"
   },
   "devDependencies": {
-    "@babel/types": "^7.12.6",
-    "@types/jest": "^26.0.15",
+    "@babel/types": "^7.13.13",
+    "@types/jest": "^26.0.22",
     "babel-plugin-tester": "^10.0.0",
     "babel-test": "^0.2.4",
     "tsdx": "^0.14.1",
-    "tslib": "^2.0.3",
-    "typescript": "^4.0.5"
+    "tslib": "^2.1.0",
+    "typescript": "^4.2.3"
   }
 }

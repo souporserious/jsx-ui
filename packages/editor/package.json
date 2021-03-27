@@ -28,15 +28,15 @@
     "prepare": "tsdx build"
   },
   "devDependencies": {
-    "@types/jest": "^26.0.15",
-    "@types/react": "^16.9.56",
-    "@types/react-dom": "^16.9.9",
-    "husky": "^4.3.0",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "@types/jest": "^26.0.22",
+    "@types/react": "^17.0.3",
+    "@types/react-dom": "^17.0.3",
+    "husky": "^5.2.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
     "tsdx": "^0.14.1",
-    "tslib": "^2.0.3",
-    "typescript": "^4.0.5"
+    "tslib": "^2.1.0",
+    "typescript": "^4.2.3"
   },
   "husky": {
     "hooks": {
@@ -45,9 +45,9 @@
   },
   "dependencies": {
     "@codemod/core": "^1.1.0",
-    "@tinyhttp/app": "^1.0.0",
+    "@tinyhttp/app": "^1.2.18",
     "cors": "^2.8.5",
     "express": "^4.17.1",
-    "prettier": "^2.2.0"
+    "prettier": "^2.2.1"
   }
 }
