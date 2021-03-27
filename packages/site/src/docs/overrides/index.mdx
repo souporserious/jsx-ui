@@ -1,0 +1,74 @@
+---
+title: Overrides
+---
+
+Overrides are cascading props that allow overriding a child component's default props. Instance props take precedence and are merged after overrides. It is advised to use overrides rather than default props to allow control of the default props of your components.
+
+In a simple example, if we want to allow control over our `Button` props from `Overrides` we can set the defaults in our `Overrides` component:
+
+```jsx
+import { Overrides } from '@jsxui/react'
+
+const styles = {
+  default: {
+    background: 'gray'
+  },
+  brand: {
+    background: 'blue'
+  }
+}
+
+function Button({ appearance, title, onClick }) {
+  return <button style={styles[appearance]} onClick={onClick}>{title}</button>
+}
+
+function App() {
+  return (
+    <Overrides value={<Button appearance="default" />]}>
+      <Button title="Hello Button" />
+      <Button title="Hello Button" appearance="brand" />
+    </Overrides>
+  )
+}
+```
+
+Now `Button` will apply `appearance="default"` to all leaf components.
+
+#### Overriding states
+
+Overrides also work great with `States` since they allow defining and activating your own states for any components within a tree.
+
+```jsx
+function TextField({ value, onChange, borderColor }) {
+  return <input value={value} onChange={onChange} style={{ borderColor }} />
+}
+
+TextField.states = {
+  invalid: () => {
+    const [invalid, setInvalid] = React.useState(false)
+    return [invalid, { onInvalid: () => setInvalid(true) }]
+  },
+}
+
+function App() {
+  return (
+    <Overrides
+      value={[
+        <TextField
+          borderColor="gray"
+          states={{ invalid: { borderColor: 'danger' } }}
+        />,
+      ]}
+    >
+      <label>
+        Name
+        <TextField />
+      </label>
+      <label>
+        Email
+        <TextField />
+      </label>
+    </Overrides>
+  )
+}
+```

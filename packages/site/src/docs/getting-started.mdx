@@ -1,0 +1,32 @@
+---
+title: Getting Started
+---
+
+[Theme](/theme)
+
+[States](/states)
+
+[Modifiers](/modifiers)
+
+[Overrides](/overrides)
+
+```jsx
+const App = () => (
+  <States dark="@media (prefers-color-scheme: dark)">
+    <Theme
+      colors={{ foreground: '#111', background: '#fff' }}
+      states={{
+        dark: {
+          colors: { foreground: '#eee', background: '#222' },
+        },
+      }}
+    >
+      <Modifiers body={{ size: 16, color: 'foreground' }}>
+        <Overrides value={[<Text modifiers="body" />]}>
+          <Text>Inherits "body" styles by default.</Text>
+        </Overrides>
+      </Modifiers>
+    </Theme>
+  </States>
+)
+```

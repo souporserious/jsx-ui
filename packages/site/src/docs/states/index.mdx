@@ -1,0 +1,132 @@
+---
+title: States
+---
+
+States allow aliasing a set of props that can be activated and deactivated.
+
+These are helpful for things like:
+
+- Media Queries
+- A/B Testing
+- User Roles
+
+#### Local
+
+Components can define local states. These are normally things like focus/hover/press states, but can be anything you want. Because they are defined statically, locally defined states have the benefit of accepting a function that can utilize hooks.
+
+```jsx
+function Button({ title, background }) {
+  return (
+    <Stack
+      as="button"
+      axis="x"
+      spaceX="minmax(16px, 1fr)"
+      spaceY="16px"
+      background={background}
+      style={{
+        padding: 0,
+        border: 'none',
+        borderRadius: 3,
+      }}
+    >
+      <Text weight={600} color="white">
+        {title}
+      </Text>
+    </Stack>
+  )
+}
+
+Button.states = {
+  hover: () => {
+    const [hover, setHover] = React.useState(false)
+    return [
+      hover,
+      {
+        onMouseOver: () => setHover(true),
+        onMouseOut: () => setHover(false),
+      },
+    ]
+  },
+  focus: () => {
+    const [focus, setFocus] = React.useState(false)
+    return [
+      focus,
+      {
+        onFocus: () => setFocus(true),
+        onBlur: () => setFocus(false),
+      },
+    ]
+  },
+}
+
+function App() {
+  return (
+    <Overrides value={[<Button background="brand" />]}>
+      <Button title="Beep" />
+      <Button title="Boop" background="tomato" />
+    </Overrides>
+  )
+}
+```
+
+#### Global
+
+Global states allow turning props on/off for a tree of components. Any element can utilize the `states` prop to define the element's props for each respective variation.
+
+```jsx
+function App() {
+  return (
+    <States hover={true}>
+      <div states={{ hover: { style: { color: 'hotpink' } } }}>
+        Hello States
+      </div>
+    </States>
+  )
+}
+```
+
+#### Media Queries
+
+States have the ability to define media queries that will be converted to use [window.matchMedia](https://developer.mozilla.org/en-US/docs/Web/API/Window/matchMedia). In the future, these will split out styles and write CSS media queries.
+
+```jsx
+function App() {
+  return (
+    <States dark="@media (prefers-color-scheme: dark)">
+      <div
+        style={{ background: 'white', color: 'black' }}
+        states={{
+          dark: {
+            style: { background: 'black', color: 'white' },
+          },
+        }}
+      >
+        Hello States
+      </div>
+    </States>
+  )
+}
+```
+
+#### Chaining
+
+States can be chained using dot notation. This is similar to chaining pseudo selectors in CSS. Props will only be applied when all States are active. Local and Global States can be chained to offer fine-grained control.
+
+```jsx
+<Text
+  color="green.500"
+  states={{
+    hover: {
+      color: 'green.800',
+    },
+    dark: {
+      color: 'green.200',
+    },
+    'dark.hover': {
+      color: 'green.700',
+    },
+  }}
+>
+  Hello Text
+</Text>
+```

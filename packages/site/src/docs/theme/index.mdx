@@ -1,0 +1,26 @@
+---
+title: Theme
+---
+
+Theme is composed of simple primitive values that are reused throughout a tree of components. While they may be of any value, it is advised to keep these as root values and use `Modifiers`, `States`, and `Overrides` to alias or apply sets of tokens that can be turned on/off.
+
+```jsx
+<Theme
+  colors={{
+    primary: 'papayawhip',
+    secondary: 'tomato',
+  }}
+  fontSizes={{
+    small: '16px',
+    medium: '20px',
+    large: '24px',
+  }}
+  fontWeights={{
+    light: '300',
+    medium: '400',
+    bold: '700',
+  }}
+>
+  ...
+</Theme>
+```
