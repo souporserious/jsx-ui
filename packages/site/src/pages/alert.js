@@ -44,7 +44,7 @@ function Link({ children, color, to }) {
   )
 }
 
-export default () => {
+export default function AlertExample() {
   return (
     <Tokens
       colors={{

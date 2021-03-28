@@ -50,7 +50,7 @@ function Image({ source }) {
   return <img src={source} width="100%" />
 }
 
-export default () => {
+export default function ProseExample() {
   return (
     <Prose>
       <Stack axis="x" spaceX="1fr" spaceY="64px">

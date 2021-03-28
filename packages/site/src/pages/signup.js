@@ -111,7 +111,7 @@ Button.variants = {
   },
 }
 
-export default () => {
+export default function SignupExample() {
   return (
     <Tokens
       colors={{

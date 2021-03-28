@@ -50,26 +50,28 @@ function Table({ children, data, spacing }) {
 
 const data = getData(50)
 
-export default () => (
-  <Overrides
-    value={[
-      <Text
-        variants={{
-          pastDue: { color: 'red' },
-        }}
-      />,
-    ]}
-  >
-    <Table data={data} spacing="32px">
-      <Column
-        header="Name"
-        cell={(data) => `${data.firstName} ${data.lastName}`}
-        cellVariants={(data) => ({ pastDue: data.pastDue })}
-        width="max-content"
-      />
-      <Column header="Age" cell="age" />
-      <Column header="Username" cell="username" />
-      <Column header="Occupation" cell="occupation" width="1fr" />
-    </Table>
-  </Overrides>
-)
+export default function TableExample() {
+  return (
+    <Overrides
+      value={[
+        <Text
+          variants={{
+            pastDue: { color: 'red' },
+          }}
+        />,
+      ]}
+    >
+      <Table data={data} spacing="32px">
+        <Column
+          header="Name"
+          cell={(data) => `${data.firstName} ${data.lastName}`}
+          cellVariants={(data) => ({ pastDue: data.pastDue })}
+          width="max-content"
+        />
+        <Column header="Age" cell="age" />
+        <Column header="Username" cell="username" />
+        <Column header="Occupation" cell="occupation" width="1fr" />
+      </Table>
+    </Overrides>
+  )
+}

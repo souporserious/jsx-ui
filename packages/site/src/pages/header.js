@@ -1,7 +1,7 @@
 import React from 'react'
 import { Variants } from '@jsxui/react'
 
-export default () => {
+export default function HeaderExample() {
   const [active, setActive] = React.useState(false)
   React.useEffect(() => {
     function handleScroll() {
