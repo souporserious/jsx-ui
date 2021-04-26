@@ -27,9 +27,14 @@ export const CreateElement = React.forwardRef((props: any, ref) => {
     __originalType,
     __jsxuiSource,
     __uuid,
+    children,
     ...variantProps
   } = useVariantProps(overrideProps, localVariants)
-  return React.createElement(props.__originalType, { ref, ...variantProps })
+  return React.createElement(
+    props.__originalType,
+    { ref, ...variantProps },
+    ...children
+  )
 })
 
 CreateElement.displayName = 'JSXUICreateElement'
@@ -38,10 +43,10 @@ export function jsx(type, props, ...children) {
   if (type === React.Fragment) {
     return React.createElement(type, props, ...children)
   } else {
-    return React.createElement(
-      CreateElement,
-      { __originalType: type, ...props },
-      ...children
-    )
+    return React.createElement(CreateElement, {
+      __originalType: type,
+      children,
+      ...props,
+    })
   }
 }
