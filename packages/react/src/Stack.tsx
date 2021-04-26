@@ -11,7 +11,7 @@ import { SharedProps } from './index'
 import { jsx } from './jsx'
 import { Spacer } from './Spacer'
 import { useTokens } from './Tokens'
-import { useChildProps } from './use-child-props'
+import { useChildren } from './use-children'
 import { useLayoutStyles } from './use-layout-styles'
 import { parseValue, isSameInstance } from './utils'
 
@@ -241,18 +241,6 @@ export const Stack: PolymorphicForwardRefExoticComponent<
     const Element: React.ElementType = as || defaultElement
     const isMainAxisHorizontal = React.useContext(StackContext)
     const { colors } = useTokens()
-    const getChildProps = useChildProps()
-    const flattenedChildren = React.Children.toArray(children)
-      .flatMap((child: any) => {
-        const childProps = getChildProps(child)
-        return isSameInstance(child, React.Fragment)
-          ? childProps.children
-          : child
-      })
-      .filter((child) => {
-        const childProps = getChildProps(child)
-        return React.isValidElement(child) && childProps.visible !== false
-      })
     const layoutStyles = useLayoutStyles(
       (isMainAxisHorizontal ? width : height) ?? size
     )
@@ -305,53 +293,47 @@ export const Stack: PolymorphicForwardRefExoticComponent<
       ..._style,
       ...layoutStyles,
     }
-    const childrenToRender =
-      spaceCrossStart ?? spaceCrossEnd
-        ? flattenedChildren.map((child: any, index) => {
-            const childProps = getChildProps(child)
-            return isSameInstance(child, [Spacer, Divider]) ? (
-              child
-            ) : (
-              <StackContext.Provider
-                key={index}
-                value={getOrthogonalAxis(axis) === 'x'}
-              >
-                <div
-                  style={{
-                    position: 'relative',
-                    display: 'flex',
-                    flexDirection: isHorizontal ? 'column' : 'row',
-                    minWidth: 0,
-                    minHeight: 0,
-                    ...getStackLayoutStyles({
-                      width: isHorizontal
-                        ? childProps.width ?? childProps.size
-                        : 'auto',
-                      height: isHorizontal
-                        ? 'auto'
-                        : childProps.height ?? childProps.size,
-                    }),
-                    // Can we be smart here and split layout props so we can pass them to the wrappers we create?
-                    ...childProps.style,
-                  }}
-                >
-                  {parseSpaceValue(childProps.spaceBefore ?? spaceCrossStart)}
-                  {React.cloneElement(child, {
-                    style: getStackLayoutStyles({
-                      width: isHorizontal
-                        ? 'auto'
-                        : childProps.width ?? childProps.size,
-                      height: isHorizontal
-                        ? childProps.height ?? childProps.size
-                        : 'auto',
-                    }),
-                  })}
-                  {parseSpaceValue(childProps.spaceAfter ?? spaceCrossEnd)}
-                </div>
-              </StackContext.Provider>
-            )
-          })
-        : flattenedChildren
+    const childrenToRender = useChildren(children, (child, childProps) => {
+      return (spaceCrossStart ?? spaceCrossEnd) &&
+        !isSameInstance(child, [Spacer, Divider]) ? (
+        <StackContext.Provider value={getOrthogonalAxis(axis) === 'x'}>
+          <div
+            style={{
+              position: 'relative',
+              display: 'flex',
+              flexDirection: isHorizontal ? 'column' : 'row',
+              minWidth: 0,
+              minHeight: 0,
+              ...getStackLayoutStyles({
+                width: isHorizontal
+                  ? childProps.width ?? childProps.size
+                  : 'auto',
+                height: isHorizontal
+                  ? 'auto'
+                  : childProps.height ?? childProps.size,
+              }),
+              // Can we be smart here and split layout props so we can pass them to the wrappers we create?
+              ...childProps.style,
+            }}
+          >
+            {parseSpaceValue(childProps.spaceBefore ?? spaceCrossStart)}
+            {React.cloneElement(child as any, {
+              style: getStackLayoutStyles({
+                width: isHorizontal
+                  ? 'auto'
+                  : childProps.width ?? childProps.size,
+                height: isHorizontal
+                  ? childProps.height ?? childProps.size
+                  : 'auto',
+              }),
+            })}
+            {parseSpaceValue(childProps.spaceAfter ?? spaceCrossEnd)}
+          </div>
+        </StackContext.Provider>
+      ) : (
+        child
+      )
+    })
 
     if (visible === false) {
       return null
