@@ -8,29 +8,24 @@
     "type": "git",
     "url": "git+https://github.com/souporserious/jsxui.git"
   },
-  "module": "dist/index.esm.js",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "develop": "tsdx watch --target node",
-    "build": "tsdx build --target node",
-    "test": "tsdx test --passWithNoTests --watch",
-    "lint": "tsdx lint",
-    "prepare": "yarn build"
+    "develop": "node build.js -watch",
+    "build": "node build.js"
   },
   "dependencies": {
     "@babel/plugin-syntax-jsx": "^7.12.13"
   },
   "devDependencies": {
-    "@babel/types": "^7.13.13",
-    "@types/jest": "^26.0.22",
+    "@babel/types": "^7.14.2",
+    "@types/jest": "^26.0.23",
     "babel-plugin-tester": "^10.0.0",
     "babel-test": "^0.2.4",
-    "tsdx": "^0.14.1",
-    "tslib": "^2.1.0",
-    "typescript": "^4.2.3"
+    "estrella": "^1.4.1",
+    "typescript": "^4.2.4"
   }
 }

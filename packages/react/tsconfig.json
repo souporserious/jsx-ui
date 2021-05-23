@@ -21,9 +21,7 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "baseUrl": "./",
-    "paths": {
-      "*": ["src/*", "node_modules/*"]
-    },
+    "paths": { "*": ["src/*"] },
     "jsx": "react",
     "esModuleInterop": true
   }
