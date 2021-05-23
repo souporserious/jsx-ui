@@ -1,22 +1,12 @@
 #!/usr/bin/env node
 const { build, ts, tsconfig, dirname, glob, log } = require('estrella')
+const { peerDependencies, dependencies } = require('./package.json')
 
 build({
   entry: 'src/index.ts',
   outfile: 'dist/index.js',
   bundle: true,
-  external: [
-    '@reach/auto-id',
-    'capsize',
-    'dlv',
-    'lodash.debounce',
-    'merge-props',
-    'react',
-    'react-dom',
-    'react-keyed-flatten-children',
-    'react-polymorphic-types',
-    'zustand',
-  ],
+  external: Object.keys(peerDependencies).concat(Object.keys(dependencies)),
   onEnd(config) {
     const dtsFilesOutdir = dirname(config.outfile)
     generateTypeDefs(tsconfig(config), config.entry, dtsFilesOutdir)

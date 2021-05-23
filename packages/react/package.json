@@ -26,9 +26,6 @@
     "develop": "node build.js -watch",
     "build": "node build.js"
   },
-  "peerDependencies": {
-    "react": ">=16.8"
-  },
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@types/react": "^17.0.6",
@@ -36,13 +33,15 @@
     "estrella": "^1.4.1",
     "husky": "^6.0.0",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
     "typescript": "^4.2.4"
   },
   "husky": {
     "hooks": {
       "pre-commit": "tsdx lint"
     }
+  },
+  "peerDependencies": {
+    "react": ">=16.8"
   },
   "dependencies": {
     "@reach/auto-id": "^0.15.0",

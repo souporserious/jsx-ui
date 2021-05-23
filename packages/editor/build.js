@@ -1,18 +1,13 @@
 #!/usr/bin/env node
 const { build, ts, tsconfig, dirname, glob, log } = require('estrella')
+const { dependencies } = require('./package.json')
 
 build({
   entry: 'src/index.ts',
   outfile: 'dist/index.js',
   bundle: true,
   platform: 'node',
-  external: [
-    '@tinyhttp/app',
-    'cors',
-    'fs/promises',
-    'prettier',
-    '@codemod/core',
-  ],
+  external: Object.keys(dependencies),
   onEnd(config) {
     const dtsFilesOutdir = dirname(config.outfile)
     generateTypeDefs(tsconfig(config), config.entry, dtsFilesOutdir)

@@ -18,10 +18,10 @@
     "build": "node build.js"
   },
   "dependencies": {
-    "@babel/plugin-syntax-jsx": "^7.12.13"
+    "@babel/plugin-syntax-jsx": "^7.12.13",
+    "@babel/types": "^7.14.2"
   },
   "devDependencies": {
-    "@babel/types": "^7.14.2",
     "@types/jest": "^26.0.23",
     "babel-plugin-tester": "^10.0.0",
     "babel-test": "^0.2.4",
