@@ -12,9 +12,9 @@
   },
   "dependencies": {
     "@emotion/babel-plugin-jsx-pragmatic": "^0.1.5",
+    "@jsxui/babel-plugin": "*",
     "@jsxui/react": "*",
     "@react-aria/interactions": "^3.3.4",
-    "babel-plugin-jsxui": "*",
     "babel-plugin-transform-react-jsx": "^6.24.1",
     "babel-preset-gatsby": "^1.1.0",
     "case-anything": "^1.1.2",

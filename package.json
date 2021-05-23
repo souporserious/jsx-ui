@@ -5,7 +5,7 @@
   ],
   "scripts": {
     "build": "yarn workspaces run build",
-    "babel": "yarn workspace babel-plugin-jsxui",
+    "babel": "yarn workspace @jsxui/babel-plugin",
     "editor": "yarn workspace @jsxui/editor",
     "jsxui": "yarn workspace @jsxui/react",
     "site": "yarn workspace site"

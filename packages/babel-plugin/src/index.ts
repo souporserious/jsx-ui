@@ -61,9 +61,9 @@ function convertAttribute(node) {
   return t.inherits(t.objectProperty(node.name, value), node)
 }
 
-export default function () {
+export default function() {
   return {
-    name: 'babel-plugin-jsxui',
+    name: '@jsxui/babel-plugin',
     inherits: jsx,
     pre() {
       this.cache = new Set()

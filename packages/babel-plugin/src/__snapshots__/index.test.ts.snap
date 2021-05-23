@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`babel-plugin-jsxui 1. babel-plugin-jsxui: 1. babel-plugin-jsxui 1`] = `
+exports[`@jsxui/babel-plugin 1. @jsxui/babel-plugin: 1. @jsxui/babel-plugin 1`] = `
 "
 import { Overrides, Text } from '@jsxui/react'
 
@@ -35,7 +35,7 @@ function App() {
 "
 `;
 
-exports[`babel-plugin-jsxui 2. babel-plugin-jsxui: 2. babel-plugin-jsxui 1`] = `
+exports[`@jsxui/babel-plugin 2. @jsxui/babel-plugin: 2. @jsxui/babel-plugin 1`] = `
 "
 import { Overrides, Text } from '@jsxui/react'
 

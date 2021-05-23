@@ -1,6 +1,6 @@
 {
   "plugins": [
-    "babel-plugin-jsxui",
+    "@jsxui/babel-plugin",
     [
       "babel-plugin-transform-react-jsx",
       {

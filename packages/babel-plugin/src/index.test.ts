@@ -1,10 +1,10 @@
 import pluginTester from 'babel-plugin-tester/pure'
 
-import plugin from '../src'
+import plugin from '.'
 
 pluginTester({
   plugin,
-  pluginName: 'babel-plugin-jsxui',
+  pluginName: '@jsxui/babel-plugin',
   filename: __filename,
   snapshot: true,
   tests: [
