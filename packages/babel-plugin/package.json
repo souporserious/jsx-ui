@@ -9,12 +9,11 @@
     "url": "git+https://github.com/souporserious/jsxui.git"
   },
   "main": "dist/index.js",
-  "typings": "dist/index.d.ts",
   "files": [
     "dist"
   ],
   "scripts": {
-    "develop": "node build.js -watch",
+    "develop": "node build.js --watch",
     "build": "node build.js"
   },
   "dependencies": {
@@ -25,7 +24,6 @@
     "@types/jest": "^26.0.23",
     "babel-plugin-tester": "^10.0.0",
     "babel-test": "^0.2.4",
-    "estrella": "^1.4.1",
     "typescript": "^4.2.4"
   }
 }

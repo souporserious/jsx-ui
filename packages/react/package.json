@@ -8,7 +8,7 @@
     "type": "git",
     "url": "git+https://github.com/souporserious/jsxui.git"
   },
-  "module": "dist/jsx-ui.esm.js",
+  "module": "dist/index.esm.js",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
   "files": [
@@ -23,15 +23,15 @@
     "isomorphic"
   ],
   "scripts": {
-    "develop": "node build.js -watch",
+    "develop": "node build.js --watch",
     "build": "node build.js"
   },
   "devDependencies": {
     "@types/jest": "^26.0.23",
     "@types/react": "^17.0.6",
     "@types/react-dom": "^17.0.5",
-    "estrella": "^1.4.1",
     "husky": "^6.0.0",
+    "npm-dts": "^1.3.9",
     "react": "^17.0.2",
     "typescript": "^4.2.4"
   },

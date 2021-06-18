@@ -1,39 +1,12 @@
-#!/usr/bin/env node
-const { build, ts, tsconfig, dirname, glob, log } = require('estrella')
+const { build } = require('esbuild')
 const { dependencies } = require('./package.json')
 
 build({
-  entry: 'src/index.ts',
-  outfile: 'dist/index.js',
+  entryPoints: ['src/index.ts'],
+  outdir: 'dist',
   bundle: true,
   platform: 'node',
+  target: 'es2016',
   external: Object.keys(dependencies),
-  onEnd(config) {
-    const dtsFilesOutdir = dirname(config.outfile)
-    generateTypeDefs(tsconfig(config), config.entry, dtsFilesOutdir)
-  },
+  watch: process.argv.includes('--watch'),
 })
-
-function generateTypeDefs(tsconfig, entryfiles, outdir) {
-  const filenames = Array.from(
-    new Set(
-      (Array.isArray(entryfiles) ? entryfiles : [entryfiles]).concat(
-        tsconfig.include || []
-      )
-    )
-  ).filter((v) => v)
-  log.info('Generating type declaration files for', filenames.join(', '))
-  const compilerOptions = {
-    ...tsconfig.compilerOptions,
-    moduleResolution: undefined,
-    declaration: true,
-    outDir: outdir,
-  }
-  const program = ts.ts.createProgram(filenames, compilerOptions)
-  const targetSourceFile = undefined
-  const writeFile = undefined
-  const cancellationToken = undefined
-  const emitOnlyDtsFiles = true
-  program.emit(targetSourceFile, writeFile, cancellationToken, emitOnlyDtsFiles)
-  log.info('Wrote', glob(outdir + '/*.d.ts').join(', '))
-}

@@ -1,38 +1,33 @@
-#!/usr/bin/env node
-const { build, ts, tsconfig, dirname, glob, log } = require('estrella')
+const { build } = require('esbuild')
+const { Generator } = require('npm-dts')
 const { peerDependencies, dependencies } = require('./package.json')
+const watch = process.argv.includes('--watch')
 
-build({
-  entry: 'src/index.ts',
-  outfile: 'dist/index.js',
+const generateTypeDefs = () => {
+  new Generator({
+    entry: 'src/index.ts',
+    output: 'dist/index.d.ts',
+  }).generate()
+}
+
+const shared = {
+  entryPoints: ['src/index.ts'],
   bundle: true,
   external: Object.keys(peerDependencies).concat(Object.keys(dependencies)),
-  onEnd(config) {
-    const dtsFilesOutdir = dirname(config.outfile)
-    generateTypeDefs(tsconfig(config), config.entry, dtsFilesOutdir)
-  },
+}
+
+build({
+  ...shared,
+  outfile: 'dist/index.esm.js',
+  format: 'esm',
+  watch: watch ? { onRebuild: generateTypeDefs } : undefined,
 })
 
-function generateTypeDefs(tsconfig, entryfiles, outdir) {
-  const filenames = Array.from(
-    new Set(
-      (Array.isArray(entryfiles) ? entryfiles : [entryfiles]).concat(
-        tsconfig.include || []
-      )
-    )
-  ).filter((v) => v)
-  log.info('Generating type declaration files for', filenames.join(', '))
-  const compilerOptions = {
-    ...tsconfig.compilerOptions,
-    moduleResolution: undefined,
-    declaration: true,
-    outDir: outdir,
-  }
-  const program = ts.ts.createProgram(filenames, compilerOptions)
-  const targetSourceFile = undefined
-  const writeFile = undefined
-  const cancellationToken = undefined
-  const emitOnlyDtsFiles = true
-  program.emit(targetSourceFile, writeFile, cancellationToken, emitOnlyDtsFiles)
-  log.info('Wrote', glob(outdir + '/*.d.ts').join(', '))
+if (!watch) {
+  build({
+    ...shared,
+    outfile: 'dist/index.js',
+  })
 }
+
+generateTypeDefs()
