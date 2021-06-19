@@ -13,7 +13,7 @@ build({
   entryPoints: ['src/index.ts'],
   bundle: true,
   external: Object.keys(peerDependencies).concat(Object.keys(dependencies)),
-  outfile: 'dist/index.esm.js',
+  outfile: 'dist/index.js',
   format: 'esm',
   watch: process.argv.includes('--watch')
     ? { onRebuild: generateTypeDefs }
