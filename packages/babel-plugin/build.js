@@ -1,5 +1,5 @@
 const { build } = require('esbuild')
-const { dependencies } = require('./package.json')
+const { peerDependencies } = require('./package.json')
 
 build({
   entryPoints: ['src/index.ts'],
@@ -7,6 +7,6 @@ build({
   bundle: true,
   platform: 'node',
   target: 'es2016',
-  external: Object.keys(dependencies),
+  external: Object.keys(peerDependencies),
   watch: process.argv.includes('--watch'),
 })
