@@ -23,7 +23,7 @@ function Field({ label, children, ...props }) {
   )
 }
 
-export default ({ style }) => {
+export default function AddToFolder({ style }) {
   return (
     <Stack height="100vh" style={style}>
       <Spacer size="32px" />

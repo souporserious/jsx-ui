@@ -21,7 +21,7 @@ const menuItems = [
   },
 ]
 
-export default () => {
+export default function Menu() {
   const {
     activeIndex,
     moveActiveIndex,

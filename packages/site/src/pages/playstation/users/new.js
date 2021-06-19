@@ -1,7 +1,7 @@
 import React from 'react'
 import { Spacer, Stack, Text } from '@jsxui/react'
 
-export default ({ style, column, row }) => {
+export default function New({ style, column, row }) {
   return (
     <Stack column={column} row={row} height="100vh" space="1fr" style={style}>
       <Stack spaceY="1fr" spaceBetween={32}>
