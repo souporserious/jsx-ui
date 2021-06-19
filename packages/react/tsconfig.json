@@ -1,7 +1,7 @@
 {
-  "include": ["src", "types", "test"],
+  "include": ["src"],
   "compilerOptions": {
-    "target": "es5",
+    "target": "es2015",
     "module": "esnext",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
@@ -21,9 +21,7 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "baseUrl": "./",
-    "paths": {
-      "*": ["src/*", "node_modules/*"]
-    },
+    "paths": { "*": ["src/*"] },
     "jsx": "react",
     "esModuleInterop": true
   }

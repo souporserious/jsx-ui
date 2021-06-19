@@ -7,11 +7,12 @@
     "build": "yarn workspaces run build",
     "babel": "yarn workspace @jsxui/babel-plugin",
     "editor": "yarn workspace @jsxui/editor",
-    "jsxui": "yarn workspace @jsxui/react",
+    "react": "yarn workspace @jsxui/react",
     "site": "yarn workspace site"
   },
   "devDependencies": {
-    "prettier": "^2.2.0"
+    "prettier": "^2.2.0",
+    "typescript": "^4.3.2"
   },
   "prettier": {
     "arrowParens": "always",
