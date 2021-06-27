@@ -5,7 +5,7 @@
   "license": "UNLICENSED",
   "scripts": {
     "assets": "node scripts/assets.js",
-    "develop": "gatsby develop --host 0.0.0.0 --port 5000",
+    "dev": "gatsby develop --host 0.0.0.0 --port 5000",
     "clean": "gatsby clean",
     "build": "gatsby build",
     "deploy": "gatsby build --prefix-paths && gh-pages -d public"

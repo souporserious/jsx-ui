@@ -1,0 +1,140 @@
+# Getting Started
+
+## Getting Started With JSXUI
+
+JSXUI is a compiler for JSX that optimizes for UI developement.
+
+## Write Once Compile Anywhere
+
+Projects like React Native and Expo have shown they can leverage powerful building blocks for developing user interfaces on any platform. At its core follows the learn once write anywhere, JSXUI optimizes props for composition
+
+## Core
+
+To create compiler-aware components, start by creating a `jsxui.config.js` file at the root of your project:
+
+```ts filename=jsxui.config.ts
+export default {
+  components: [],
+}
+```
+
+Next we'll add a new `Card` component:
+
+```tsx
+export type CardProps = {} & StackProps
+
+export function Card(props: CardProps) {
+  return (
+    <Stack background="white" {...props}>
+      {children}
+    </Stack>
+  )
+}
+```
+
+### Types
+
+When inheriting props from another component we need to either extend and intersect depending on which syntax you choose:
+
+```ts
+export interface CardProps extends StackProps {}
+```
+
+```ts
+export type CardProps = {} & StackProps
+```
+
+## Modifiers
+
+Modifiers allow specifying repeat logic used throughout your application. We'll use text styles as an example:
+
+```ts filename=jsxui.config.ts
+import Text from './components/Text'
+
+export default {
+  components: [Text],
+  defaults: [[Text, { variant: 'body' }]],
+  modifiers: [
+    [
+      Text,
+      {
+        heading1: {
+          role: 'heading',
+          level: 1,
+          size: 32,
+        },
+        heading2: {
+          role: 'heading',
+          level: 2,
+          size: 24,
+        },
+        heading3: {
+          role: 'heading',
+          level: 3,
+          size: 18,
+        },
+        body: {
+          role: 'paragraph',
+          size: 14,
+        },
+      },
+    ],
+  ],
+}
+```
+
+Now when using these components you can reference these props:
+
+```jsx
+function App() {
+  return (
+    <Stack>
+      <Text modifier="heading1">Heading</Text>
+      <Text>Content</Text>
+    </Stack>
+  )
+}
+```
+
+### Theme
+
+```ts filename=jsxui.config.ts
+import Text from './components/Text'
+
+export default {
+  defaultTheme: 'system', // prefers-color-scheme
+  theme: [
+    ['light', { colors: { grey: 'lightgrey' } }],
+    ['dark', { colors: { grey: 'darkgrey' } }],
+  ],
+}
+```
+
+### Build
+
+Now that we've defined a new component we can compile our component for use in our app. Run the following to compile your components:
+
+```bash
+jsxui build
+```
+
+In our app, we can use our new `Card` component now:
+
+```jsx
+function App() {
+  return (
+    <Card>
+      <Text modifier="heading1">This is a title</Text>
+      <Text modifier="body">That has a description.</Text>
+    </Card>
+  )
+}
+```
+
+## UI Library
+
+JSXUI ships with an accompanying set of pre-built components for common UI:
+
+[Stack](/ui/stack)
+
+[Text](/ui/text)
