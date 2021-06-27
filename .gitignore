@@ -13,6 +13,9 @@ yarn-error.log*
 # ESLint
 .eslintcache
 
+# NextJS
+.next
+
 # Gatsby
 .cache
 public

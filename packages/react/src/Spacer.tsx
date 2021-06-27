@@ -1,5 +1,4 @@
 import * as React from 'react'
-
 import { StackContext } from './Contexts'
 import { useTokens } from './Tokens'
 import { useLayoutStyles } from './use-layout-styles'
@@ -34,7 +33,7 @@ export function Spacer(props: SpacerProps) {
     <div
       style={{
         position: 'relative',
-        fontFamily: fontFamilies.body,
+        fontFamily: fontFamilies?.body,
         ...layoutStyles,
         ...style,
       }}

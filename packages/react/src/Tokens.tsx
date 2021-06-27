@@ -1,7 +1,15 @@
-import * as React from 'react'
 import dlv from 'dlv'
+import * as React from 'react'
 
-const TokensContext = React.createContext({})
+const defaultTheme = {
+  colors: {},
+  fontSizes: {},
+  fontFamilies: {},
+  fontWeights: {},
+  fontMetrics: {},
+}
+
+const TokensContext = React.createContext(defaultTheme)
 
 export function useTokens(): { [key in any]: any } {
   return React.useContext(TokensContext)

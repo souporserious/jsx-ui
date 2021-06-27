@@ -1,3 +1,5 @@
+const path = require('path')
+
 module.exports = {
   siteMetadata: {
     siteUrl: `https://www.jsxui.com`,
@@ -18,6 +20,13 @@ module.exports = {
   plugins: [
     `gatsby-plugin-react-helmet`,
     {
+      resolve: 'gatsby-source-filesystem',
+      options: {
+        name: 'docs',
+        path: path.resolve('../docs/docs'),
+      },
+    },
+    {
       resolve: `gatsby-plugin-google-fonts`,
       options: {
         fonts: [`muli\:300,400,700`],
@@ -28,6 +37,10 @@ module.exports = {
       options: {
         component: require.resolve(`./src/components/Layout.js`),
       },
+    },
+    {
+      resolve: 'gatsby-plugin-mdx',
+      options: {},
     },
   ],
 }

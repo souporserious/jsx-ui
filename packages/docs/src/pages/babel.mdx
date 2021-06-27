@@ -1,0 +1,558 @@
+---
+title: Babel
+---
+
+import Stateful from '../components/Stateful'
+
+## Configuring babel
+
+<Stateful />
+
+```json
+{
+  "plugins": [["babel-plugin-jsxui", { "target": "web" }]]
+}
+```
+
+This will build `Text` and `Stack` components as HTML elements for web:
+
+```jsx
+export default function App() {
+  return <span>Hello World</span>
+}
+```
+
+Alternatively, you can build additional targets like `native`:
+
+```json
+{
+  "plugins": [["babel-plugin-jsxui", { "target": "native" }]]
+}
+```
+
+```jsx
+import { View } from 'react-native'
+
+export default function App() {
+  return <View>Hello World</View>
+}
+```
+
+You can even configure the styling solution you want:
+
+.babelrc
+
+```json
+{
+  "plugins": [
+    [
+      "babel-plugin-jsxui",
+      {
+        "target": "web",
+        "style": "emotion"
+      }
+    ]
+  ]
+}
+```
+
+.jsxuirc
+
+```js
+export default {
+  colors: {
+    primary: 'hotpink',
+    secondary: 'black',
+  },
+  fontWeights: {
+    normal: 400,
+    medium: 500,
+    bold: 700,
+  },
+}
+```
+
+### In
+
+```jsx
+import { Text } from '@jsxui/react'
+
+export default function App() {
+  return (
+    <Text weight="light" color="primary">
+      Hello World
+    </Text>
+  )
+}
+```
+
+### Out
+
+Emotion / Styled Components
+
+```jsx
+export default function App() {
+  return (
+    <span
+      css={{
+        fontWeight: 'var(--weights-light)',
+        color: 'var(--colors-primary)',
+      }}
+    >
+      Hello World
+    </span>
+  )
+}
+```
+
+Tailwind
+
+```jsx
+export default function App() {
+  return <span className="font-light text-primary">Hello World</span>
+}
+```
+
+## Pitfalls
+
+In order for the Babel plugin to parse components properly for rewriting there are a few rules to follow for the best performance:
+
+### Do
+
+Compose components using JSXUI primitives:
+
+```tsx
+import { createComponent, Stack, Text, Theme, Events } from '@jsxui/react'
+
+type ButtonProps = {
+  title: string
+  background: Theme.Color
+  color: Theme.Color
+  onPress: Events.PressEvent
+}
+
+export const Button = createComponent<ButtonProps>(
+  ({ title, background, color, onPress }) => {
+    return (
+      <Stack onPress={onPress} background={background}>
+        <Text color={color}>{title}</Text>
+      </Stack>
+    )
+  },
+  {
+    primary: {
+      background: '$colors.primary',
+      color: '$colors.white',
+    },
+    secondary: {
+      background: '$colors.secondary',
+      color: '$colors.secondary',
+    },
+    'size.small': {
+      paddingLeft: '$spacings.4',
+      paddingRight: '$spacings.4',
+    },
+    'size.medium': {
+      paddingLeft: '$spacings.5',
+      paddingRight: '$spacings.5',
+    },
+  }
+)
+```
+
+```tsx
+import { createComponent, Stack, Text, Theme, Events } from '@jsxui/react'
+
+type ButtonProps = {
+  title: string
+  background: Theme.Color
+  color: Theme.Color
+  onPress: Events.PressEvent
+}
+
+export const Button = createComponent<ButtonProps>(
+  ({ title, background, color, onPress }) => {
+    return (
+      <Stack onPress={onPress} background={background}>
+        <Text color={color}>{title}</Text>
+      </Stack>
+    )
+  },
+  {
+    appearance: {
+      primary: {
+        background: '$colors.primary',
+        color: '$colors.white',
+      },
+      secondary: {
+        background: '$colors.secondary',
+        color: '$colors.secondary',
+      },
+    },
+    size: {
+      small: {
+        paddingLeft: '$spacings.4',
+        paddingRight: '$spacings.4',
+      },
+      medium: {
+        paddingLeft: '$spacings.5',
+        paddingRight: '$spacings.5',
+      },
+    },
+  }
+)
+```
+
+```tsx
+import { createComponent, Stack, Text, Theme, Events } from '@jsxui/react'
+
+export type ButtonProps = {
+  title: string
+  background: Theme.Color
+  color: Theme.Color
+  stroke: {
+    align: 'inside' | 'outside'
+    size: number
+    color: Theme.Color
+  }
+  onPress: Events.PressEvent
+}
+
+export const Button = createComponent<ButtonProps>(
+  ({ title, color, background, stroke, onPress }) => {
+    return (
+      <Stack onPress={onPress} background={background} stroke={stroke}>
+        <Text color={color}>{title}</Text>
+      </Stack>
+    )
+  },
+  {
+    appearance: {
+      primary: {
+        background: '$colors.primary',
+        color: '$colors.white',
+      },
+      secondary: {
+        background: '$colors.secondary',
+        color: '$colors.secondary',
+      },
+      primaryOutline: {
+        stroke: { size: 1, color: '$colors.primary' },
+        color: '$colors.primary',
+      },
+      secondaryOutline: {
+        stroke: { size: 1, color: '$colors.secondary' },
+        color: '$colors.secondary',
+      },
+    },
+    size: {
+      small: {
+        paddingLeft: '$spacings.4',
+        paddingRight: '$spacings.4',
+      },
+      medium: {
+        paddingLeft: '$spacings.5',
+        paddingRight: '$spacings.5',
+      },
+    },
+  }
+)
+```
+
+```tsx
+import {
+  createComponent,
+  Events,
+  Graphic,
+  Path,
+  Stack,
+  Text,
+} from '@jsxui/react'
+
+export type CheckboxProps = {
+  label: string
+  checked: boolean
+  onChange: Events.ChangeEvent
+}
+
+export const Checkbox = createComponent<CheckboxProps>(
+  ({ label, checked, onChange }) => {
+    return (
+      <Stack role="checkbox" onChange={onChange}>
+        <Graphic>
+          <Path d={``} />
+          <Path d={``} />
+        </Graphic>
+        {label ? <Text color={color}>{label}</Text> : null}
+      </Stack>
+    )
+  },
+  {
+    appearance: {
+      primary: {
+        background: '$colors.primary',
+        color: '$colors.white',
+      },
+      secondary: {
+        background: '$colors.secondary',
+        color: '$colors.secondary',
+      },
+      primaryOutline: {
+        stroke: { size: 1, color: '$colors.primary' },
+        color: '$colors.primary',
+      },
+      secondaryOutline: {
+        stroke: { size: 1, color: '$colors.secondary' },
+        color: '$colors.secondary',
+      },
+    },
+    size: {
+      small: {
+        paddingLeft: '$spacings.4',
+        paddingRight: '$spacings.4',
+      },
+      medium: {
+        paddingLeft: '$spacings.5',
+        paddingRight: '$spacings.5',
+      },
+    },
+  }
+)
+```
+
+```tsx
+export type CheckboxProps = {
+  label: string
+  checked: boolean
+  onChange: Events.ChangeEvent
+}
+
+const Checkbox = createComponent<CheckboxProps>({
+  default: ({ label, checked, onChange }) => {
+    return (
+      <Stack
+        role="checkbox"
+        onChange={onChange}
+        background="$colors.controlBackground"
+      >
+        <Graphic>
+          <Path d={`12345`} />
+        </Graphic>
+        {label ? <Text color={color}>{label}</Text> : null}
+      </Stack>
+    )
+  },
+  checked: ({ label, checked, onChange }) => {
+    return (
+      <Stack
+        role="checkbox"
+        onChange={onChange}
+        background="$colors.controlCheckedBackground"
+      >
+        <Graphic>
+          <Path d={`54321`} />
+        </Graphic>
+        {label ? <Text color={color}>{label}</Text> : null}
+      </Stack>
+    )
+  },
+  disabled: ({ label, checked, onChange }) => {
+    return (
+      <Stack role="checkbox" background="$colors.controlDisabledBackground">
+        <Graphic>
+          <Path d={`12345`} />
+        </Graphic>
+        {label ? <Text color={color}>{label}</Text> : null}
+      </Stack>
+    )
+  },
+  disabledChecked: ({ label, checked, onChange }) => {
+    return (
+      <Stack role="checkbox" background="$colors.controlDisabledBackground">
+        <Graphic>
+          <Path d={`54321`} />
+        </Graphic>
+        {label ? <Text color={color}>{label}</Text> : null}
+      </Stack>
+    )
+  },
+})
+```
+
+```tsx
+// <Checkbox checked />
+// <Checkbox disabled />
+// <Checkbox checked disabled />
+// <Checkbox checked disabled size="sm" />
+
+type CheckboxProps = {
+  label: string
+  onChange: Events.Change
+}
+
+type CheckboxVariants = {
+  checked: boolean
+  disabled: boolean
+  size: 'small' | 'medium'
+}
+
+const Checkbox = createComponent<CheckboxProps, CheckboxVariants>(
+  ({ Graphic, Path, Stack, Text }) => ({ label, onChange }) => {
+    return (
+      <Stack
+        role="checkbox"
+        onChange={onChange}
+        space={{
+          size: {
+            small: 8,
+            medium: 16,
+          },
+        }}
+        background={{
+          default: '$colors.controlBackground',
+          checked: '$colors.controlCheckedBackground',
+          disabled: '$colors.controlDisabledBackground',
+        }}
+      >
+        <Graphic>
+          <Path
+            d={{
+              default: '54321',
+              checked: '12345',
+            }}
+          />
+        </Graphic>
+        <Text visible={Boolean(label)} color={color}>
+          {label}
+        </Text>
+      </Stack>
+    )
+  }
+)
+```
+
+```tsx
+type CheckboxProps = {
+  label: string
+  onChange: Events.Change
+}
+
+type CheckboxVariants = {
+  checked: boolean
+  indeterminate: boolean
+  disabled: boolean
+  size: 'small' | 'medium'
+}
+
+const Checkbox = createComponent<CheckboxProps, CheckboxVariants>(
+  ({ variants, checked, disabled, label, onChange }) => {
+    return (
+      <Stack
+        role="checkbox"
+        checked={checked}
+        disabled={disabled}
+        onChange={variants({
+          default: onChange,
+          disabled: null,
+        })}
+        space={variants({
+          size: {
+            small: 8,
+            medium: 16,
+          },
+        })}
+      >
+        <Graphic
+          fill={variants({
+            default: '$colors.controlBackground',
+            checked: '$colors.controlCheckedBackground',
+          })}
+          opacity={variants({
+            disabled: 0.8,
+          })}
+        >
+          <Path
+            d={variants({
+              default: '54321',
+              checked: '12345',
+              indeterminate: '21354',
+            })}
+          />
+        </Graphic>
+        <Text visible={Boolean(label)} color={color}>
+          {label}
+        </Text>
+      </Stack>
+    )
+  }
+)
+
+const example = (
+  <Checkbox
+    label="Subscribe to newsletter"
+    onChange={() => console.log()}
+    variants={{
+      size: 'small',
+      checked: true,
+      disabled: true,
+    }}
+  />
+)
+
+const example = (
+  <Button
+    title="Signup"
+    onAction={() => console.log()}
+    variants={{
+      size: 'small',
+      appearance: 'primaryOutline',
+      disabled: true,
+    }}
+  />
+)
+```
+
+Create your own `createComponent` function to have your own components be typed with variants:
+
+```tsx
+const { createComponent } = createSystem(
+  { MyComponent },
+  {
+    colors: {
+      'grey.100': 'grey',
+      controlBackground: '$grey.100',
+      controlBackgroundDisabled: '$grey.100',
+    },
+  }
+)
+```
+
+```tsx
+import * as components from './components/index'
+
+const theme = {
+  colors: {
+    'grey.100': 'grey',
+    controlBackground: '$grey.100',
+    controlBackgroundDisabled: '$grey.100',
+  },
+}
+
+const { createComponent } = createSystem(components, theme)
+```
+
+```jsx
+import { Button } from './Button'
+
+function App() {
+  return (
+    <Button
+      title="Hello Button"
+      modifier="primary"
+      onPress={() => console.log('Hello!')}
+    />
+  )
+}
+```
+
+### Don't

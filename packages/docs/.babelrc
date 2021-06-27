@@ -1,0 +1,29 @@
+{
+  "presets": [
+    [
+      "next/babel",
+      {
+        "preset-react": {
+          "runtime": "classic"
+        }
+      }
+    ]
+  ],
+  "plugins": [
+    "babel-plugin-jsxui",
+    [
+      "babel-plugin-transform-react-jsx",
+      {
+        "pragma": "jsx"
+      }
+    ],
+    [
+      "@emotion/babel-plugin-jsx-pragmatic",
+      {
+        "module": "@jsxui/react",
+        "import": "jsx",
+        "export": "jsx"
+      }
+    ]
+  ]
+}
