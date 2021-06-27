@@ -1,0 +1,91 @@
+# Assets
+
+Manage assets using Figma. Specify Figma credentials in your `jsxui.config` file:
+
+```tsx
+export default {
+  figma: {
+    test: '12345',
+  },
+}
+```
+
+Now we can reference the file to target and export frames in various formats:
+
+```tsx
+<Graphic file="test" frame="1234" format="jpg" />
+```
+
+When targeting `svg` specifically we have access to the underlying structure for modification:
+
+```tsx
+<Graphic file="test" frame="1234" format="svg">
+  <Frame
+    id="eyes"
+    color={{ hover: 'green' }}
+    scale={{ press: 1.2, hover: 1.4 }}
+    x={{ hover: (props) => props.x + 100 }} // move it +100 from it's current position
+  />
+  <Frame
+    id="eyes"
+    states={{
+      hover: {
+        color: 'green',
+        scale: 1.4,
+        x: (props) => props.scale * 100, // use pre-defined items in the object
+      },
+      press: {
+        scale: 1.2,
+      },
+    }}
+  />
+</Graphic>
+```
+
+<small>Sketch and AdobeXD support planned.</small>
+
+## Optimize
+
+### NextJS
+
+Using NextJS `Image` component we can output a performant component that works at any size:
+
+```tsx
+// In
+import type { GraphicProps } from '@jsxui/core'
+import { useGraphicProps } from '@jsxui/core'
+import NextImage from 'next/image'
+
+export type ImageProps = {} & GraphicProps
+
+export function Image(props: ImageProps) {
+  const { source } = useGraphicProps(props)
+  return <NextImage src={source} />
+}
+```
+
+```tsx
+type GraphicProps = {
+  /**
+   * The associated name of the file configured in figma settings.
+   */
+  file: string
+
+  /**
+   * The associsated id or name of the Figma frame. If duplicate frame names
+   * exist the first instance will be resolved.
+   */
+  frame: number | string
+
+  /**
+   * The associsated id or name of the Figma frame. If duplicate frame names
+   * exist the first instance will be resolved.
+   */
+  format: 'svg' | 'png' | 'jpg'
+
+  /**
+   * What scales should these be set to.
+   */
+  scale: number
+}
+```
