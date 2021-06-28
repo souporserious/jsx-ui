@@ -73,7 +73,7 @@ export default function () {
     visitor: {
       JSXOpeningElement(path, state) {
         if (path.node.name.name === 'Graphic') {
-          transformGraphic(path, state)
+          transformGraphic(path)
         }
 
         // add component source information

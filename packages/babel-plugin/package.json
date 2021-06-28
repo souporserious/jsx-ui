@@ -26,6 +26,8 @@
     "@babel/types": "^7.14.5"
   },
   "dependencies": {
+    "dotenv": "^10.0.0",
+    "figma-tools": "^0.2.4",
     "svg64": "^1.1.0",
     "synckit": "^0.1.5"
   }
