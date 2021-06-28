@@ -1,6 +1,6 @@
 import pluginTester from 'babel-plugin-tester/pure'
 
-import plugin from '.'
+import plugin from './index'
 
 pluginTester({
   plugin,
@@ -10,5 +10,6 @@ pluginTester({
   tests: [
     { fixture: '__fixtures__/simple.js' },
     { fixture: '__fixtures__/variable.js' },
+    { fixture: '__fixtures__/graphic.js' },
   ],
 })

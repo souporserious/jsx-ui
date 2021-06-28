@@ -1,6 +1,6 @@
 import { Overrides, Text } from '@jsxui/react'
 
-function App() {
+export function App() {
   return (
     <Overrides
       value={[

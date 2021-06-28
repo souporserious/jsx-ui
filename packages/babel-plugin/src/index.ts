@@ -1,6 +1,8 @@
 import * as t from '@babel/types'
 import jsx from '@babel/plugin-syntax-jsx'
 
+import { transformGraphic } from './graphic'
+
 // adapted from: https://github.com/babel/babel/blob/master/packages/babel-plugin-transform-react-jsx-source/
 const TRACE_ID = '__jsxuiSource'
 const FILE_NAME_ID = '__jsxuiFileName'
@@ -61,7 +63,7 @@ function convertAttribute(node) {
   return t.inherits(t.objectProperty(node.name, value), node)
 }
 
-export default function() {
+export default function () {
   return {
     name: '@jsxui/babel-plugin',
     inherits: jsx,
@@ -70,6 +72,10 @@ export default function() {
     },
     visitor: {
       JSXOpeningElement(path, state) {
+        if (path.node.name.name === 'Graphic') {
+          transformGraphic(path)
+        }
+
         // add component source information
         if (
           path.node.name.name !== 'Fragment' &&
@@ -78,9 +84,8 @@ export default function() {
           const location = path.container.openingElement.loc
           if (!state.fileNameIdentifier) {
             const fileName = state.filename || ''
-            const fileNameIdentifier = path.scope.generateUidIdentifier(
-              FILE_NAME_ID
-            )
+            const fileNameIdentifier =
+              path.scope.generateUidIdentifier(FILE_NAME_ID)
             const scope = path.hub.getScope()
             if (scope) {
               scope.push({
@@ -125,9 +130,10 @@ export default function() {
               if (element.node.type === 'CallExpression') {
                 const [identifier, objectExpression] = element.node.arguments
                 // filter out TRACE_ID if it was applied to any Overrides
-                objectExpression.properties = objectExpression.properties.filter(
-                  (property) => property.key.name !== TRACE_ID
-                )
+                objectExpression.properties =
+                  objectExpression.properties.filter(
+                    (property) => property.key.name !== TRACE_ID
+                  )
                 element.node.leadingComments = []
                 element.replaceWith(
                   t.arrayExpression([identifier, objectExpression])
@@ -135,9 +141,8 @@ export default function() {
               } else {
                 const openingElement = element.get('openingElement')
                 const name = openingElement.node.name.name
-                const objectValues = openingElement.node.attributes.map(
-                  convertAttribute
-                )
+                const objectValues =
+                  openingElement.node.attributes.map(convertAttribute)
                 element.replaceWith(
                   t.arrayExpression([
                     name[0] === name[0].toUpperCase()
