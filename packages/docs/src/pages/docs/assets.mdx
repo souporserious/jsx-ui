@@ -5,7 +5,10 @@ Manage assets using Figma. Specify Figma credentials in your `jsxui.config` file
 ```tsx
 export default {
   figma: {
-    test: '12345',
+    token: 1234,
+    files: {
+      test: 'E6didZF0rpPf8piANHABDZ',
+    },
   },
 }
 ```
@@ -89,3 +92,29 @@ type GraphicProps = {
   scale: number
 }
 ```
+
+## Options
+
+```ts
+type FigmaOptions = {
+  /**
+   * Named file id[s] to make available for querying.
+   */
+  files: Record<string>
+
+  /**
+   * Figma [personal access token](https://www.figma.com/developers/docs#auth-dev-token).
+   */
+  token: number
+
+  /**
+   * Output directory used when an image is created. Defaults to a colocated
+   * `images` folder.
+   */
+  output: boolean
+}
+```
+
+## MDX Plugin
+
+The MDX remark plugin runs similar optimizations to the Babel plugin.

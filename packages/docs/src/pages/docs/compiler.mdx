@@ -12,3 +12,46 @@ The compiler allows for high-end optimization of UI compositions. As an example 
 - Streamline asset management
 - Reduce Naming Fatigue
 - Tailored systems through plugins (use your workflow)
+
+## Optimized builds
+
+For instance:
+
+```tsx
+// In:
+<Graphic file="test" name="1234" format="svg" />
+
+// Out:
+<image src="1234.svg" />
+```
+
+While the following will yield:
+
+```tsx
+// In:
+<Graphic file="test" name="1234" format="svg">
+  <Frame name="eyes" color="brand" />
+</Graphic>
+
+// Out:
+<svg>
+  <path d="1234" className="c-brand" />
+</svg>
+```
+
+By fully understanding the intent, we can make the API for working with components easier and split their responsibilities at build time. By following a component model this gives us unique benefits like abstracting away implementation details and hoisting them to a central location.
+
+Fully declarative, once code is deleted all of its assets are cleaned up.
+
+## Swap implementation details not code
+
+Did your design team move from Sketch to Figma? No problem! Since assets are fully declarative we can simply change our config around:
+
+```diff
+export default {
+- sketch: { test: '1234' }
++ figma: { test: '1234' }
+}
+```
+
+Now all assests will build from Figma instead of Sketch.
