@@ -6,7 +6,7 @@ build({
   outdir: 'dist',
   bundle: true,
   platform: 'node',
-  target: 'es2016',
+  target: 'es2018',
   external: Object.keys(dependencies),
   watch: process.argv.includes('--watch'),
 })
