@@ -4,7 +4,7 @@ const overrides = [
   <Text color="tomato" variants={{ hover: { color: 'papayawhip' } }} />,
 ]
 
-function App() {
+export function App() {
   return (
     <Overrides value={overrides}>
       <Text>Hello World</Text>
