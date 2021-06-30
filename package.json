@@ -5,8 +5,8 @@
     "packages/*"
   ],
   "scripts": {
-    "build": "lerna run build --parallel",
-    "develop": "lerna run develop --parallel",
+    "build": "lerna run build --parallel --include-dependencies",
+    "develop": "lerna run develop --parallel --include-dependencies",
     "babel": "yarn workspace @jsxui/babel-plugin",
     "editor": "yarn workspace @jsxui/editor",
     "react": "yarn workspace @jsxui/react",
