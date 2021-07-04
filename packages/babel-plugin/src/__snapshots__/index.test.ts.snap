@@ -1,119 +1,40 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`@jsxui/babel-plugin 1. @jsxui/babel-plugin: 1. @jsxui/babel-plugin 1`] = `
-"
-import { Overrides, Text } from '@jsxui/react'
 
-export function App() {
+import { Stack, Text } from '@jsxui/react'
+
+export default function App() {
   return (
-    <Overrides
-      value={[
-        <Text color=\\"tomato\\" variants={{ hover: { color: 'papayawhip' } }} />,
-      ]}
+    <Stack
+      axis="x"
+      width="minmax(100%, 1440px)"
+      spaceYStart="40px"
+      spaceYEnd="80px"
     >
       <Text>Hello World</Text>
-    </Overrides>
+    </Stack>
   )
 }
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-var _jsxuiFileName = \\"/Users/souporserious/Code/jsxui/packages/babel-plugin/src/__fixtures__/simple.js\\";
-import { Overrides, Text } from '@jsxui/react';
-export function App() {
-  return <Overrides value={[[Text, {
-    color: \\"tomato\\",
-    variants: {
-      hover: {
-        color: 'papayawhip'
-      }
-    }
-  }]]} __jsxuiSource={{
-    fileName: _jsxuiFileName,
-    lineNumber: 5,
-    columnNumber: 5
-  }}>
-      <Text __jsxuiSource={{
-      fileName: _jsxuiFileName,
-      lineNumber: 10,
-      columnNumber: 7
-    }}>Hello World</Text>
-    </Overrides>;
-}
-"
-`;
-
-exports[`@jsxui/babel-plugin 2. @jsxui/babel-plugin: 2. @jsxui/babel-plugin 1`] = `
-"
-import { Overrides, Text } from '@jsxui/react'
-
-const overrides = [
-  <Text color=\\"tomato\\" variants={{ hover: { color: 'papayawhip' } }} />,
-]
-
-export function App() {
+import { Stack, Text } from '@jsxui/react'
+export default function App() {
   return (
-    <Overrides value={overrides}>
-      <Text>Hello World</Text>
-    </Overrides>
+    <div
+      css={{
+        display: 'flex',
+        flexDirection: 'row',
+        width: 'minmax(100%, 1440px)',
+        paddingTop: '40px',
+        paddingBottom: '80px',
+      }}
+    >
+      <span>Hello World</span>
+    </div>
   )
 }
 
-      ↓ ↓ ↓ ↓ ↓ ↓
 
-var _jsxuiFileName = \\"/Users/souporserious/Code/jsxui/packages/babel-plugin/src/__fixtures__/variable.js\\";
-import { Overrides, Text } from '@jsxui/react';
-const overrides = [[Text, {
-  color: \\"tomato\\",
-  variants: {
-    hover: {
-      color: 'papayawhip'
-    }
-  },
-  __jsxuiSource: {
-    fileName: _jsxuiFileName,
-    lineNumber: 4,
-    columnNumber: 3
-  }
-}]];
-export function App() {
-  return <Overrides value={overrides} __jsxuiSource={{
-    fileName: _jsxuiFileName,
-    lineNumber: 9,
-    columnNumber: 5
-  }}>
-      <Text __jsxuiSource={{
-      fileName: _jsxuiFileName,
-      lineNumber: 10,
-      columnNumber: 7
-    }}>Hello World</Text>
-    </Overrides>;
-}
-"
-`;
-
-exports[`@jsxui/babel-plugin 3. @jsxui/babel-plugin: 3. @jsxui/babel-plugin 1`] = `
-"
-import { Graphic } from '@jsxui/react'
-
-// https://www.figma.com/file/CPiIvxuJKkcompqr9PKXap/Material-Design-Icons-(Community)
-export function App() {
-  return (
-    <Graphic file=\\"CPiIvxuJKkcompqr9PKXap\\" page=\\"Filled\\" name=\\"check_box\\" />
-  )
-}
-
-      ↓ ↓ ↓ ↓ ↓ ↓
-
-var _jsxuiFileName = \\"/Users/souporserious/Code/jsxui/packages/babel-plugin/src/__fixtures__/graphic.js\\";
-import { Graphic } from '@jsxui/react'; // https://www.figma.com/file/CPiIvxuJKkcompqr9PKXap/Material-Design-Icons-(Community)
-
-export function App() {
-  return <img src=\\"data:image/svg+xml;base64,77+9UE5HChoKAAAADUlIRFIAAAAYAAAAGAgGAAAA77+9dz3vv70AAAAJcEhZcwAACxMAAAsTAQDvv73vv70YAAAAAXNSR0IA77+977+9HO+/vQAAAARnQU1BAADvv73vv70L77+9YQUAAADvv71JREFUeAHvv73vv70N77+9IAxFDe+/vUDvv70EYe+/ve+/ve+/vUwATATvv73vv71S77+9KCR2Qg5V77+9T++/ve+/ve+/vRMWNu+/vT87Ue+/vTDvv71MWu+/vRlOJO+/ve+/vVNKS++/vTU9PAtfY2jvv704QwTvv73vv70F77+9EiA877+977+977+977+9BRXvv73vv71K77+977+9UAHvv71ba++/vWASCe+/ve+/vcqFdwXvv71PBO+/vUkk7aG67bCm77+9SO+/vV0BDgtONe+/vRzvv71jPlbvv71z77+90Lodey4877+977+9Nm/vv70+JDfvv73vv73vv73vv73vv71+eEk877+9cynvv70l77+9Ejjvv73vv71YdmxBb2FJMu+/ve+/vWN5AO+/ve+/vXrvv71yU2hpAAAAAElFTkTvv71CYO+/vQ==\\" __jsxuiSource={{
-    fileName: _jsxuiFileName,
-    lineNumber: 6,
-    columnNumber: 5
-  }} />;
-}
-"
 `;

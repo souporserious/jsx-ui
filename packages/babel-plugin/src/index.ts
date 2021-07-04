@@ -63,6 +63,36 @@ function convertAttribute(node) {
   return t.inherits(t.objectProperty(node.name, value), node)
 }
 
+const Schemas = [
+  {
+    name: 'Text',
+    as: 'span',
+    style: {
+      // color: null, // takes any value
+      color: ['primary', 'secondary'],
+    },
+  },
+  {
+    name: 'Stack',
+    as: 'div',
+    props: {
+      axis: ['x', 'y'],
+      width: null,
+      spaceYStart: null,
+      spaceYEnd: null,
+    },
+    defaults: {
+      display: 'flex',
+    },
+    transforms: {
+      axis: (value) => ['flexDirection', value === 'x' ? 'row' : 'column'],
+      width: (value, theme) => theme.spacings[value] ?? value,
+      spaceYStart: (value) => ['paddingTop', value],
+      spaceYEnd: (value) => ['paddingBottom', value],
+    },
+  },
+]
+
 export default function () {
   return {
     name: '@jsxui/babel-plugin',
@@ -71,90 +101,162 @@ export default function () {
       this.cache = new Set()
     },
     visitor: {
-      JSXOpeningElement(path, state) {
-        if (path.node.name.name === 'Graphic') {
-          transformGraphic(path)
-        }
+      JSXElement(path, state) {
+        const { theme } = state.opts
 
-        // add component source information
-        if (
-          path.node.name.name !== 'Fragment' &&
-          path.node.name.property?.name !== 'Fragment'
-        ) {
-          const location = path.container.openingElement.loc
-          if (!state.fileNameIdentifier) {
-            const fileName = state.filename || ''
-            const fileNameIdentifier =
-              path.scope.generateUidIdentifier(FILE_NAME_ID)
-            const scope = path.hub.getScope()
-            if (scope) {
-              scope.push({
-                id: fileNameIdentifier,
-                init: t.stringLiteral(fileName),
+        Schemas.forEach((schema) => {
+          if (path.node.openingElement.name.name === schema.name) {
+            path.node.openingElement.name.name = schema.as
+            path.node.closingElement.name.name = schema.as
+
+            const attributes = []
+            const styleAttributes = []
+            const defaultAttributes = []
+
+            if (schema.defaults) {
+              Object.entries(schema.defaults).forEach(([key, value]) => {
+                defaultAttributes.push(
+                  t.objectProperty(
+                    t.identifier(key),
+                    typeof value === 'boolean'
+                      ? t.booleanLiteral(value)
+                      : typeof value === 'number'
+                      ? t.numericLiteral(value)
+                      : t.stringLiteral(value)
+                  )
+                )
               })
             }
-            state.fileNameIdentifier = fileNameIdentifier
-          }
 
-          const trace = makeTrace(
-            state.fileNameIdentifier,
-            location.start.line,
-            location.start.column
-          )
-
-          path.node.attributes.push(
-            t.jsxAttribute(
-              t.jsxIdentifier(TRACE_ID),
-              t.jsxExpressionContainer(trace)
-            )
-          )
-        }
-
-        if (path.node.name.name === 'Overrides') {
-          const [valuePath] = path.get('attributes')
-          const expressionPath = valuePath.get('value').get('expression')
-          const expressionName = expressionPath.node.name
-          const binding = expressionPath.scope.getBinding(expressionName)
-          let arrayExpression
-          if (binding) {
-            if (!this.cache.has(expressionName)) {
-              arrayExpression = binding.path.get('init')
-              this.cache.add(expressionName)
-            }
-          } else {
-            arrayExpression = expressionPath
-          }
-          if (arrayExpression) {
-            arrayExpression.get('elements').forEach((element) => {
-              // handle already transpiled JSX
-              if (element.node.type === 'CallExpression') {
-                const [identifier, objectExpression] = element.node.arguments
-                // filter out TRACE_ID if it was applied to any Overrides
-                objectExpression.properties =
-                  objectExpression.properties.filter(
-                    (property) => property.key.name !== TRACE_ID
+            path.node.openingElement.attributes.forEach((attribute) => {
+              const styleProp = schema.props[attribute.name.name]
+              if (styleProp !== undefined) {
+                const transform = schema.transforms[attribute.name.name]
+                if (transform) {
+                  const transformedValue = transform(
+                    attribute.value.value,
+                    theme
                   )
-                element.node.leadingComments = []
-                element.replaceWith(
-                  t.arrayExpression([identifier, objectExpression])
-                )
+                  if (Array.isArray(transformedValue)) {
+                    const [key, value] = transformedValue
+                    attribute.name.name = key
+                    attribute.value.value = value
+                  } else {
+                    attribute.value.value = transformedValue
+                  }
+                }
+                styleAttributes.push(attribute)
               } else {
-                const openingElement = element.get('openingElement')
-                const name = openingElement.node.name.name
-                const objectValues =
-                  openingElement.node.attributes.map(convertAttribute)
-                element.replaceWith(
-                  t.arrayExpression([
-                    name[0] === name[0].toUpperCase()
-                      ? t.identifier(name)
-                      : t.stringLiteral(name),
-                    t.objectExpression(objectValues),
-                  ])
-                )
+                attributes.push(attribute)
               }
             })
+
+            if (styleAttributes.length > 0) {
+              attributes.push(
+                t.jsxAttribute(
+                  t.jsxIdentifier('css'),
+                  t.jsxExpressionContainer(
+                    t.objectExpression([
+                      ...defaultAttributes,
+                      ...styleAttributes.map((attribute) =>
+                        t.objectProperty(
+                          t.identifier(attribute.name.name),
+                          attribute.value
+                        )
+                      ),
+                    ])
+                  )
+                )
+              )
+            }
+
+            path.node.openingElement.attributes = attributes
           }
-        }
+        })
+
+        // if (path.node.name.name === 'Graphic') {
+        //   transformGraphic(path)
+        // }
+
+        // add component source information
+        // if (
+        //   path.node.name.name !== 'Fragment' &&
+        //   path.node.name.property?.name !== 'Fragment'
+        // ) {
+        //   const location = path.container.openingElement.loc
+        //   if (!state.fileNameIdentifier) {
+        //     const fileName = state.filename || ''
+        //     const fileNameIdentifier =
+        //       path.scope.generateUidIdentifier(FILE_NAME_ID)
+        //     const scope = path.hub.getScope()
+        //     if (scope) {
+        //       scope.push({
+        //         id: fileNameIdentifier,
+        //         init: t.stringLiteral(fileName),
+        //       })
+        //     }
+        //     state.fileNameIdentifier = fileNameIdentifier
+        //   }
+
+        //   const trace = makeTrace(
+        //     state.fileNameIdentifier,
+        //     location.start.line,
+        //     location.start.column
+        //   )
+
+        //   path.node.attributes.push(
+        //     t.jsxAttribute(
+        //       t.jsxIdentifier(TRACE_ID),
+        //       t.jsxExpressionContainer(trace)
+        //     )
+        //   )
+        // }
+
+        // if (path.node.name.name === 'Overrides') {
+        //   const [valuePath] = path.get('attributes')
+        //   const expressionPath = valuePath.get('value').get('expression')
+        //   const expressionName = expressionPath.node.name
+        //   const binding = expressionPath.scope.getBinding(expressionName)
+        //   let arrayExpression
+        //   if (binding) {
+        //     if (!this.cache.has(expressionName)) {
+        //       arrayExpression = binding.path.get('init')
+        //       this.cache.add(expressionName)
+        //     }
+        //   } else {
+        //     arrayExpression = expressionPath
+        //   }
+        //   if (arrayExpression) {
+        //     arrayExpression.get('elements').forEach((element) => {
+        //       // handle already transpiled JSX
+        //       if (element.node.type === 'CallExpression') {
+        //         const [identifier, objectExpression] = element.node.arguments
+        //         // filter out TRACE_ID if it was applied to any Overrides
+        //         objectExpression.properties =
+        //           objectExpression.properties.filter(
+        //             (property) => property.key.name !== TRACE_ID
+        //           )
+        //         element.node.leadingComments = []
+        //         element.replaceWith(
+        //           t.arrayExpression([identifier, objectExpression])
+        //         )
+        //       } else {
+        //         const openingElement = element.get('openingElement')
+        //         const name = openingElement.node.name.name
+        //         const objectValues =
+        //           openingElement.node.attributes.map(convertAttribute)
+        //         element.replaceWith(
+        //           t.arrayExpression([
+        //             name[0] === name[0].toUpperCase()
+        //               ? t.identifier(name)
+        //               : t.stringLiteral(name),
+        //             t.objectExpression(objectValues),
+        //           ])
+        //         )
+        //       }
+        //     })
+        //   }
+        // }
       },
     },
   }
