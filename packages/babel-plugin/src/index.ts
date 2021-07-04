@@ -63,36 +63,6 @@ function convertAttribute(node) {
   return t.inherits(t.objectProperty(node.name, value), node)
 }
 
-const Schemas = [
-  {
-    name: 'Text',
-    as: 'span',
-    style: {
-      // color: null, // takes any value
-      color: ['primary', 'secondary'],
-    },
-  },
-  {
-    name: 'Stack',
-    as: 'div',
-    props: {
-      axis: ['x', 'y'],
-      width: null,
-      spaceYStart: null,
-      spaceYEnd: null,
-    },
-    defaults: {
-      display: 'flex',
-    },
-    transforms: {
-      axis: (value) => ['flexDirection', value === 'x' ? 'row' : 'column'],
-      width: (value, theme) => theme.spacings[value] ?? value,
-      spaceYStart: (value) => ['paddingTop', value],
-      spaceYEnd: (value) => ['paddingBottom', value],
-    },
-  },
-]
-
 export default function () {
   return {
     name: '@jsxui/babel-plugin',
@@ -102,19 +72,19 @@ export default function () {
     },
     visitor: {
       JSXElement(path, state) {
-        const { theme } = state.opts
+        const { components, theme } = state.opts
 
-        Schemas.forEach((schema) => {
-          if (path.node.openingElement.name.name === schema.name) {
-            path.node.openingElement.name.name = schema.as
-            path.node.closingElement.name.name = schema.as
+        components.forEach((component) => {
+          if (path.node.openingElement.name.name === component.name) {
+            path.node.openingElement.name.name = component.as
+            path.node.closingElement.name.name = component.as
 
             const attributes = []
             const styleAttributes = []
             const defaultAttributes = []
 
-            if (schema.defaults) {
-              Object.entries(schema.defaults).forEach(([key, value]) => {
+            if (component.defaults) {
+              Object.entries(component.defaults).forEach(([key, value]) => {
                 defaultAttributes.push(
                   t.objectProperty(
                     t.identifier(key),
@@ -122,16 +92,18 @@ export default function () {
                       ? t.booleanLiteral(value)
                       : typeof value === 'number'
                       ? t.numericLiteral(value)
-                      : t.stringLiteral(value)
+                      : typeof value === 'string'
+                      ? t.stringLiteral(value)
+                      : null
                   )
                 )
               })
             }
 
             path.node.openingElement.attributes.forEach((attribute) => {
-              const styleProp = schema.props[attribute.name.name]
+              const styleProp = component.props[attribute.name.name]
               if (styleProp !== undefined) {
-                const transform = schema.transforms[attribute.name.name]
+                const transform = component.transforms[attribute.name.name]
                 if (transform) {
                   const transformedValue = transform(
                     attribute.value.value,

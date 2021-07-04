@@ -8,7 +8,7 @@ export default function App() {
       spaceYStart="40px"
       spaceYEnd="80px"
     >
-      <Text>Hello World</Text>
+      <Text color="primary">Hello World</Text>
     </Stack>
   )
 }

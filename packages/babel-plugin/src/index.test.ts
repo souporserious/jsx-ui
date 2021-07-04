@@ -27,10 +27,43 @@ const theme = {
   },
 }
 
+const components = [
+  {
+    name: 'Text',
+    as: 'span',
+    props: {
+      color: ['primary', 'secondary'],
+    },
+    transforms: {
+      color: (value, theme) => theme.colors[value],
+    },
+  },
+  {
+    name: 'Stack',
+    as: 'div',
+    props: {
+      axis: ['x', 'y'],
+      width: null,
+      spaceYStart: null,
+      spaceYEnd: null,
+    },
+    defaults: {
+      display: 'flex',
+    },
+    transforms: {
+      axis: (value) => ['flexDirection', value === 'x' ? 'row' : 'column'],
+      width: (value, theme) => theme.spacings[value] ?? value,
+      spaceYStart: (value) => ['paddingTop', value],
+      spaceYEnd: (value) => ['paddingBottom', value],
+    },
+  },
+]
+
 pluginTester({
   plugin,
   pluginName: '@jsxui/babel-plugin',
   pluginOptions: {
+    components,
     theme,
   },
   filename: __filename,

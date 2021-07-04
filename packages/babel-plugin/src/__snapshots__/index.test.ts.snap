@@ -12,7 +12,7 @@ export default function App() {
       spaceYStart="40px"
       spaceYEnd="80px"
     >
-      <Text>Hello World</Text>
+      <Text color="primary">Hello World</Text>
     </Stack>
   )
 }
@@ -31,7 +31,13 @@ export default function App() {
         paddingBottom: '80px',
       }}
     >
-      <span>Hello World</span>
+      <span
+        css={{
+          color: 'purple',
+        }}
+      >
+        Hello World
+      </span>
     </div>
   )
 }
