@@ -1,3 +1,4 @@
+import { NodePath, PluginObj, PluginPass } from '@babel/core'
 import * as t from '@babel/types'
 import jsx from '@babel/plugin-syntax-jsx'
 
@@ -63,14 +64,53 @@ function convertAttribute(node) {
   return t.inherits(t.objectProperty(node.name, value), node)
 }
 
-export default function () {
+type PluginOptions = {
+  opts: {
+    components: {
+      /** The name of the component. */
+      name: string
+
+      /** What element should this component render as. */
+      as: string
+
+      /** What library should this component be imported from. */
+      import?: string
+
+      /** What default styles should be applied before merging style props. */
+      defaults?: any
+
+      /** Style props to process. */
+      props?: any
+
+      /** Transforms to be ran for specific props. */
+      transforms?: any
+    }[]
+    theme: any
+  }
+} & PluginPass
+
+export default function (): PluginObj<PluginOptions> {
+  const cache = new Set()
+  const importDeclarations = new Map()
   return {
     name: '@jsxui/babel-plugin',
     inherits: jsx,
-    pre() {
-      this.cache = new Set()
-    },
     visitor: {
+      Program: {
+        exit(path, state) {
+          if (importDeclarations.size > 0) {
+            console.log(importDeclarations.entries())
+            // Determine if import exists
+            // path.travers({
+            //   ImportDeclaration(path, state): {
+            //     //
+            //   }
+            // })
+            // Add import if it didn't exist
+            // this.importDeclarations.forEach(declaration => )
+          }
+        },
+      },
       JSXElement(path, state) {
         const { components, theme } = state.opts
 
@@ -82,6 +122,10 @@ export default function () {
             const attributes = []
             const styleAttributes = []
             const defaultAttributes = []
+
+            if (component.import) {
+              importDeclarations.set(component.import, component.name)
+            }
 
             if (component.defaults) {
               Object.entries(component.defaults).forEach(([key, value]) => {

@@ -27,10 +27,13 @@ const theme = {
   },
 }
 
+const native = true
+
 const components = [
   {
     name: 'Text',
-    as: 'span',
+    as: native ? 'Text' : 'span', //
+    import: native ? 'react-native' : null, // adds import { Text } from 'react-native'
     props: {
       color: ['primary', 'secondary'],
     },

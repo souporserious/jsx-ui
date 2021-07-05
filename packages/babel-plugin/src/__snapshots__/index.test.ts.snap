@@ -31,13 +31,13 @@ export default function App() {
         paddingBottom: '80px',
       }}
     >
-      <span
+      <Text
         css={{
           color: 'purple',
         }}
       >
         Hello World
-      </span>
+      </Text>
     </div>
   )
 }
