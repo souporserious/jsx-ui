@@ -32,8 +32,8 @@ const native = true
 const components = [
   {
     name: 'Text',
-    as: native ? 'Text' : 'span', //
-    import: native ? 'react-native' : null, // adds import { Text } from 'react-native'
+    as: native ? 'Text' : 'span',
+    source: native ? 'react-native' : null,
     props: {
       color: ['primary', 'secondary'],
     },
@@ -43,7 +43,8 @@ const components = [
   },
   {
     name: 'Stack',
-    as: 'div',
+    as: native ? 'View' : 'div',
+    source: native ? 'react-native' : null,
     props: {
       axis: ['x', 'y'],
       width: null,

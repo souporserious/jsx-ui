@@ -74,7 +74,7 @@ type PluginOptions = {
       as: string
 
       /** What library should this component be imported from. */
-      import?: string
+      source?: string
 
       /** What default styles should be applied before merging style props. */
       defaults?: any
@@ -91,23 +91,52 @@ type PluginOptions = {
 
 export default function (): PluginObj<PluginOptions> {
   const cache = new Set()
-  const importDeclarations = new Map()
+  const importDeclarations = []
   return {
     name: '@jsxui/babel-plugin',
     inherits: jsx,
     visitor: {
       Program: {
-        exit(path, state) {
-          if (importDeclarations.size > 0) {
-            console.log(importDeclarations.entries())
-            // Determine if import exists
-            // path.travers({
-            //   ImportDeclaration(path, state): {
-            //     //
-            //   }
-            // })
-            // Add import if it didn't exist
-            // this.importDeclarations.forEach(declaration => )
+        exit(path) {
+          let importEntries = Object.entries(importDeclarations)
+          if (importEntries.length > 0) {
+            path.traverse({
+              ImportDeclaration(path) {
+                const componentImports =
+                  importDeclarations[path.node.source.value]
+                if (componentImports) {
+                  // Filter out from imports since we don't need to add the source
+                  importEntries = importEntries.filter(
+                    ([key]) => key === path.node.source.value
+                  )
+
+                  // Loop through component imports and add them
+                  componentImports.forEach((componentName) => {
+                    path.node.specifiers.push(
+                      t.importSpecifier(
+                        t.identifier(componentName),
+                        t.stringLiteral(componentName)
+                      )
+                    )
+                  })
+                }
+              },
+            })
+
+            if (importEntries.length > 0) {
+              importEntries.forEach(([source, componentImports]) => {
+                const importDeclaration = t.importDeclaration(
+                  componentImports.map((componentName) =>
+                    t.importSpecifier(
+                      t.identifier(componentName),
+                      t.identifier(componentName)
+                    )
+                  ),
+                  t.stringLiteral(source)
+                )
+                path.unshiftContainer('body', importDeclaration)
+              })
+            }
           }
         },
       },
@@ -123,8 +152,11 @@ export default function (): PluginObj<PluginOptions> {
             const styleAttributes = []
             const defaultAttributes = []
 
-            if (component.import) {
-              importDeclarations.set(component.import, component.name)
+            if (component.source) {
+              if (importDeclarations[component.source] === undefined) {
+                importDeclarations[component.source] = []
+              }
+              importDeclarations[component.source].push(component.as)
             }
 
             if (component.defaults) {

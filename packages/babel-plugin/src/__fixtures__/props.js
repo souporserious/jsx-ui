@@ -1,5 +1,3 @@
-import { Stack, Text } from '@jsxui/react'
-
 export default function App() {
   return (
     <Stack

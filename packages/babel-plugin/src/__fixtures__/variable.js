@@ -1,4 +1,4 @@
-import { Overrides, Text } from '@jsxui/react'
+import { Overrides } from '@jsxui/react'
 
 const overrides = [
   <Text color="tomato" variants={{ hover: { color: 'papayawhip' } }} />,
