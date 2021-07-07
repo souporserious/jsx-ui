@@ -1,5 +1,6 @@
 import pluginTester from 'babel-plugin-tester'
 import * as t from '@babel/types'
+import template from '@babel/template'
 
 import plugin from './index'
 
@@ -64,7 +65,7 @@ const components = [
   },
 ]
 
-const visitor = {
+const webVisitor = {
   JSXOpeningElement(path) {
     const id = path.node.attributes.find(
       (attribute) => attribute.name.name === 'uid'
@@ -81,13 +82,52 @@ const visitor = {
   },
 }
 
+const buildStylesheet = template(`
+const styles = StyleSheet.create(STYLES)
+`)
+
+const nativeVistitor = {
+  Program(path) {
+    path.pushContainer(
+      'body',
+      buildStylesheet({
+        STYLES: t.objectExpression(
+          Object.entries(this.styleAttributes).map(([id, attributes]) =>
+            t.objectProperty(t.identifier(id), t.objectExpression(attributes))
+          )
+        ),
+      })
+    )
+  },
+  JSXOpeningElement(path) {
+    const uid = path.node.attributes.find(
+      (attribute) => attribute.name.name === 'uid'
+    )
+    const attributes = path.node.attributes.filter(
+      (attribute) => attribute.name.name !== 'uid'
+    )
+    path.node.attributes = [
+      ...attributes,
+      t.jsxAttribute(
+        t.jsxIdentifier('style'),
+        t.jSXExpressionContainer(
+          t.memberExpression(
+            t.identifier('styles'),
+            t.identifier(uid.value.value)
+          )
+        )
+      ),
+    ]
+  },
+}
+
 pluginTester({
   plugin,
   pluginName: '@jsxui/babel-plugin',
   pluginOptions: {
     components,
     theme,
-    visitor,
+    visitor: native ? nativeVistitor : webVisitor,
   },
   filename: __filename,
   snapshot: true,

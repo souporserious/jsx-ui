@@ -6,7 +6,8 @@ export default function App() {
       spaceYStart="40px"
       spaceYEnd="80px"
     >
-      <Text color="primary">Hello World</Text>
+      <Text color="primary">Hello</Text>
+      <Text color="secondary">World</Text>
     </Stack>
   )
 }

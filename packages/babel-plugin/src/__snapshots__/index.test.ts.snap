@@ -10,37 +10,38 @@ export default function App() {
       spaceYStart="40px"
       spaceYEnd="80px"
     >
-      <Text color="primary">Hello World</Text>
+      <Text color="primary">Hello</Text>
+      <Text color="secondary">World</Text>
     </Stack>
   )
 }
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { View, Text } from 'react-native'
+import { View, Text, Text } from 'react-native'
 export default function App() {
   return (
-    <View
-      uid="_Stack"
-      css={{
-        display: 'flex',
-        flexDirection: 'row',
-        width: 'minmax(100%, 1440px)',
-        paddingTop: '40px',
-        paddingBottom: '80px',
-      }}
-    >
-      <Text
-        uid="_Text"
-        css={{
-          color: 'purple',
-        }}
-      >
-        Hello World
-      </Text>
+    <View style={styles._Stack}>
+      <Text style={styles._Text}>Hello</Text>
+      <Text style={styles._Text2}>World</Text>
     </View>
   )
 }
+const styles = StyleSheet.create({
+  _Stack: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: 'minmax(100%, 1440px)',
+    paddingTop: '40px',
+    paddingBottom: '80px',
+  },
+  _Text: {
+    color: 'purple',
+  },
+  _Text2: {
+    color: 'grey',
+  },
+})
 
 
 `;

@@ -90,6 +90,23 @@ export default function (): PluginObj<PluginOptions> {
             }
           }
 
+          if (visitor.Program) {
+            if (visitor.Program) {
+              const state = { styleAttributes }
+              visitor.Program.call(state, path, state)
+            }
+            if (visitor.Program.enter) {
+              throw Error(
+                'Program.enter does not exist in this visitor pattern.'
+              )
+            }
+            if (visitor.Program.exit) {
+              throw Error(
+                'Program.exit does not exist in this visitor pattern.'
+              )
+            }
+          }
+
           path.traverse(visitor, { styleAttributes })
         },
       },
