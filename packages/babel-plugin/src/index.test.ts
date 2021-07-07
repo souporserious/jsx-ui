@@ -97,6 +97,16 @@ const nativeVistitor = {
       })
     )
   },
+  ImportDeclaration(path) {
+    if (path.node.source.value === 'react-native') {
+      path.node.specifiers.push(
+        t.importSpecifier(
+          t.identifier('StyleSheet'),
+          t.identifier('StyleSheet')
+        )
+      )
+    }
+  },
   JSXOpeningElement(path) {
     const id = this.getElementId(path)
     path.node.attributes.push(
