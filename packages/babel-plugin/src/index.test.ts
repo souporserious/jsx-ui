@@ -67,10 +67,8 @@ const components = [
 
 const webVisitor = {
   JSXOpeningElement(path) {
-    const id = path.node.attributes.find(
-      (attribute) => attribute.name.name === 'uid'
-    )
-    const styleAttributes = id ? this.styleAttributes[id.value.value] : null
+    const id = this.getElementId(path)
+    const styleAttributes = this.styleAttributes[id]
     if (styleAttributes) {
       path.node.attributes.push(
         t.jsxAttribute(
@@ -100,24 +98,15 @@ const nativeVistitor = {
     )
   },
   JSXOpeningElement(path) {
-    const uid = path.node.attributes.find(
-      (attribute) => attribute.name.name === 'uid'
-    )
-    const attributes = path.node.attributes.filter(
-      (attribute) => attribute.name.name !== 'uid'
-    )
-    path.node.attributes = [
-      ...attributes,
+    const id = this.getElementId(path)
+    path.node.attributes.push(
       t.jsxAttribute(
         t.jsxIdentifier('style'),
-        t.jSXExpressionContainer(
-          t.memberExpression(
-            t.identifier('styles'),
-            t.identifier(uid.value.value)
-          )
+        t.jsxExpressionContainer(
+          t.memberExpression(t.identifier('styles'), t.identifier(id))
         )
-      ),
-    ]
+      )
+    )
   },
 }
 

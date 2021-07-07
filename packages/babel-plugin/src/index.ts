@@ -91,8 +91,8 @@ export default function (): PluginObj<PluginOptions> {
           }
 
           if (visitor.Program) {
+            const state = { styleAttributes }
             if (visitor.Program) {
-              const state = { styleAttributes }
               visitor.Program.call(state, path, state)
             }
             if (visitor.Program.enter) {
@@ -107,7 +107,25 @@ export default function (): PluginObj<PluginOptions> {
             }
           }
 
-          path.traverse(visitor, { styleAttributes })
+          path.traverse(visitor, {
+            // TODO: better name for this helper, is it too vague?
+            getElementId: (path) => {
+              const attribute = path.node.attributes.find(
+                (attribute) => attribute.name.name === '__jsxuiId'
+              )
+              return attribute ? attribute.value.value : null
+            },
+            styleAttributes,
+          })
+
+          // TODO: merge with above visitor for less traversals
+          path.traverse({
+            JSXOpeningElement(path) {
+              path.node.attributes = path.node.attributes.filter(
+                (attribute) => attribute.name.name !== '__jsxuiId'
+              )
+            },
+          })
         },
       },
       JSXElement(path, state) {
@@ -126,9 +144,15 @@ export default function (): PluginObj<PluginOptions> {
           const defaultAttributes = []
           const localStyleAttributes = []
 
-          /** We add a uid to track which style props belong to what instance */
+          /**
+           * We add a uid to track which style props belong to what instance
+           * There's probably a better way to do this.
+           */
           attributes.push(
-            t.jsxAttribute(t.jsxIdentifier('uid'), t.stringLiteral(id.name))
+            t.jsxAttribute(
+              t.jsxIdentifier('__jsxuiId'),
+              t.stringLiteral(id.name)
+            )
           )
 
           if (component.source) {
