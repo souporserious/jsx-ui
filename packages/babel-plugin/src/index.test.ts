@@ -1,4 +1,5 @@
 import pluginTester from 'babel-plugin-tester'
+import * as t from '@babel/types'
 
 import plugin from './index'
 
@@ -63,12 +64,30 @@ const components = [
   },
 ]
 
+const visitor = {
+  JSXOpeningElement(path) {
+    const id = path.node.attributes.find(
+      (attribute) => attribute.name.name === 'uid'
+    )
+    const styleAttributes = id ? this.styleAttributes[id.value.value] : null
+    if (styleAttributes) {
+      path.node.attributes.push(
+        t.jsxAttribute(
+          t.jsxIdentifier('css'),
+          t.jsxExpressionContainer(t.objectExpression(styleAttributes))
+        )
+      )
+    }
+  },
+}
+
 pluginTester({
   plugin,
   pluginName: '@jsxui/babel-plugin',
   pluginOptions: {
     components,
     theme,
+    visitor,
   },
   filename: __filename,
   snapshot: true,

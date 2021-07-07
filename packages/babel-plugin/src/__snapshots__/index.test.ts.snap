@@ -21,6 +21,7 @@ import { View, Text } from 'react-native'
 export default function App() {
   return (
     <View
+      uid="_Stack"
       css={{
         display: 'flex',
         flexDirection: 'row',
@@ -30,6 +31,7 @@ export default function App() {
       }}
     >
       <Text
+        uid="_Text"
         css={{
           color: 'purple',
         }}
