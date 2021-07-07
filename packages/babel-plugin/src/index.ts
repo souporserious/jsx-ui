@@ -132,10 +132,13 @@ export default function (): PluginObj<PluginOptions> {
           )
 
           if (component.source) {
-            if (importDeclarations[component.source] === undefined) {
+            const importDeclaration = importDeclarations[component.source]
+            if (importDeclaration === undefined) {
               importDeclarations[component.source] = []
             }
-            importDeclarations[component.source].push(component.as)
+            if (!importDeclaration?.includes(component.as)) {
+              importDeclarations[component.source].push(component.as)
+            }
           }
 
           if (component.defaults) {
