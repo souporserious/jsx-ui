@@ -3,12 +3,13 @@
 exports[`@jsxui/babel-plugin 1. @jsxui/babel-plugin: 1. @jsxui/babel-plugin 1`] = `
 
 export default function App() {
+  const x = 'x'
   return (
     <Stack
-      axis="x"
+      axis={x}
       width="minmax(100%, 1440px)"
       spaceYStart="40px"
-      spaceYEnd="80px"
+      spaceYEnd={80}
     >
       <Text color="primary">Hello</Text>
       <Text color="secondary">World</Text>
@@ -18,30 +19,35 @@ export default function App() {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { View, Text, StyleSheet } from 'react-native'
 export default function App() {
+  const x = 'x'
   return (
-    <View style={styles._Stack}>
-      <Text style={styles._Text}>Hello</Text>
-      <Text style={styles._Text2}>World</Text>
-    </View>
+    <div
+      css={{
+        display: 'flex',
+        flexDirection: x,
+        width: 'minmax(100%, 1440px)',
+        paddingTop: '40px',
+        paddingBottom: 80,
+      }}
+    >
+      <span
+        css={{
+          color: 'purple',
+        }}
+      >
+        Hello
+      </span>
+      <span
+        css={{
+          color: 'grey',
+        }}
+      >
+        World
+      </span>
+    </div>
   )
 }
-const styles = StyleSheet.create({
-  _Stack: {
-    display: 'flex',
-    flexDirection: 'row',
-    width: 'minmax(100%, 1440px)',
-    paddingTop: '40px',
-    paddingBottom: '80px',
-  },
-  _Text: {
-    color: 'purple',
-  },
-  _Text2: {
-    color: 'grey',
-  },
-})
 
 
 `;

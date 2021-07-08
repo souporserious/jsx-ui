@@ -208,7 +208,9 @@ export default function (): PluginObj<PluginOptions> {
               ...localStyleAttributes.map((attribute) =>
                 t.objectProperty(
                   t.identifier(attribute.name.name),
-                  attribute.value
+                  attribute.value.type === 'JSXExpressionContainer'
+                    ? attribute.value.expression
+                    : attribute.value
                 )
               ),
             ]

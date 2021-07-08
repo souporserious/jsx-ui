@@ -29,7 +29,7 @@ const theme = {
   },
 }
 
-const native = true
+const native = false
 
 const components = [
   {
