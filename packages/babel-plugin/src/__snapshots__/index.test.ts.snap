@@ -3,16 +3,15 @@
 exports[`@jsxui/babel-plugin 1. @jsxui/babel-plugin: 1. @jsxui/babel-plugin 1`] = `
 
 export default function App() {
-  const x = 'x'
   return (
     <Stack
-      axis={x}
-      width="minmax(100%, 1440px)"
+      axis="x"
+      width="1fr"
+      // spaceX={{ 'breakpoints.large': '1fr' }}
       spaceYStart="40px"
-      spaceYEnd={80}
+      spaceYEnd="80px"
     >
-      <Text color="primary">Hello</Text>
-      <Text color="secondary">World</Text>
+      <Text>Hello World</Text>
     </Stack>
   )
 }
@@ -20,31 +19,17 @@ export default function App() {
       ↓ ↓ ↓ ↓ ↓ ↓
 
 export default function App() {
-  const x = 'x'
   return (
     <div
       css={{
         display: 'flex',
-        flexDirection: x,
-        width: 'minmax(100%, 1440px)',
+        flexDirection: 'row',
+        flex: '1',
         paddingTop: '40px',
-        paddingBottom: 80,
+        paddingBottom: '80px',
       }}
     >
-      <span
-        css={{
-          color: 'purple',
-        }}
-      >
-        Hello
-      </span>
-      <span
-        css={{
-          color: 'grey',
-        }}
-      >
-        World
-      </span>
+      <span>Hello World</span>
     </div>
   )
 }

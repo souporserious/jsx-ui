@@ -28,6 +28,9 @@ type PluginOptions = {
       transforms?: any
     }[]
 
+    /** The threshold for layouts across specific screen sizes. */
+    breakpoints: any
+
     /** Common values reused throughout your components. */
     theme: any
 
@@ -35,6 +38,34 @@ type PluginOptions = {
     visitor: any
   }
 } & PluginPass
+
+// compiler breakpoints and variants
+// <Breakpoints>
+// </Breakpoints>
+
+function getValueType(value) {
+  return typeof value === 'boolean'
+    ? t.booleanLiteral(value)
+    : typeof value === 'number'
+    ? t.numericLiteral(value)
+    : typeof value === 'string'
+    ? t.stringLiteral(value)
+    : null
+}
+
+function getAttributeValue(attribute) {
+  const valuePath = attribute.get('value')
+  // const { confident, value } =
+  //   valuePath.node.type === 'JSXExpressionContainer'
+  //     ? valuePath.get('expression').evaluate()
+  //     : valuePath.evaluate()
+  // if (confident) {
+  //   return value
+  // }
+  return valuePath.node.type === 'JSXExpressionContainer'
+    ? valuePath.node.expression
+    : valuePath.node.value
+}
 
 export default function (): PluginObj<PluginOptions> {
   const cache = new Set()
@@ -168,35 +199,41 @@ export default function (): PluginObj<PluginOptions> {
           if (component.defaults) {
             Object.entries(component.defaults).forEach(([key, value]) => {
               defaultAttributes.push(
-                t.objectProperty(
-                  t.identifier(key),
-                  typeof value === 'boolean'
-                    ? t.booleanLiteral(value)
-                    : typeof value === 'number'
-                    ? t.numericLiteral(value)
-                    : typeof value === 'string'
-                    ? t.stringLiteral(value)
-                    : null
-                )
+                t.objectProperty(t.identifier(key), getValueType(value))
               )
             })
           }
 
           path.node.openingElement.attributes.forEach((attribute) => {
-            const styleProp = component.props[attribute.name.name]
-            if (styleProp !== undefined) {
-              const transform = component.transforms[attribute.name.name]
-              if (transform) {
-                const transformedValue = transform(attribute.value.value, theme)
-                if (Array.isArray(transformedValue)) {
-                  const [key, value] = transformedValue
-                  attribute.name.name = key
-                  attribute.value.value = value
-                } else {
-                  attribute.value.value = transformedValue
-                }
+            const transform = component.transforms[attribute.name.name]
+
+            /**
+             * Create an object property to make it easier when writing visitors.
+             * Alternatively we can store this as an actual object and let users
+             * compose them however (e.g. writing to template literals).
+             */
+            if (transform !== undefined) {
+              const transformedValue = transform(attribute.value.value, theme)
+
+              // TODO: how to handle if prop value itself is an object?
+              // Can we use types to determine or should we only support simple
+              // primitive values string/number
+              if (typeof transformedValue === 'object') {
+                // console.log(transformedValue)
+                Object.entries(transformedValue).forEach(([key, value]) => {
+                  // console.log(value, getValueType(value))
+                  localStyleAttributes.push(
+                    t.objectProperty(t.identifier(key), getValueType(value))
+                  )
+                })
+              } else {
+                localStyleAttributes.push(
+                  t.objectProperty(
+                    t.identifier(attribute.name.name),
+                    getValueType(transformedValue)
+                  )
+                )
               }
-              localStyleAttributes.push(attribute)
             } else {
               attributes.push(attribute)
             }
@@ -205,14 +242,7 @@ export default function (): PluginObj<PluginOptions> {
           if (localStyleAttributes.length > 0) {
             styleAttributes[id.name] = [
               ...defaultAttributes,
-              ...localStyleAttributes.map((attribute) =>
-                t.objectProperty(
-                  t.identifier(attribute.name.name),
-                  attribute.value.type === 'JSXExpressionContainer'
-                    ? attribute.value.expression
-                    : attribute.value
-                )
-              ),
+              ...localStyleAttributes,
             ]
           }
 

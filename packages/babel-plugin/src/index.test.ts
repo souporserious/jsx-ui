@@ -1,8 +1,15 @@
 import pluginTester from 'babel-plugin-tester'
 import * as t from '@babel/types'
 import template from '@babel/template'
+import get from 'dlv'
 
 import plugin from './index'
+
+const breakpoints = {
+  small: 600,
+  medium: 960,
+  large: 1200,
+}
 
 const theme = {
   colors: {
@@ -36,9 +43,6 @@ const components = [
     name: 'Text',
     as: native ? 'Text' : 'span',
     source: native ? 'react-native' : null,
-    props: {
-      color: ['primary', 'secondary'],
-    },
     transforms: {
       color: (value, theme) => theme.colors[value],
     },
@@ -47,20 +51,18 @@ const components = [
     name: 'Stack',
     as: native ? 'View' : 'div',
     source: native ? 'react-native' : null,
-    props: {
-      axis: ['x', 'y'],
-      width: null,
-      spaceYStart: null,
-      spaceYEnd: null,
-    },
     defaults: {
       display: 'flex',
     },
     transforms: {
-      axis: (value) => ['flexDirection', value === 'x' ? 'row' : 'column'],
-      width: (value, theme) => theme.spacings[value] ?? value,
-      spaceYStart: (value) => ['paddingTop', value],
-      spaceYEnd: (value) => ['paddingBottom', value],
+      axis: (value) => ({ flexDirection: value === 'x' ? 'row' : 'column' }),
+      width: (value, theme) =>
+        value.includes('fr')
+          ? { flex: value.slice(0, -2) }
+          : get(theme.spacings, value) ?? value,
+      spaceX: (value) => ({ paddingLeft: value, paddingRight: value }),
+      spaceYStart: (value) => ({ paddingTop: value }),
+      spaceYEnd: (value) => ({ paddingBottom: value }),
     },
   },
 ]
@@ -126,12 +128,14 @@ pluginTester({
   pluginOptions: {
     components,
     theme,
+    breakpoints,
     visitor: native ? nativeVistitor : webVisitor,
   },
   filename: __filename,
   snapshot: true,
   tests: [
-    { fixture: '__fixtures__/props.js' },
+    { fixture: '__fixtures__/variants.js' },
+    // { fixture: '__fixtures__/props.js' },
     // { fixture: '__fixtures__/simple.js' },
     // { fixture: '__fixtures__/variable.js' },
     // { fixture: '__fixtures__/graphic.js' },
