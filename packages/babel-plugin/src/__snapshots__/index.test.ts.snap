@@ -6,8 +6,8 @@ export default function App() {
   return (
     <Stack
       axis="x"
-      width="1fr"
-      // spaceX={{ 'breakpoints.large': '1fr' }}
+      width="container.medium"
+      spaceX={{ 'breakpoints.large': 'xlarge' }}
       spaceYStart="40px"
       spaceYEnd="80px"
     >
@@ -24,9 +24,13 @@ export default function App() {
       css={{
         display: 'flex',
         flexDirection: 'row',
-        flex: '1',
+        width: '960px',
         paddingTop: '40px',
         paddingBottom: '80px',
+        '@media (min-width: 1200px)': {
+          paddingLeft: '60px',
+          paddingRight: '60px',
+        },
       }}
     >
       <span>Hello World</span>

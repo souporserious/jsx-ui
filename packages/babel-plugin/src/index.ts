@@ -1,6 +1,7 @@
 import { NodePath, PluginObj, PluginPass } from '@babel/core'
 import * as t from '@babel/types'
 import jsx from '@babel/plugin-syntax-jsx'
+import get from 'dlv'
 
 import { addSourceProps } from './add-source-props'
 import { transformGraphic } from './graphic'
@@ -174,6 +175,7 @@ export default function (): PluginObj<PluginOptions> {
           const attributes = []
           const defaultAttributes = []
           const localStyleAttributes = []
+          const breakpointAttributes = {}
 
           /**
            * We add a uid to track which style props belong to what instance
@@ -207,42 +209,88 @@ export default function (): PluginObj<PluginOptions> {
           path.node.openingElement.attributes.forEach((attribute) => {
             const transform = component.transforms[attribute.name.name]
 
+            console.log(attribute.name.name)
+
             /**
              * Create an object property to make it easier when writing visitors.
-             * Alternatively we can store this as an actual object and let users
+             * Alternatively, we can store this as an actual object and let users
              * compose them however (e.g. writing to template literals).
              */
             if (transform !== undefined) {
-              const transformedValue = transform(attribute.value.value, theme)
+              // TODO: for now we're only supporting breakpoints
+              // but we need to support expressions like <Stack space={8} />
+              if (attribute.value.type === 'JSXExpressionContainer') {
+                const expression = attribute.value.expression
 
-              // TODO: how to handle if prop value itself is an object?
-              // Can we use types to determine or should we only support simple
-              // primitive values string/number
-              if (typeof transformedValue === 'object') {
-                // console.log(transformedValue)
-                Object.entries(transformedValue).forEach(([key, value]) => {
-                  // console.log(value, getValueType(value))
-                  localStyleAttributes.push(
-                    t.objectProperty(t.identifier(key), getValueType(value))
+                expression.properties.forEach((property) => {
+                  const breakpoint = get(state.opts, property.key.value)
+                  const transformedValue = transform(
+                    property.value.value,
+                    theme
                   )
+
+                  if (breakpointAttributes[breakpoint] === undefined) {
+                    breakpointAttributes[breakpoint] = []
+                  }
+
+                  if (typeof transformedValue === 'object') {
+                    Object.entries(transformedValue).forEach(([key, value]) => {
+                      breakpointAttributes[breakpoint].push(
+                        t.objectProperty(t.identifier(key), getValueType(value))
+                      )
+                    })
+                  } else {
+                    breakpointAttributes[breakpoint].push(
+                      t.objectProperty(
+                        t.identifier(attribute.name.name),
+                        getValueType(transformedValue)
+                      )
+                    )
+                  }
                 })
               } else {
-                localStyleAttributes.push(
-                  t.objectProperty(
-                    t.identifier(attribute.name.name),
-                    getValueType(transformedValue)
+                const transformedValue = transform(attribute.value.value, theme)
+
+                // TODO: how to handle if prop value itself is an object?
+                // Can we use types to determine or should we only support simple
+                // primitive values like string/number?
+                if (typeof transformedValue === 'object') {
+                  Object.entries(transformedValue).forEach(([key, value]) => {
+                    // console.log(value, getValueType(value))
+                    localStyleAttributes.push(
+                      t.objectProperty(t.identifier(key), getValueType(value))
+                    )
+                  })
+                } else {
+                  localStyleAttributes.push(
+                    t.objectProperty(
+                      t.identifier(attribute.name.name),
+                      getValueType(transformedValue)
+                    )
                   )
-                )
+                }
               }
             } else {
               attributes.push(attribute)
             }
           })
 
+          console.log(breakpointAttributes)
+
           if (localStyleAttributes.length > 0) {
             styleAttributes[id.name] = [
               ...defaultAttributes,
               ...localStyleAttributes,
+              ...Object.entries(breakpointAttributes).reduce(
+                (previousValue, [key, properties]) => [
+                  ...previousValue,
+                  t.objectProperty(
+                    t.stringLiteral(key),
+                    t.objectExpression(properties)
+                  ),
+                ],
+                []
+              ),
             ]
           }
 

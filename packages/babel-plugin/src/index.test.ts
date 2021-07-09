@@ -6,9 +6,9 @@ import get from 'dlv'
 import plugin from './index'
 
 const breakpoints = {
-  small: 600,
-  medium: 960,
-  large: 1200,
+  small: '@media (min-width: 600px)',
+  medium: '@media (min-width: 960px)',
+  large: '@media (min-width: 1200px)',
 }
 
 const theme = {
@@ -55,14 +55,33 @@ const components = [
       display: 'flex',
     },
     transforms: {
-      axis: (value) => ({ flexDirection: value === 'x' ? 'row' : 'column' }),
+      axis: (value) => ({
+        flexDirection: value === 'x' ? 'row' : 'column',
+      }),
       width: (value, theme) =>
         value.includes('fr')
           ? { flex: value.slice(0, -2) }
           : get(theme.spacings, value) ?? value,
-      spaceX: (value) => ({ paddingLeft: value, paddingRight: value }),
-      spaceYStart: (value) => ({ paddingTop: value }),
-      spaceYEnd: (value) => ({ paddingBottom: value }),
+      spaceX: (value, theme) => ({
+        paddingLeft: get(theme.spacings, value) ?? value,
+        paddingRight: get(theme.spacings, value) ?? value,
+      }),
+      spaceXStart: (value, theme) => ({
+        paddingLeft: get(theme.spacings, value) ?? value,
+      }),
+      spaceXEnd: (value, theme) => ({
+        paddingRight: get(theme.spacings, value) ?? value,
+      }),
+      spaceY: (value, theme) => ({
+        paddingTop: get(theme.spacings, value) ?? value,
+        paddingBottom: get(theme.spacings, value) ?? value,
+      }),
+      spaceYStart: (value, theme) => ({
+        paddingTop: get(theme.spacings, value) ?? value,
+      }),
+      spaceYEnd: (value, theme) => ({
+        paddingBottom: get(theme.spacings, value) ?? value,
+      }),
     },
   },
 ]
@@ -92,8 +111,11 @@ const nativeVistitor = {
       'body',
       buildStylesheet({
         STYLES: t.objectExpression(
-          Object.entries(this.styleAttributes).map(([id, attributes]) =>
-            t.objectProperty(t.identifier(id), t.objectExpression(attributes))
+          Object.entries(this.styleAttributes).map(([id, styleAttributes]) =>
+            t.objectProperty(
+              t.identifier(id),
+              t.objectExpression(styleAttributes)
+            )
           )
         ),
       })
