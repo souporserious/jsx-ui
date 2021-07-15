@@ -5,6 +5,8 @@ import get from 'dlv'
 
 import plugin from './index'
 
+const activeVisitor: 'figma' | 'native' | 'web' = 'figma'
+
 const breakpoints = {
   small: '@media (min-width: 600px)',
   medium: '@media (min-width: 960px)',
@@ -36,25 +38,48 @@ const theme = {
   },
 }
 
-const native = false
-
 const getValue = (value, key) => {
   return typeof value === 'number' ? value : get(theme[key], value, value)
+}
+
+const textPlatformComponents = {
+  figma: {
+    as: 'Text',
+    source: 'react-figma',
+  },
+  native: {
+    as: 'Text',
+    source: 'react-native',
+  },
+  web: {
+    as: 'span',
+  },
+}
+
+const stackPlatformComponents = {
+  figma: {
+    as: 'View',
+    source: 'react-figma',
+  },
+  native: {
+    as: 'View',
+    source: 'react-native',
+  },
+  web: {
+    as: 'div',
+  },
 }
 
 const components = [
   {
     name: 'Text',
-    as: native ? 'Text' : 'span',
-    source: native ? 'react-native' : null,
     transforms: {
       color: (value, theme) => theme.colors[value],
     },
+    ...textPlatformComponents[activeVisitor],
   },
   {
     name: 'Stack',
-    as: native ? 'View' : 'div',
-    source: native ? 'react-native' : null,
     defaults: {
       display: 'flex',
     },
@@ -87,6 +112,7 @@ const components = [
         paddingBottom: getValue(value, 'spacings'),
       }),
     },
+    ...stackPlatformComponents[activeVisitor],
   },
 ]
 
@@ -105,11 +131,26 @@ const webVisitor = {
   },
 }
 
+const figmaVisitor = {
+  JSXOpeningElement(path) {
+    const id = this.getElementId(path)
+    const styleAttributes = this.styleAttributes[id]
+    if (styleAttributes) {
+      path.node.attributes.push(
+        t.jsxAttribute(
+          t.jsxIdentifier('style'),
+          t.jsxExpressionContainer(t.objectExpression(styleAttributes))
+        )
+      )
+    }
+  },
+}
+
 const buildStylesheet = template(`
 const styles = StyleSheet.create(STYLES)
 `)
 
-const nativeVistitor = {
+const nativeVisitor = {
   Program(path) {
     path.pushContainer(
       'body',
@@ -148,6 +189,12 @@ const nativeVistitor = {
   },
 }
 
+const visitors = {
+  figma: figmaVisitor,
+  native: nativeVisitor,
+  web: webVisitor,
+}
+
 pluginTester({
   plugin,
   pluginName: '@jsxui/babel-plugin',
@@ -155,7 +202,7 @@ pluginTester({
     components,
     theme,
     breakpoints,
-    visitor: native ? nativeVistitor : webVisitor,
+    visitor: visitors[activeVisitor],
   },
   filename: __filename,
   snapshot: true,

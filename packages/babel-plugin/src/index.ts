@@ -221,73 +221,91 @@ export default function (): PluginObj<PluginOptions> {
               if (attribute.value.type === 'JSXExpressionContainer') {
                 const expression = attribute.value.expression
 
-                expression.properties.forEach((property) => {
-                  if (property.key.name === 'initial') {
-                    const transformedValue = transform(
-                      property.value.value,
-                      theme
-                    )
-
-                    if (typeof transformedValue === 'object') {
-                      Object.entries(transformedValue).forEach(
-                        ([key, value]) => {
-                          localStyleAttributes.push(
-                            t.objectProperty(
-                              t.identifier(key),
-                              getValueType(value)
-                            )
-                          )
-                        }
+                // <Stack axis={{ initial: 'x', 'breakpoints.medium': 'y' }} />
+                if (expression.type === 'ObjectExpression') {
+                  expression.properties.forEach((property) => {
+                    if (property.key.name === 'initial') {
+                      const transformedValue = transform(
+                        property.value.value,
+                        theme
                       )
+                      if (typeof transformedValue === 'object') {
+                        Object.entries(transformedValue).forEach(
+                          ([key, value]) => {
+                            localStyleAttributes.push(
+                              t.objectProperty(
+                                t.identifier(key),
+                                getValueType(value)
+                              )
+                            )
+                          }
+                        )
+                      } else {
+                        localStyleAttributes.push(
+                          t.objectProperty(
+                            t.identifier(property.key.name),
+                            getValueType(transformedValue)
+                          )
+                        )
+                      }
                     } else {
+                      const breakpoint = get(state.opts, property.key.value)
+                      const transformedValue = transform(
+                        property.value.value,
+                        theme
+                      )
+
+                      if (breakpointAttributes[breakpoint] === undefined) {
+                        breakpointAttributes[breakpoint] = []
+                      }
+
+                      if (typeof transformedValue === 'object') {
+                        Object.entries(transformedValue).forEach(
+                          ([key, value]) => {
+                            breakpointAttributes[breakpoint].push(
+                              t.objectProperty(
+                                t.identifier(key),
+                                getValueType(value)
+                              )
+                            )
+                          }
+                        )
+                      } else {
+                        breakpointAttributes[breakpoint].push(
+                          t.objectProperty(
+                            t.identifier(attribute.name.name),
+                            getValueType(transformedValue)
+                          )
+                        )
+                      }
+                    }
+                  })
+                } else {
+                  // <Stack axis={'x'} />
+                  const transformedValue = transform(expression.value, theme)
+                  if (typeof transformedValue === 'object') {
+                    Object.entries(transformedValue).forEach(([key, value]) => {
                       localStyleAttributes.push(
-                        t.objectProperty(
-                          t.identifier(property.key.name),
-                          getValueType(transformedValue)
-                        )
+                        t.objectProperty(t.identifier(key), getValueType(value))
                       )
-                    }
+                    })
                   } else {
-                    const breakpoint = get(state.opts, property.key.value)
-                    const transformedValue = transform(
-                      property.value.value,
-                      theme
+                    localStyleAttributes.push(
+                      t.objectProperty(
+                        t.identifier(attribute.name.name),
+                        getValueType(transformedValue)
+                      )
                     )
-
-                    if (breakpointAttributes[breakpoint] === undefined) {
-                      breakpointAttributes[breakpoint] = []
-                    }
-
-                    if (typeof transformedValue === 'object') {
-                      Object.entries(transformedValue).forEach(
-                        ([key, value]) => {
-                          breakpointAttributes[breakpoint].push(
-                            t.objectProperty(
-                              t.identifier(key),
-                              getValueType(value)
-                            )
-                          )
-                        }
-                      )
-                    } else {
-                      breakpointAttributes[breakpoint].push(
-                        t.objectProperty(
-                          t.identifier(attribute.name.name),
-                          getValueType(transformedValue)
-                        )
-                      )
-                    }
                   }
-                })
+                }
               } else {
                 const transformedValue = transform(attribute.value.value, theme)
 
-                // TODO: how to handle if prop value itself is an object?
+                // TODO: how to handle if prop value itself is an object? (e.g. translate={{ x: -5, y: 10 }} )
                 // Can we use types to determine or should we only support simple
                 // primitive values like string/number?
                 if (typeof transformedValue === 'object') {
                   Object.entries(transformedValue).forEach(([key, value]) => {
-                    // console.log(value, getValueType(value))
                     localStyleAttributes.push(
                       t.objectProperty(t.identifier(key), getValueType(value))
                     )

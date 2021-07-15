@@ -7,7 +7,7 @@ export default function App() {
         initial: 16,
         'breakpoints.large': 'xlarge',
       }}
-      spaceYStart="40px"
+      spaceY={40}
       spaceYEnd="80px"
     >
       <Text>Hello World</Text>

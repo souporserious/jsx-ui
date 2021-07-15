@@ -11,7 +11,7 @@ export default function App() {
         initial: 16,
         'breakpoints.large': 'xlarge',
       }}
-      spaceYStart="40px"
+      spaceY={40}
       spaceYEnd="80px"
     >
       <Text>Hello World</Text>
@@ -21,16 +21,18 @@ export default function App() {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
+import { View, Text } from 'react-figma'
 export default function App() {
   return (
-    <div
-      css={{
+    <View
+      style={{
         display: 'flex',
         flexDirection: 'row',
         width: '960px',
         paddingLeft: 16,
         paddingRight: 16,
-        paddingTop: '40px',
+        paddingTop: 40,
+        paddingBottom: 40,
         paddingBottom: '80px',
         '@media (min-width: 1200px)': {
           paddingLeft: '60px',
@@ -38,8 +40,8 @@ export default function App() {
         },
       }}
     >
-      <span>Hello World</span>
-    </div>
+      <Text>Hello World</Text>
+    </View>
   )
 }
 
