@@ -3,7 +3,10 @@ export default function App() {
     <Stack
       axis="x"
       width="container.medium"
-      spaceX={{ 'breakpoints.large': 'xlarge' }}
+      spaceX={{
+        initial: 16,
+        'breakpoints.large': 'xlarge',
+      }}
       spaceYStart="40px"
       spaceYEnd="80px"
     >

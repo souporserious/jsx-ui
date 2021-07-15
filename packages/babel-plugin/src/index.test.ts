@@ -38,6 +38,10 @@ const theme = {
 
 const native = false
 
+const getValue = (value, key) => {
+  return typeof value === 'number' ? value : get(theme[key], value, value)
+}
+
 const components = [
   {
     name: 'Text',
@@ -58,29 +62,29 @@ const components = [
       axis: (value) => ({
         flexDirection: value === 'x' ? 'row' : 'column',
       }),
-      width: (value, theme) =>
+      width: (value) =>
         value.includes('fr')
           ? { flex: value.slice(0, -2) }
-          : get(theme.spacings, value) ?? value,
-      spaceX: (value, theme) => ({
-        paddingLeft: get(theme.spacings, value) ?? value,
-        paddingRight: get(theme.spacings, value) ?? value,
+          : getValue(value, 'spacings'),
+      spaceX: (value) => ({
+        paddingLeft: getValue(value, 'spacings'),
+        paddingRight: getValue(value, 'spacings'),
       }),
-      spaceXStart: (value, theme) => ({
-        paddingLeft: get(theme.spacings, value) ?? value,
+      spaceXStart: (value) => ({
+        paddingLeft: getValue(value, 'spacings'),
       }),
-      spaceXEnd: (value, theme) => ({
-        paddingRight: get(theme.spacings, value) ?? value,
+      spaceXEnd: (value) => ({
+        paddingRight: getValue(value, 'spacings'),
       }),
-      spaceY: (value, theme) => ({
-        paddingTop: get(theme.spacings, value) ?? value,
-        paddingBottom: get(theme.spacings, value) ?? value,
+      spaceY: (value) => ({
+        paddingTop: getValue(value, 'spacings'),
+        paddingBottom: getValue(value, 'spacings'),
       }),
-      spaceYStart: (value, theme) => ({
-        paddingTop: get(theme.spacings, value) ?? value,
+      spaceYStart: (value) => ({
+        paddingTop: getValue(value, 'spacings'),
       }),
-      spaceYEnd: (value, theme) => ({
-        paddingBottom: get(theme.spacings, value) ?? value,
+      spaceYEnd: (value) => ({
+        paddingBottom: getValue(value, 'spacings'),
       }),
     },
   },

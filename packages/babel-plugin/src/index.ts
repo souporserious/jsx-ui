@@ -1,4 +1,4 @@
-import { NodePath, PluginObj, PluginPass } from '@babel/core'
+import { PluginObj, PluginPass } from '@babel/core'
 import * as t from '@babel/types'
 import jsx from '@babel/plugin-syntax-jsx'
 import get from 'dlv'
@@ -40,10 +40,6 @@ type PluginOptions = {
   }
 } & PluginPass
 
-// compiler breakpoints and variants
-// <Breakpoints>
-// </Breakpoints>
-
 function getValueType(value) {
   return typeof value === 'boolean'
     ? t.booleanLiteral(value)
@@ -69,14 +65,17 @@ function getAttributeValue(attribute) {
 }
 
 export default function (): PluginObj<PluginOptions> {
-  const cache = new Set()
-  const importDeclarations = []
-  const styleAttributes = {}
+  let cache, importDeclarations, styleAttributes
   return {
     name: '@jsxui/babel-plugin',
     inherits: jsx,
     visitor: {
       Program: {
+        enter() {
+          cache = new Set()
+          importDeclarations = []
+          styleAttributes = {}
+        },
         exit(path, state) {
           const { visitor } = state.opts
           let importEntries = Object.entries(importDeclarations)
@@ -209,7 +208,7 @@ export default function (): PluginObj<PluginOptions> {
           path.node.openingElement.attributes.forEach((attribute) => {
             const transform = component.transforms[attribute.name.name]
 
-            console.log(attribute.name.name)
+            // console.log(attribute.name.name)
 
             /**
              * Create an object property to make it easier when writing visitors.
@@ -223,29 +222,61 @@ export default function (): PluginObj<PluginOptions> {
                 const expression = attribute.value.expression
 
                 expression.properties.forEach((property) => {
-                  const breakpoint = get(state.opts, property.key.value)
-                  const transformedValue = transform(
-                    property.value.value,
-                    theme
-                  )
-
-                  if (breakpointAttributes[breakpoint] === undefined) {
-                    breakpointAttributes[breakpoint] = []
-                  }
-
-                  if (typeof transformedValue === 'object') {
-                    Object.entries(transformedValue).forEach(([key, value]) => {
-                      breakpointAttributes[breakpoint].push(
-                        t.objectProperty(t.identifier(key), getValueType(value))
-                      )
-                    })
-                  } else {
-                    breakpointAttributes[breakpoint].push(
-                      t.objectProperty(
-                        t.identifier(attribute.name.name),
-                        getValueType(transformedValue)
-                      )
+                  if (property.key.name === 'initial') {
+                    const transformedValue = transform(
+                      property.value.value,
+                      theme
                     )
+
+                    if (typeof transformedValue === 'object') {
+                      Object.entries(transformedValue).forEach(
+                        ([key, value]) => {
+                          localStyleAttributes.push(
+                            t.objectProperty(
+                              t.identifier(key),
+                              getValueType(value)
+                            )
+                          )
+                        }
+                      )
+                    } else {
+                      localStyleAttributes.push(
+                        t.objectProperty(
+                          t.identifier(property.key.name),
+                          getValueType(transformedValue)
+                        )
+                      )
+                    }
+                  } else {
+                    const breakpoint = get(state.opts, property.key.value)
+                    const transformedValue = transform(
+                      property.value.value,
+                      theme
+                    )
+
+                    if (breakpointAttributes[breakpoint] === undefined) {
+                      breakpointAttributes[breakpoint] = []
+                    }
+
+                    if (typeof transformedValue === 'object') {
+                      Object.entries(transformedValue).forEach(
+                        ([key, value]) => {
+                          breakpointAttributes[breakpoint].push(
+                            t.objectProperty(
+                              t.identifier(key),
+                              getValueType(value)
+                            )
+                          )
+                        }
+                      )
+                    } else {
+                      breakpointAttributes[breakpoint].push(
+                        t.objectProperty(
+                          t.identifier(attribute.name.name),
+                          getValueType(transformedValue)
+                        )
+                      )
+                    }
                   }
                 })
               } else {
@@ -275,8 +306,6 @@ export default function (): PluginObj<PluginOptions> {
             }
           })
 
-          console.log(breakpointAttributes)
-
           if (localStyleAttributes.length > 0) {
             styleAttributes[id.name] = [
               ...defaultAttributes,
@@ -296,14 +325,13 @@ export default function (): PluginObj<PluginOptions> {
 
           path.node.openingElement.attributes = attributes
         }
-
-        // if (path.node.name.name === 'Graphic') {
-        //   transformGraphic(path)
-        // }
       },
-      // TODO: fix this.cache
       // JSXOpeningElement(path, state) {
-      //   addSourceProps(path, state)
+      //   if (path.node.name.name === 'Graphic') {
+      //     transformGraphic(path)
+      //   }
+
+      //   addSourceProps(path, state, cache)
       // },
     },
   }

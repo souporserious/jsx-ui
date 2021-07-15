@@ -7,7 +7,10 @@ export default function App() {
     <Stack
       axis="x"
       width="container.medium"
-      spaceX={{ 'breakpoints.large': 'xlarge' }}
+      spaceX={{
+        initial: 16,
+        'breakpoints.large': 'xlarge',
+      }}
       spaceYStart="40px"
       spaceYEnd="80px"
     >
@@ -25,6 +28,8 @@ export default function App() {
         display: 'flex',
         flexDirection: 'row',
         width: '960px',
+        paddingLeft: 16,
+        paddingRight: 16,
         paddingTop: '40px',
         paddingBottom: '80px',
         '@media (min-width: 1200px)': {

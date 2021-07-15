@@ -60,7 +60,7 @@ function convertAttribute(node) {
   return t.inherits(t.objectProperty(node.name, value), node)
 }
 
-export function addSourceProps(path, state) {
+export function addSourceProps(path, state, cache) {
   if (
     path.node.name.name !== 'Fragment' &&
     path.node.name.property?.name !== 'Fragment'
@@ -97,9 +97,9 @@ export function addSourceProps(path, state) {
     const binding = expressionPath.scope.getBinding(expressionName)
     let arrayExpression
     if (binding) {
-      if (!this.cache.has(expressionName)) {
+      if (!cache.has(expressionName)) {
         arrayExpression = binding.path.get('init')
-        this.cache.add(expressionName)
+        cache.add(expressionName)
       }
     } else {
       arrayExpression = expressionPath
