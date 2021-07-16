@@ -2,46 +2,39 @@
 
 exports[`@jsxui/babel-plugin 1. @jsxui/babel-plugin: 1. @jsxui/babel-plugin 1`] = `
 
-export default function App() {
+import * as React from 'react'
+import { Page } from 'react-figma'
+
+export const App = () => {
   return (
-    <Stack
-      axis="x"
-      width="container.medium"
-      spaceX={{
-        initial: 16,
-        'breakpoints.large': 'xlarge',
-      }}
-      spaceY={40}
-      spaceYEnd="80px"
-    >
-      <Text>Hello World</Text>
-    </Stack>
+    <Page name="Buttons">
+      <stack spaceX={16} spaceY={64} background="primary">
+        <text color="primary">Hello World</text>
+      </stack>
+    </Page>
   )
 }
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { View, Text } from 'react-figma'
-export default function App() {
+import * as React from 'react'
+import { Page, View } from 'react-figma'
+export const App = () => {
   return (
-    <View
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        width: '960px',
-        paddingLeft: 16,
-        paddingRight: 16,
-        paddingTop: 40,
-        paddingBottom: 40,
-        paddingBottom: '80px',
-        '@media (min-width: 1200px)': {
-          paddingLeft: '60px',
-          paddingRight: '60px',
-        },
-      }}
-    >
-      <Text>Hello World</Text>
-    </View>
+    <Page name="Buttons">
+      <View
+        style={{
+          display: 'flex',
+          paddingLeft: 16,
+          paddingRight: 16,
+          paddingTop: 64,
+          paddingBottom: 64,
+          background: 'purple',
+        }}
+      >
+        <text color="primary">Hello World</text>
+      </View>
+    </Page>
   )
 }
 

@@ -74,12 +74,14 @@ const components = [
   {
     name: 'Text',
     transforms: {
-      color: (value, theme) => theme.colors[value],
+      color: (value) => ({
+        color: theme.colors[value],
+      }),
     },
     ...textPlatformComponents[activeVisitor],
   },
   {
-    name: 'Stack',
+    name: 'stack',
     defaults: {
       display: 'flex',
     },
@@ -110,6 +112,9 @@ const components = [
       }),
       spaceYEnd: (value) => ({
         paddingBottom: getValue(value, 'spacings'),
+      }),
+      background: (value) => ({
+        background: theme.colors[value],
       }),
     },
     ...stackPlatformComponents[activeVisitor],
@@ -207,7 +212,8 @@ pluginTester({
   filename: __filename,
   snapshot: true,
   tests: [
-    { fixture: '__fixtures__/variants.js' },
+    { fixture: '__fixtures__/react-figma.js' },
+    // { fixture: '__fixtures__/variants.js' },
     // { fixture: '__fixtures__/props.js' },
     // { fixture: '__fixtures__/simple.js' },
     // { fixture: '__fixtures__/variable.js' },

@@ -71,7 +71,20 @@ export default function (): PluginObj<PluginOptions> {
     inherits: jsx,
     visitor: {
       Program: {
-        enter() {
+        enter(path, state) {
+          const { visitor, components } = state.opts
+
+          if (!visitor) {
+            throw new Error(
+              '@jsxui/babel-plugin: "visitor" option must be set in babel plugin config'
+            )
+          }
+          if (!components) {
+            throw new Error(
+              '@jsxui/babel-plugin: "components" option must be set in babel plugin config'
+            )
+          }
+
           cache = new Set()
           importDeclarations = []
           styleAttributes = {}
@@ -84,6 +97,10 @@ export default function (): PluginObj<PluginOptions> {
             // TODO: move out in a constant and pass state for better optimization
             path.traverse({
               ImportDeclaration(path) {
+                /**
+                 * Determine if library is already imported and if it is add
+                 * the specifier to that.
+                 */
                 const componentImports =
                   importDeclarations[path.node.source.value]
                 if (componentImports) {
@@ -93,32 +110,38 @@ export default function (): PluginObj<PluginOptions> {
                   )
 
                   // Loop through component imports and add them
-                  componentImports.forEach((componentName) => {
-                    path.node.specifiers.push(
-                      t.importSpecifier(
-                        t.identifier(componentName),
-                        t.stringLiteral(componentName)
-                      )
+                  componentImports
+                    // Filter out any specifiers that are already defined
+                    .filter(
+                      (componentName) =>
+                        !path.node.specifiers
+                          .map((specifier) => specifier.local.name)
+                          .includes(componentName)
                     )
-                  })
+                    .forEach((componentName) => {
+                      path.node.specifiers.push(
+                        t.importSpecifier(
+                          t.identifier(componentName),
+                          t.identifier(componentName)
+                        )
+                      )
+                    })
                 }
               },
             })
 
-            if (importEntries.length > 0) {
-              importEntries.forEach(([source, componentImports]) => {
-                const importDeclaration = t.importDeclaration(
-                  componentImports.map((componentName) =>
-                    t.importSpecifier(
-                      t.identifier(componentName),
-                      t.identifier(componentName)
-                    )
-                  ),
-                  t.stringLiteral(source)
-                )
-                path.unshiftContainer('body', importDeclaration)
-              })
-            }
+            importEntries.forEach(([source, componentImports]) => {
+              const importDeclaration = t.importDeclaration(
+                componentImports.map((componentName) =>
+                  t.importSpecifier(
+                    t.identifier(componentName),
+                    t.identifier(componentName)
+                  )
+                ),
+                t.stringLiteral(source)
+              )
+              // path.unshiftContainer('body', importDeclaration)
+            })
           }
 
           if (visitor.Program) {
