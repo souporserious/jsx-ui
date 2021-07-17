@@ -162,14 +162,9 @@ const figmaVisitor = {
 const inkVisitor = {
   JSXOpeningElement(path) {
     const id = this.getElementId(path)
-    const styleProperties = this.styleProperties[id]
-    if (styleProperties) {
-      path.node.attributes.push(
-        t.jsxAttribute(
-          t.jsxIdentifier('style'),
-          t.jsxExpressionContainer(t.objectExpression(styleProperties))
-        )
-      )
+    const styleAttributes = this.styleAttributes[id]
+    if (styleAttributes) {
+      path.node.attributes = path.node.attributes.concat(styleAttributes)
     }
   },
 }
