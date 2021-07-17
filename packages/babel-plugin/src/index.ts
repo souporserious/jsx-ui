@@ -65,7 +65,7 @@ function getAttributeValue(attribute) {
 }
 
 export default function (): PluginObj<PluginOptions> {
-  let cache, importDeclarations, styleAttributes
+  let cache, importDeclarations, styleProperties
   return {
     name: '@jsxui/babel-plugin',
     inherits: jsx,
@@ -91,7 +91,7 @@ export default function (): PluginObj<PluginOptions> {
 
           cache = new Set()
           importDeclarations = []
-          styleAttributes = {}
+          styleProperties = {}
         },
         exit(path, state) {
           const { visitor } = state.opts
@@ -149,7 +149,7 @@ export default function (): PluginObj<PluginOptions> {
           }
 
           if (visitor.Program) {
-            const state = { styleAttributes }
+            const state = { styleProperties }
             if (visitor.Program) {
               visitor.Program.call(state, path, state)
             }
@@ -173,7 +173,7 @@ export default function (): PluginObj<PluginOptions> {
               )
               return attribute ? attribute.value.value : null
             },
-            styleAttributes,
+            styleProperties,
           })
 
           // TODO: merge with above visitor for less traversals
@@ -199,9 +199,9 @@ export default function (): PluginObj<PluginOptions> {
           path.node.closingElement.name.name = component.as
 
           const attributes = []
-          const defaultAttributes = []
-          const localStyleAttributes = []
-          const breakpointAttributes = {}
+          const defaultProperties = []
+          const localStyleProperties = []
+          const breakpointProperties = {}
 
           /**
            * We add a uid to track which style props belong to what instance
@@ -226,7 +226,7 @@ export default function (): PluginObj<PluginOptions> {
 
           if (component.defaults) {
             Object.entries(component.defaults).forEach(([key, value]) => {
-              defaultAttributes.push(
+              defaultProperties.push(
                 t.objectProperty(t.identifier(key), getValueType(value))
               )
             })
@@ -257,7 +257,7 @@ export default function (): PluginObj<PluginOptions> {
                       if (typeof transformedValue === 'object') {
                         Object.entries(transformedValue).forEach(
                           ([key, value]) => {
-                            localStyleAttributes.push(
+                            localStyleProperties.push(
                               t.objectProperty(
                                 t.identifier(key),
                                 getValueType(value)
@@ -266,7 +266,7 @@ export default function (): PluginObj<PluginOptions> {
                           }
                         )
                       } else {
-                        localStyleAttributes.push(
+                        localStyleProperties.push(
                           t.objectProperty(
                             t.identifier(property.key.name),
                             getValueType(transformedValue)
@@ -280,14 +280,14 @@ export default function (): PluginObj<PluginOptions> {
                         theme
                       )
 
-                      if (breakpointAttributes[breakpoint] === undefined) {
-                        breakpointAttributes[breakpoint] = []
+                      if (breakpointProperties[breakpoint] === undefined) {
+                        breakpointProperties[breakpoint] = []
                       }
 
                       if (typeof transformedValue === 'object') {
                         Object.entries(transformedValue).forEach(
                           ([key, value]) => {
-                            breakpointAttributes[breakpoint].push(
+                            breakpointProperties[breakpoint].push(
                               t.objectProperty(
                                 t.identifier(key),
                                 getValueType(value)
@@ -296,7 +296,7 @@ export default function (): PluginObj<PluginOptions> {
                           }
                         )
                       } else {
-                        breakpointAttributes[breakpoint].push(
+                        breakpointProperties[breakpoint].push(
                           t.objectProperty(
                             t.identifier(attribute.name.name),
                             getValueType(transformedValue)
@@ -310,12 +310,12 @@ export default function (): PluginObj<PluginOptions> {
                   const transformedValue = transform(expression.value, theme)
                   if (typeof transformedValue === 'object') {
                     Object.entries(transformedValue).forEach(([key, value]) => {
-                      localStyleAttributes.push(
+                      localStyleProperties.push(
                         t.objectProperty(t.identifier(key), getValueType(value))
                       )
                     })
                   } else {
-                    localStyleAttributes.push(
+                    localStyleProperties.push(
                       t.objectProperty(
                         t.identifier(attribute.name.name),
                         getValueType(transformedValue)
@@ -331,12 +331,12 @@ export default function (): PluginObj<PluginOptions> {
                 // primitive values like string/number?
                 if (typeof transformedValue === 'object') {
                   Object.entries(transformedValue).forEach(([key, value]) => {
-                    localStyleAttributes.push(
+                    localStyleProperties.push(
                       t.objectProperty(t.identifier(key), getValueType(value))
                     )
                   })
                 } else {
-                  localStyleAttributes.push(
+                  localStyleProperties.push(
                     t.objectProperty(
                       t.identifier(attribute.name.name),
                       getValueType(transformedValue)
@@ -349,20 +349,20 @@ export default function (): PluginObj<PluginOptions> {
             }
           })
 
-          if (localStyleAttributes.length > 0) {
-            styleAttributes[id.name] = [
-              ...defaultAttributes,
-              ...localStyleAttributes.filter((property, index) => {
+          if (localStyleProperties.length > 0) {
+            styleProperties[id.name] = [
+              ...defaultProperties,
+              ...localStyleProperties.filter((property, index) => {
                 // if same value is present we take the last one since it will
                 // be overwritten anyways
-                const sameAttributes = localStyleAttributes.filter(
+                const sameAttributes = localStyleProperties.filter(
                   ({ key }) => key.name === property.key.name
                 )
                 return sameAttributes.length > 0
                   ? sameAttributes.length === index
                   : true
               }),
-              ...Object.entries(breakpointAttributes).reduce(
+              ...Object.entries(breakpointProperties).reduce(
                 (previousValue, [key, properties]) => [
                   ...previousValue,
                   t.objectProperty(
@@ -374,7 +374,7 @@ export default function (): PluginObj<PluginOptions> {
               ),
             ]
           } else {
-            styleAttributes[id.name] = defaultAttributes
+            localProperties[id.name] = defaultProperties
           }
 
           path.node.openingElement.attributes = attributes

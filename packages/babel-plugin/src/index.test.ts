@@ -5,7 +5,7 @@ import get from 'dlv'
 
 import plugin from './index'
 
-const activeVisitor: 'figma' | 'native' | 'web' = 'web'
+const activeVisitor: 'figma' | 'ink' | 'native' | 'web' = 'ink'
 
 const breakpoints = {
   small: '@media (min-width: 600px)',
@@ -47,6 +47,10 @@ const textPlatformComponents = {
     as: 'Text',
     source: 'react-figma',
   },
+  ink: {
+    as: 'Text',
+    source: 'ink',
+  },
   native: {
     as: 'Text',
     source: 'react-native',
@@ -60,6 +64,10 @@ const stackPlatformComponents = {
   figma: {
     as: 'View',
     source: 'react-figma',
+  },
+  ink: {
+    as: 'Box',
+    source: 'ink',
   },
   native: {
     as: 'View',
@@ -124,12 +132,12 @@ const components = [
 const webVisitor = {
   JSXOpeningElement(path) {
     const id = this.getElementId(path)
-    const styleAttributes = this.styleAttributes[id]
-    if (styleAttributes) {
+    const styleProperties = this.styleProperties[id]
+    if (styleProperties) {
       path.node.attributes.push(
         t.jsxAttribute(
           t.jsxIdentifier('css'),
-          t.jsxExpressionContainer(t.objectExpression(styleAttributes))
+          t.jsxExpressionContainer(t.objectExpression(styleProperties))
         )
       )
     }
@@ -139,12 +147,27 @@ const webVisitor = {
 const figmaVisitor = {
   JSXOpeningElement(path) {
     const id = this.getElementId(path)
-    const styleAttributes = this.styleAttributes[id]
-    if (styleAttributes) {
+    const styleProperties = this.styleProperties[id]
+    if (styleProperties) {
       path.node.attributes.push(
         t.jsxAttribute(
           t.jsxIdentifier('style'),
-          t.jsxExpressionContainer(t.objectExpression(styleAttributes))
+          t.jsxExpressionContainer(t.objectExpression(styleProperties))
+        )
+      )
+    }
+  },
+}
+
+const inkVisitor = {
+  JSXOpeningElement(path) {
+    const id = this.getElementId(path)
+    const styleProperties = this.styleProperties[id]
+    if (styleProperties) {
+      path.node.attributes.push(
+        t.jsxAttribute(
+          t.jsxIdentifier('style'),
+          t.jsxExpressionContainer(t.objectExpression(styleProperties))
         )
       )
     }
@@ -161,10 +184,10 @@ const nativeVisitor = {
       'body',
       buildStylesheet({
         STYLES: t.objectExpression(
-          Object.entries(this.styleAttributes).map(([id, styleAttributes]) =>
+          Object.entries(this.styleProperties).map(([id, styleProperties]) =>
             t.objectProperty(
               t.identifier(id),
-              t.objectExpression(styleAttributes)
+              t.objectExpression(styleProperties)
             )
           )
         ),
@@ -196,6 +219,7 @@ const nativeVisitor = {
 
 const visitors = {
   figma: figmaVisitor,
+  ink: inkVisitor,
   native: nativeVisitor,
   web: webVisitor,
 }
@@ -212,7 +236,8 @@ pluginTester({
   filename: __filename,
   snapshot: true,
   tests: [
-    { fixture: '__fixtures__/multiple-props.js' },
+    { fixture: '__fixtures__/ink.js' },
+    // { fixture: '__fixtures__/multiple-props.js' },
     // { fixture: '__fixtures__/empty.js' },
     // { fixture: '__fixtures__/react-figma.js' },
     // { fixture: '__fixtures__/variants.js' },

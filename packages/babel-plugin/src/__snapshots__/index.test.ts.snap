@@ -2,31 +2,59 @@
 
 exports[`@jsxui/babel-plugin 1. @jsxui/babel-plugin: 1. @jsxui/babel-plugin 1`] = `
 
-/** Collapse the same props present after transforms. */
-export default function App() {
+import React, { useState, useEffect } from 'react'
+import { render } from 'ink'
+
+const Counter = () => {
+  const [counter, setCounter] = useState(0)
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCounter((previousCounter) => previousCounter + 1)
+    }, 100)
+
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
+
   return (
-    <Stack spaceX={16} spaceXStart={24}>
-      <Text>Hello World</Text>
+    <Stack spaceX={8} spaceY={16}>
+      <Text color="primary">{counter} tests passed</Text>
     </Stack>
   )
 }
 
+render(<Counter />)
+
       ↓ ↓ ↓ ↓ ↓ ↓
 
-/** Collapse the same props present after transforms. */
-export default function App() {
+import { Box, Text } from 'ink'
+import React, { useState, useEffect } from 'react'
+import { render, Box, Text } from 'ink'
+
+const Counter = () => {
+  const [counter, setCounter] = useState(0)
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCounter((previousCounter) => previousCounter + 1)
+    }, 100)
+    return () => {
+      clearInterval(timer)
+    }
+  }, [])
   return (
-    <div
-      css={{
-        display: 'flex',
-        paddingRight: 16,
-        paddingLeft: 24,
+    <Box
+      style={{
+        paddingRight: 8,
       }}
     >
-      <span css={{}}>Hello World</span>
-    </div>
+      <Text style={{}}>{counter} tests passed</Text>
+    </Box>
   )
 }
+
+render(<Counter />)
 
 
 `;
