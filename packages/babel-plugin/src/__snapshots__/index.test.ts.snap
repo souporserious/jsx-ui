@@ -2,39 +2,29 @@
 
 exports[`@jsxui/babel-plugin 1. @jsxui/babel-plugin: 1. @jsxui/babel-plugin 1`] = `
 
-import * as React from 'react'
-import { Page } from 'react-figma'
-
-export const App = () => {
+/** Collapse the same props present after transforms. */
+export default function App() {
   return (
-    <Page name="Buttons">
-      <stack spaceX={16} spaceY={64} background="primary">
-        <text color="primary">Hello World</text>
-      </stack>
-    </Page>
+    <Stack spaceX={16} spaceXStart={24}>
+      <Text>Hello World</Text>
+    </Stack>
   )
 }
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import * as React from 'react'
-import { Page, View } from 'react-figma'
-export const App = () => {
+/** Collapse the same props present after transforms. */
+export default function App() {
   return (
-    <Page name="Buttons">
-      <View
-        style={{
-          display: 'flex',
-          paddingLeft: 16,
-          paddingRight: 16,
-          paddingTop: 64,
-          paddingBottom: 64,
-          background: 'purple',
-        }}
-      >
-        <text color="primary">Hello World</text>
-      </View>
-    </Page>
+    <div
+      css={{
+        display: 'flex',
+        paddingRight: 16,
+        paddingLeft: 24,
+      }}
+    >
+      <span css={{}}>Hello World</span>
+    </div>
   )
 }
 

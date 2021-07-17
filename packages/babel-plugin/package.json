@@ -4,6 +4,9 @@
   "author": "Travis Arnold",
   "description": "Babel plugin to optimize JSXUI components.",
   "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/souporserious/jsxui.git"

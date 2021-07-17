@@ -70,6 +70,10 @@ export default function (): PluginObj<PluginOptions> {
     name: '@jsxui/babel-plugin',
     inherits: jsx,
     visitor: {
+      // TODO: since this plugin manipulates props we need to run it before
+      // any other plugin since Babel operates on each node of a plugin at once.
+      // Otherwise we end up with transformed JSX which is harder to analyze/mod.
+      // https://jamie.build/babel-plugin-ordering.html
       Program: {
         enter(path, state) {
           const { visitor, components } = state.opts
@@ -140,7 +144,7 @@ export default function (): PluginObj<PluginOptions> {
                 ),
                 t.stringLiteral(source)
               )
-              // path.unshiftContainer('body', importDeclaration)
+              path.unshiftContainer('body', importDeclaration)
             })
           }
 
@@ -230,8 +234,6 @@ export default function (): PluginObj<PluginOptions> {
 
           path.node.openingElement.attributes.forEach((attribute) => {
             const transform = component.transforms[attribute.name.name]
-
-            // console.log(attribute.name.name)
 
             /**
              * Create an object property to make it easier when writing visitors.
@@ -350,7 +352,16 @@ export default function (): PluginObj<PluginOptions> {
           if (localStyleAttributes.length > 0) {
             styleAttributes[id.name] = [
               ...defaultAttributes,
-              ...localStyleAttributes,
+              ...localStyleAttributes.filter((property, index) => {
+                // if same value is present we take the last one since it will
+                // be overwritten anyways
+                const sameAttributes = localStyleAttributes.filter(
+                  ({ key }) => key.name === property.key.name
+                )
+                return sameAttributes.length > 0
+                  ? sameAttributes.length === index
+                  : true
+              }),
               ...Object.entries(breakpointAttributes).reduce(
                 (previousValue, [key, properties]) => [
                   ...previousValue,
@@ -362,6 +373,8 @@ export default function (): PluginObj<PluginOptions> {
                 []
               ),
             ]
+          } else {
+            styleAttributes[id.name] = defaultAttributes
           }
 
           path.node.openingElement.attributes = attributes

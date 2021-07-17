@@ -5,7 +5,7 @@ import get from 'dlv'
 
 import plugin from './index'
 
-const activeVisitor: 'figma' | 'native' | 'web' = 'figma'
+const activeVisitor: 'figma' | 'native' | 'web' = 'web'
 
 const breakpoints = {
   small: '@media (min-width: 600px)',
@@ -67,6 +67,9 @@ const stackPlatformComponents = {
   },
   web: {
     as: 'div',
+    defaults: {
+      display: 'flex',
+    },
   },
 }
 
@@ -81,10 +84,7 @@ const components = [
     ...textPlatformComponents[activeVisitor],
   },
   {
-    name: 'stack',
-    defaults: {
-      display: 'flex',
-    },
+    name: 'Stack',
     transforms: {
       axis: (value) => ({
         flexDirection: value === 'x' ? 'row' : 'column',
@@ -212,7 +212,9 @@ pluginTester({
   filename: __filename,
   snapshot: true,
   tests: [
-    { fixture: '__fixtures__/react-figma.js' },
+    { fixture: '__fixtures__/multiple-props.js' },
+    // { fixture: '__fixtures__/empty.js' },
+    // { fixture: '__fixtures__/react-figma.js' },
     // { fixture: '__fixtures__/variants.js' },
     // { fixture: '__fixtures__/props.js' },
     // { fixture: '__fixtures__/simple.js' },
