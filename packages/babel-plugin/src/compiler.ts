@@ -89,7 +89,6 @@ export default function (): PluginObj<PluginOptions> {
       // https://jamie.build/babel-plugin-ordering.html
       Program: {
         enter() {
-          cache = new Set()
           styleAttributes = {}
           styleProperties = {}
         },
@@ -354,23 +353,23 @@ export default function (): PluginObj<PluginOptions> {
                   const transformedValue = transform(expression.value, theme)
                   if (typeof transformedValue === 'object') {
                     Object.entries(transformedValue).forEach(([key, value]) => {
-                      localStyleAttributes.push(
-                        t.jsxAttribute(
-                          t.jsxIdentifier(key),
-                          t.jsxExpressionContainer(getValueType(value))
-                        )
-                      )
+                      // localStyleAttributes.push(
+                      //   t.jsxAttribute(
+                      //     t.jsxIdentifier(key),
+                      //     t.jsxExpressionContainer(getValueType(value))
+                      //   )
+                      // )
                       localStyleProperties.push(
                         t.objectProperty(t.identifier(key), getValueType(value))
                       )
                     })
                   } else {
-                    localStyleAttributes.push(
-                      t.jsxAttribute(
-                        t.jsxIdentifier(attribute.name.name),
-                        t.jsxExpressionContainer(getValueType(transformedValue))
-                      )
-                    )
+                    // localStyleAttributes.push(
+                    //   t.jsxAttribute(
+                    //     t.jsxIdentifier(attribute.name.name),
+                    //     t.jsxExpressionContainer(getValueType(transformedValue))
+                    //   )
+                    // )
                     localStyleProperties.push(
                       t.objectProperty(
                         t.identifier(attribute.name.name),

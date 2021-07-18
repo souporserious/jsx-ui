@@ -1,6 +1,6 @@
 import pluginTester from 'babel-plugin-tester'
 
-import plugin from './index'
+import plugin from './compiler'
 import { createConfig } from './config'
 
 pluginTester({

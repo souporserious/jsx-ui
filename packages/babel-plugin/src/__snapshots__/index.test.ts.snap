@@ -45,7 +45,7 @@ export default function Index() {
             <Text
               width="1fr"
               size="xlarge"
-              weight="900"
+              weight="bold"
               lineSpacing={24}
               alignment="center"
               spaceBefore={{
@@ -75,7 +75,7 @@ export default function Index() {
         spaceBetween={{ 'breakpoints.large': 'minmax(24px, 0.5fr)' }}
         spaceYStart="40px"
         spaceYEnd="80px"
-        background={{ xray: 'url(#diagonalHatch)' }}
+        // background={{ xray: 'url(#diagonalHatch)' }}
         // TODO: add X/YWrap components
         style={{ flexWrap: 'wrap' }}
       >
@@ -89,7 +89,12 @@ export default function Index() {
             spaceX="1fr"
             spaceBetween="24px"
           >
-            <Text size="large" weight={600} alignment="center" opacity={0.75}>
+            <Text
+              size="large"
+              weight="medium"
+              alignment="center"
+              opacity={0.75}
+            >
               {name}
             </Text>
             <Text>Coming Soon</Text>
@@ -104,39 +109,28 @@ export default function Index() {
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-var _jsxuiFileName =
-  '/Users/travisarnold/Code/jsxui/packages/babel-plugin/src/__fixtures__/site.js'
 import React from 'react'
 import { Text, Spacer, Stack } from '@jsxui/react'
 import { Github, Logo, Shapes, Wave } from '../assets'
 export default function Index() {
   return (
-    <Stack
+    <div
       height="minmax(100vh, auto)"
-      __jsxuiSource={{
-        fileName: _jsxuiFileName,
-        lineNumber: 8,
-        columnNumber: 5,
+      css={{
+        display: 'flex',
       }}
     >
       <div
         style={{
           display: 'grid',
         }}
-        __jsxuiSource={{
-          fileName: _jsxuiFileName,
-          lineNumber: 9,
-          columnNumber: 7,
-        }}
       >
-        <Stack
+        <div
           style={{
             gridArea: '1 / 1',
           }}
-          __jsxuiSource={{
-            fileName: _jsxuiFileName,
-            lineNumber: 10,
-            columnNumber: 9,
+          css={{
+            display: 'flex',
           }}
         >
           <Shapes
@@ -145,96 +139,56 @@ export default function Index() {
               'breakpoints.large': true,
             }}
             width="100%"
-            __jsxuiSource={{
-              fileName: _jsxuiFileName,
-              lineNumber: 11,
-              columnNumber: 11,
-            }}
           />
-        </Stack>
-        <Stack
-          axis="x"
-          spaceX="minmax(16px, 1fr)"
+        </div>
+        <div
           style={{
             gridArea: '1 / 1',
           }}
-          __jsxuiSource={{
-            fileName: _jsxuiFileName,
-            lineNumber: 16,
-            columnNumber: 9,
+          css={{
+            display: 'flex',
+            flexDirection: 'row',
+            paddingLeft: 'minmax(16px, 1fr)',
+            paddingRight: 'minmax(16px, 1fr)',
           }}
         >
-          <Stack
-            width="minmax(auto, 960px)"
-            spaceX="1fr"
-            spaceYStart="16px"
-            spaceYEnd="minmax(16px, 1fr)"
-            __jsxuiSource={{
-              fileName: _jsxuiFileName,
-              lineNumber: 21,
-              columnNumber: 11,
+          <div
+            css={{
+              display: 'flex',
+              width: 'minmax(auto, 960px)',
+              paddingLeft: '1fr',
+              paddingRight: '1fr',
+              paddingTop: '16px',
+              paddingBottom: 'minmax(16px, 1fr)',
             }}
           >
-            <Stack
-              axis="x"
-              width="1fr"
-              spaceY="1fr"
+            <div
               spaceBefore={0}
               spaceAfter={0}
-              __jsxuiSource={{
-                fileName: _jsxuiFileName,
-                lineNumber: 27,
-                columnNumber: 13,
+              css={{
+                display: 'flex',
+                flexDirection: 'row',
+                flex: '1',
+                paddingTop: '1fr',
+                paddingBottom: '1fr',
               }}
             >
-              <Logo
-                width="auto"
-                height="32px"
-                __jsxuiSource={{
-                  fileName: _jsxuiFileName,
-                  lineNumber: 34,
-                  columnNumber: 15,
-                }}
-              />
-              <Spacer
-                __jsxuiSource={{
-                  fileName: _jsxuiFileName,
-                  lineNumber: 35,
-                  columnNumber: 15,
-                }}
-              />
-              <Stack
+              <Logo width="auto" height="32px" />
+              <Spacer />
+              <div
                 as="a"
                 href="https://github.com/souporserious/jsxui"
-                __jsxuiSource={{
-                  fileName: _jsxuiFileName,
-                  lineNumber: 36,
-                  columnNumber: 15,
+                css={{
+                  display: 'flex',
                 }}
               >
-                <Github
-                  __jsxuiSource={{
-                    fileName: _jsxuiFileName,
-                    lineNumber: 37,
-                    columnNumber: 17,
-                  }}
-                />
-              </Stack>
-            </Stack>
-            <Spacer
-              size="80px"
-              __jsxuiSource={{
-                fileName: _jsxuiFileName,
-                lineNumber: 40,
-                columnNumber: 13,
-              }}
-            />
-            <Text
+                <Github />
+              </div>
+            </div>
+            <Spacer size="80px" />
+            <span
               width="1fr"
-              size="xlarge"
-              weight="900"
               lineSpacing={24}
-              alignment="center"
               spaceBefore={{
                 initial: 0,
                 screenMedium: 60,
@@ -243,110 +197,72 @@ export default function Index() {
                 initial: 0,
                 screenMedium: 60,
               }}
-              __jsxuiSource={{
-                fileName: _jsxuiFileName,
-                lineNumber: 41,
-                columnNumber: 13,
+              css={{
+                fontSize: 32,
+                fontWeight: 500,
+                textAlign: 'center',
               }}
             >
               Simple UI Primitives to Help Launch Your next&nbsp;Idea
-            </Text>
+            </span>
             <Spacer
               size={{
                 initial: '32px',
                 screenMedium: '48px',
               }}
-              __jsxuiSource={{
-                fileName: _jsxuiFileName,
-                lineNumber: 58,
-                columnNumber: 13,
-              }}
             />
-          </Stack>
-        </Stack>
+          </div>
+        </div>
       </div>
-      <Stack
-        axis="x"
-        width="minmax(100%, 1440px)"
-        spaceX={{
-          'breakpoints.large': '1fr',
-        }}
-        spaceBetween={{
-          'breakpoints.large': 'minmax(24px, 0.5fr)',
-        }}
-        spaceYStart="40px"
-        spaceYEnd="80px"
-        background={{
-          xray: 'url(#diagonalHatch)',
-        }} // TODO: add X/YWrap components
+      <div // background={{ xray: 'url(#diagonalHatch)' }}
+        // TODO: add X/YWrap components
         style={{
           flexWrap: 'wrap',
         }}
-        __jsxuiSource={{
-          fileName: _jsxuiFileName,
-          lineNumber: 67,
-          columnNumber: 7,
+        css={{
+          display: 'flex',
+          flexDirection: 'row',
+          width: 'minmax(100%, 1440px)',
+          paddingTop: '40px',
+          paddingBottom: '80px',
+          '@media (min-width: 1200px)': {
+            paddingLeft: '1fr',
+            paddingRight: '1fr',
+            gap: 'minmax(24px, 0.5fr)',
+          },
         }}
       >
         {['Elements', 'Variants', 'Overrides', 'Editor'].map((name) => (
-          <Stack
+          <div
             key={name}
-            width={{
+            css={{
+              display: 'flex',
               initial: '50%',
-              'breakpoints.large': '1fr',
-            }}
-            spaceX="1fr"
-            spaceBetween="24px"
-            __jsxuiSource={{
-              fileName: _jsxuiFileName,
-              lineNumber: 79,
-              columnNumber: 11,
+              paddingLeft: '1fr',
+              paddingRight: '1fr',
+              gap: '24px',
+              '@media (min-width: 1200px)': {
+                flex: '1',
+              },
             }}
           >
-            <Text
-              size="large"
-              weight={600}
-              alignment="center"
-              opacity={0.75}
-              __jsxuiSource={{
-                fileName: _jsxuiFileName,
-                lineNumber: 88,
-                columnNumber: 13,
+            <span
+              css={{
+                fontSize: 20,
+                fontWeight: 400,
+                textAlign: 'center',
+                opacity: 0.75,
               }}
             >
               {name}
-            </Text>
-            <Text
-              __jsxuiSource={{
-                fileName: _jsxuiFileName,
-                lineNumber: 91,
-                columnNumber: 13,
-              }}
-            >
-              Coming Soon
-            </Text>
-          </Stack>
+            </span>
+            <span css={{}}>Coming Soon</span>
+          </div>
         ))}
-      </Stack>
-      <Wave
-        width="1fr"
-        height="auto"
-        __jsxuiSource={{
-          fileName: _jsxuiFileName,
-          lineNumber: 95,
-          columnNumber: 7,
-        }}
-      />
-      <Spacer
-        size="minmax(80px, 1fr)"
-        background="#7B5AD9"
-        __jsxuiSource={{
-          fileName: _jsxuiFileName,
-          lineNumber: 96,
-          columnNumber: 7,
-        }}
-      />
-    </Stack>
+      </div>
+      <Wave width="1fr" height="auto" />
+      <Spacer size="minmax(80px, 1fr)" background="#7B5AD9" />
+    </div>
   )
 }
 

@@ -41,7 +41,7 @@ export default function Index() {
             <Text
               width="1fr"
               size="xlarge"
-              weight="900"
+              weight="bold"
               lineSpacing={24}
               alignment="center"
               spaceBefore={{
@@ -71,7 +71,7 @@ export default function Index() {
         spaceBetween={{ 'breakpoints.large': 'minmax(24px, 0.5fr)' }}
         spaceYStart="40px"
         spaceYEnd="80px"
-        background={{ xray: 'url(#diagonalHatch)' }}
+        // background={{ xray: 'url(#diagonalHatch)' }}
         // TODO: add X/YWrap components
         style={{ flexWrap: 'wrap' }}
       >
@@ -85,7 +85,12 @@ export default function Index() {
             spaceX="1fr"
             spaceBetween="24px"
           >
-            <Text size="large" weight={600} alignment="center" opacity={0.75}>
+            <Text
+              size="large"
+              weight="medium"
+              alignment="center"
+              opacity={0.75}
+            >
               {name}
             </Text>
             <Text>Coming Soon</Text>
