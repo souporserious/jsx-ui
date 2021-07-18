@@ -1,10 +1,10 @@
-import { Overrides, Text } from '@jsxui/react'
+import { Overrides } from '@jsxui/react'
 
 const overrides = [
   <Text color="tomato" variants={{ hover: { color: 'papayawhip' } }} />,
 ]
 
-export function App() {
+export default function App() {
   return (
     <Overrides value={overrides}>
       <Text>Hello World</Text>
