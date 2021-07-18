@@ -44,7 +44,13 @@ const Counter = () => {
     }
   }, [])
   return (
-    <Box paddingLeft={8} paddingRight={8} paddingTop={16} paddingBottom={16}>
+    <Box
+      flexDirection={'column'}
+      paddingLeft={8}
+      paddingRight={8}
+      paddingTop={16}
+      paddingBottom={16}
+    >
       <Text color={'purple'}>{counter} tests passed</Text>
     </Box>
   )

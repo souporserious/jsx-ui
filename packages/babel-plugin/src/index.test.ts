@@ -68,6 +68,9 @@ const stackPlatformComponents = {
   ink: {
     as: 'Box',
     source: 'ink',
+    defaults: {
+      flexDirection: 'column',
+    },
   },
   native: {
     as: 'View',
@@ -231,6 +234,7 @@ pluginTester({
   filename: __filename,
   snapshot: true,
   tests: [
+    // { fixture: '__fixtures__/visibility.js' },
     { fixture: '__fixtures__/ink.js' },
     // { fixture: '__fixtures__/multiple-props.js' },
     // { fixture: '__fixtures__/empty.js' },

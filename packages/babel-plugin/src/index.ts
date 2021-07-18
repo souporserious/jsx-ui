@@ -247,13 +247,21 @@ export default function (): PluginObj<PluginOptions> {
             const transform = component.transforms[attribute.name.name]
 
             /**
+             * The visible prop is special and allows completely removing an element
+             * for a specific breakpoint or platform.
+             */
+            if (attribute.name.name === 'visible') {
+              // TODO: implement "visible" prop
+              // will this just be platform specific and implemented per visitor?
+              // web for instance will use display: none, but native should return null?
+            }
+
+            /**
              * Create an object property to make it easier when writing visitors.
              * Alternatively, we can store this as an actual object and let users
              * compose them however (e.g. writing to template literals).
              */
             if (transform !== undefined) {
-              // TODO: for now we're only supporting breakpoints
-              // but we need to support expressions like <Stack space={8} />
               if (attribute.value.type === 'JSXExpressionContainer') {
                 const expression = attribute.value.expression
 
