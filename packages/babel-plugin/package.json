@@ -1,6 +1,6 @@
 {
   "name": "@jsxui/babel-plugin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "Travis Arnold",
   "description": "Babel plugin to optimize JSXUI components.",
   "license": "MIT",
