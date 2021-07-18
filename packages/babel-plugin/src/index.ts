@@ -29,11 +29,13 @@ type PluginOptions = {
       transforms?: any
     }[]
 
-    /** The threshold for layouts across specific screen sizes. */
-    breakpoints: any
-
     /** Common values reused throughout your components. */
-    theme: any
+    theme:
+      | (string & {})
+      | {
+          /** The threshold for layouts across specific screen sizes. */
+          breakpoints: any
+        }
 
     /** Describe how style props should be mapped to the respecitve platform. */
     visitor: any
@@ -315,7 +317,10 @@ export default function (): PluginObj<PluginOptions> {
                         )
                       }
                     } else {
-                      const breakpoint = get(state.opts, property.key.value)
+                      const breakpoint = get(
+                        state.opts.theme,
+                        property.key.value
+                      )
                       const transformedValue = transform(
                         property.value.value,
                         theme

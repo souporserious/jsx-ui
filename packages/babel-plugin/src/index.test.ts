@@ -5,20 +5,52 @@ import get from 'dlv'
 
 import plugin from './index'
 
-const activeVisitor: 'figma' | 'ink' | 'native' | 'web' = 'ink'
-
-const breakpoints = {
-  small: '@media (min-width: 600px)',
-  medium: '@media (min-width: 960px)',
-  large: '@media (min-width: 1200px)',
-}
+const activeVisitor: 'figma' | 'ink' | 'native' | 'web' = 'web'
 
 const theme = {
-  colors: {
-    primary: 'purple',
-    secondary: 'grey',
+  breakpoints: {
+    small: '@media (min-width: 600px)',
+    medium: '@media (min-width: 960px)',
+    large: '@media (min-width: 1200px)',
   },
-  spacings: {
+  colors: {
+    brand: '#8D6CEE',
+    foreground: 'black',
+    foregroundSecondary: 'gray',
+  },
+  fontSizes: {
+    small: {
+      initial: 10,
+      'breakpoints.medium': 12,
+    },
+    medium: {
+      initial: 12,
+      'breakpoints.medium': 16,
+    },
+    large: {
+      initial: 20,
+      'breakpoints.medium': 28,
+    },
+    xlarge: {
+      initial: 32,
+      'breakpoints.medium': 48,
+    },
+  },
+  fontWeights: {
+    medium: 400,
+    bold: {
+      initial: 500,
+      'prefers.dark': 600,
+    },
+  },
+  letterSpacings: {
+    normal: 0.25,
+    tracked: {
+      initial: 0.3,
+      'prefers.dark': 0.4,
+    },
+  },
+  boxSpacings: {
     xxsmall: '4px',
     xsmall: '8px',
     small: '16px',
@@ -26,14 +58,44 @@ const theme = {
     large: '40px',
     xlarge: '60px',
     xxlarge: '80px',
+  },
+  boxSizes: {
     container: {
       small: '640px',
       medium: '960px',
       large: '1440px',
     },
+    button: {},
+    input: {},
     icon: {
       small: '20px',
       medium: '32px',
+    },
+  },
+  variants: {
+    heading1: {
+      initial: {
+        size: 'fontSizes.large',
+      },
+      web: {
+        as: 'h1',
+      },
+      native: {
+        as: 'Text',
+        accessibilityRole: 'header',
+      },
+    },
+    heading2: {
+      initial: {
+        size: 'fontSizes.medium',
+      },
+      web: {
+        as: 'h2',
+      },
+      native: {
+        as: 'Text',
+        accessibilityRole: 'header',
+      },
     },
   },
 }
@@ -88,6 +150,18 @@ const components = [
   {
     name: 'Text',
     transforms: {
+      // size: (value, theme) => ({
+      //   fontSize: theme.fontSizes[value],
+      // }),
+      // weight: (value, theme) => ({
+      //   fontWeight: theme.fontWeights[value],
+      // }),
+      alignment: (value) => ({
+        textAlign: value,
+      }),
+      opacity: (value) => ({
+        opacity: value,
+      }),
       color: (value) => ({
         color: theme.colors[value],
       }),
@@ -103,26 +177,26 @@ const components = [
       width: (value) =>
         value.includes('fr')
           ? { flex: value.slice(0, -2) }
-          : getValue(value, 'spacings'),
+          : getValue(value, 'boxSpacings'),
       spaceX: (value) => ({
-        paddingLeft: getValue(value, 'spacings'),
-        paddingRight: getValue(value, 'spacings'),
+        paddingLeft: getValue(value, 'boxSpacings'),
+        paddingRight: getValue(value, 'boxSpacings'),
       }),
       spaceXStart: (value) => ({
-        paddingLeft: getValue(value, 'spacings'),
+        paddingLeft: getValue(value, 'boxSpacings'),
       }),
       spaceXEnd: (value) => ({
-        paddingRight: getValue(value, 'spacings'),
+        paddingRight: getValue(value, 'boxSpacings'),
       }),
       spaceY: (value) => ({
-        paddingTop: getValue(value, 'spacings'),
-        paddingBottom: getValue(value, 'spacings'),
+        paddingTop: getValue(value, 'boxSpacings'),
+        paddingBottom: getValue(value, 'boxSpacings'),
       }),
       spaceYStart: (value) => ({
-        paddingTop: getValue(value, 'spacings'),
+        paddingTop: getValue(value, 'boxSpacings'),
       }),
       spaceYEnd: (value) => ({
-        paddingBottom: getValue(value, 'spacings'),
+        paddingBottom: getValue(value, 'boxSpacings'),
       }),
       background: (value) => ({
         background: theme.colors[value],
@@ -228,14 +302,14 @@ pluginTester({
   pluginOptions: {
     components,
     theme,
-    breakpoints,
     visitor: visitors[activeVisitor],
   },
   filename: __filename,
   snapshot: true,
   tests: [
+    { fixture: '__fixtures__/site.js' },
     // { fixture: '__fixtures__/visibility.js' },
-    { fixture: '__fixtures__/ink.js' },
+    // { fixture: '__fixtures__/ink.js' },
     // { fixture: '__fixtures__/multiple-props.js' },
     // { fixture: '__fixtures__/empty.js' },
     // { fixture: '__fixtures__/react-figma.js' },

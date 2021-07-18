@@ -71,9 +71,7 @@ export default function Index() {
         spaceBetween={{ 'breakpoints.large': 'minmax(24px, 0.5fr)' }}
         spaceYStart="40px"
         spaceYEnd="80px"
-        background={{ xray: 'url(#diagonalHatch)' }}
-        // TODO: add X/YWrap components
-        style={{ flexWrap: 'wrap' }}
+        // background={{ xray: 'url(#diagonalHatch)' }}
       >
         {['Elements', 'Variants', 'Overrides', 'Editor'].map((name) => (
           <Stack
