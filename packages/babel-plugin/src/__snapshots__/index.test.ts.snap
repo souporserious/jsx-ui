@@ -29,9 +29,8 @@ render(<Counter />)
 
       ↓ ↓ ↓ ↓ ↓ ↓
 
-import { Box, Text } from 'ink'
 import React, { useState, useEffect } from 'react'
-import { render, Box, Text } from 'ink'
+import { render, Text, Box } from 'ink'
 
 const Counter = () => {
   const [counter, setCounter] = useState(0)

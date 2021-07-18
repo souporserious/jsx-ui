@@ -65,7 +65,7 @@ function getAttributeValue(attribute) {
 }
 
 export default function (): PluginObj<PluginOptions> {
-  let cache, importDeclarations, styleAttributes, styleProperties
+  let cache, styleAttributes, styleProperties
   return {
     name: '@jsxui/babel-plugin',
     inherits: jsx,
@@ -90,13 +90,27 @@ export default function (): PluginObj<PluginOptions> {
           }
 
           cache = new Set()
-          importDeclarations = []
           styleAttributes = {}
           styleProperties = {}
         },
         exit(path, state) {
-          const { visitor } = state.opts
+          const { components, visitor } = state.opts
+          const importDeclarations = {}
+
+          components.forEach((component) => {
+            if (component.source) {
+              const importDeclaration = importDeclarations[component.source]
+              if (importDeclaration === undefined) {
+                importDeclarations[component.source] = []
+              }
+              if (!importDeclaration?.includes(component.as)) {
+                importDeclarations[component.source].push(component.as)
+              }
+            }
+          })
+
           let importEntries = Object.entries(importDeclarations)
+          let containsImportDeclaration = false
 
           if (importEntries.length > 0) {
             // TODO: move out in a constant and pass state for better optimization
@@ -109,6 +123,8 @@ export default function (): PluginObj<PluginOptions> {
                 const componentImports =
                   importDeclarations[path.node.source.value]
                 if (componentImports) {
+                  containsImportDeclaration = true
+
                   // Filter out from imports since we don't need to add the source
                   importEntries = importEntries.filter(
                     ([key]) => key === path.node.source.value
@@ -135,18 +151,20 @@ export default function (): PluginObj<PluginOptions> {
               },
             })
 
-            importEntries.forEach(([source, componentImports]) => {
-              const importDeclaration = t.importDeclaration(
-                componentImports.map((componentName) =>
-                  t.importSpecifier(
-                    t.identifier(componentName),
-                    t.identifier(componentName)
-                  )
-                ),
-                t.stringLiteral(source)
-              )
-              path.unshiftContainer('body', importDeclaration)
-            })
+            if (!containsImportDeclaration) {
+              importEntries.forEach(([source, componentImports]) => {
+                const importDeclaration = t.importDeclaration(
+                  componentImports.map((componentName) =>
+                    t.importSpecifier(
+                      t.identifier(componentName),
+                      t.identifier(componentName)
+                    )
+                  ),
+                  t.stringLiteral(source)
+                )
+                path.unshiftContainer('body', importDeclaration)
+              })
+            }
           }
 
           if (visitor.Program) {
@@ -216,16 +234,6 @@ export default function (): PluginObj<PluginOptions> {
               t.stringLiteral(id.name)
             )
           )
-
-          if (component.source) {
-            const importDeclaration = importDeclarations[component.source]
-            if (importDeclaration === undefined) {
-              importDeclarations[component.source] = []
-            }
-            if (!importDeclaration?.includes(component.as)) {
-              importDeclarations[component.source].push(component.as)
-            }
-          }
 
           if (component.defaults) {
             Object.entries(component.defaults).forEach(([key, value]) => {
