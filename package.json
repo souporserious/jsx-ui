@@ -22,6 +22,7 @@
     "babel-jest": "^27.0.5",
     "babel-plugin-tester": "^10.1.0",
     "babel-test": "^0.2.4",
+    "cypress": "^7.6.0",
     "esbuild": "^0.12.11",
     "husky": "^6.0.0",
     "jest": "^27.0.5",
